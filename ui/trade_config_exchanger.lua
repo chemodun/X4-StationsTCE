@@ -1,7 +1,7 @@
 local ffi = require("ffi")
 local C = ffi.C
 
-ffi.cdef[[
+ffi.cdef [[
   typedef uint64_t UniverseID;
   typedef int32_t TradeRuleID;
 
@@ -61,6 +61,8 @@ local labels = {
 }
 
 
+local dbg = nil
+
 TradeConfigExchanger.labels = labels
 
 
@@ -104,18 +106,18 @@ local function toUniverseId(value)
 end
 
 
-local function getStationName(shipId)
-  if shipId == 0 then
+local function getStationName(id)
+  if id == 0 then
     return "Unknown"
   end
-  local name = GetComponentData(ConvertStringToLuaID(tostring(shipId)), "name")
-  local idCode = ffi.string(C.GetObjectIDCode(shipId))
+  local name = GetComponentData(ConvertStringToLuaID(tostring(id)), "name")
+  local idCode = ffi.string(C.GetObjectIDCode(id))
   return string.format("%s (%s)", name, idCode)
 end
 
 local function centerFrameVertically(frame)
   frame.properties.height = frame:getUsedHeight() + Helper.borderSize
-  if (frame.properties.height > Helper.viewHeight ) then
+  if (frame.properties.height > Helper.viewHeight) then
     frame.properties.y = Helper.borderSize
     frame.properties.height = Helper.viewHeight - 2 * Helper.borderSize
   else
@@ -195,7 +197,7 @@ function TradeConfigExchanger.alertMessage(options)
 
   local buttonRow = ftable:addRow(true, { fixed = true })
   buttonRow[3]:createButton():setText(okLabel, { halign = "center" })
-  buttonRow[3].handlers.onClick = function ()
+  buttonRow[3].handlers.onClick = function()
     local shouldClose = true
     if shouldClose then
       menu.closeContextMenu("back")
@@ -216,7 +218,6 @@ function TradeConfigExchanger.showTargetAlert()
   options.message = ReadText(1972092408, 10311)
   TradeConfigExchanger.alertMessage(options)
 end
-
 
 function TradeConfigExchanger.cloneOrdersConfirm()
   local menu = TradeConfigExchanger.mapMenu
@@ -263,14 +264,15 @@ function TradeConfigExchanger.cloneOrdersConfirm()
   local frame = menu.contextFrame
   frame:setBackground("solid", { color = Color["frame_background_semitransparent"] })
 
-  local ftable = frame:addTable(13, { tabOrder = 1, x = Helper.borderSize, y = Helper.borderSize, width = width, reserveScrollBar = false, highlightMode = "off" })
+  local ftable = frame:addTable(13,
+    { tabOrder = 1, x = Helper.borderSize, y = Helper.borderSize, width = width, reserveScrollBar = false, highlightMode = "off" })
 
   local headerRow = ftable:addRow(false, { fixed = true })
   headerRow[1]:setColSpan(13):createText(title, Helper.titleTextProperties)
   ftable:addEmptyRow(Helper.standardTextHeight / 2)
   local headerRow = ftable:addRow(false, { fixed = true })
   headerRow[1]:createText(ReadText(1972092408, 10321), Helper.headerRow1Properties)
-  local sourceNameProperties = copyAndEnrichTable(Helper.headerRowCenteredProperties, {color = Color["text_player_current"]})
+  local sourceNameProperties = copyAndEnrichTable(Helper.headerRowCenteredProperties, { color = Color["text_player_current"] })
   headerRow[2]:setColSpan(7):createText(sourceName, sourceNameProperties)
   headerRow[9]:setColSpan(5):createText(targetsTitle, Helper.headerRowCenteredProperties)
   ftable:addEmptyRow(Helper.standardTextHeight / 2)
@@ -280,12 +282,12 @@ function TradeConfigExchanger.cloneOrdersConfirm()
   headerRow[1]:setColSpan(8):createText(ReadText(1001, 3225), Helper.headerRowCenteredProperties) -- Order Queue
 
   local tableHeaderRow = ftable:addRow(false, { fixed = true })
-  tableHeaderRow[1]:createText(ReadText(1001, 7802), Helper.headerRow1Properties) -- Orders
-  tableHeaderRow[2]:setColSpan(2):createText(ReadText(1001, 45), Helper.headerRow1Properties) -- Ware
-  tableHeaderRow[4]:createText(ReadText(1001, 1202), Helper.headerRow1Properties) -- Amount
-  tableHeaderRow[5]:createText(ReadText(1001, 2808), Helper.headerRow1Properties) -- Price
+  tableHeaderRow[1]:createText(ReadText(1001, 7802), Helper.headerRow1Properties)                -- Orders
+  tableHeaderRow[2]:setColSpan(2):createText(ReadText(1001, 45), Helper.headerRow1Properties)    -- Ware
+  tableHeaderRow[4]:createText(ReadText(1001, 1202), Helper.headerRow1Properties)                -- Amount
+  tableHeaderRow[5]:createText(ReadText(1001, 2808), Helper.headerRow1Properties)                -- Price
   tableHeaderRow[6]:setColSpan(3):createText(ReadText(1041, 10049), Helper.headerRow1Properties) -- Location
-  tableHeaderRow[9]:setColSpan(5):createText(ReadText(1001, 2809), Helper.headerRow1Properties) -- Name
+  tableHeaderRow[9]:setColSpan(5):createText(ReadText(1001, 2809), Helper.headerRow1Properties)  -- Name
 
   ftable:addEmptyRow(Helper.standardTextHeight / 2)
 
@@ -302,15 +304,15 @@ function TradeConfigExchanger.cloneOrdersConfirm()
       menu.infoTableData[instance].orders[i] = {}
       local orderparams = GetOrderParams(sourceId, order.idx)
       menu.infoTableData[instance].orders[i].params = orderparams
-      row[1]:createText(TradeConfigExchanger.validOrders[order.order], {halign = "left"})
-      row[2]:setColSpan(2):createText(GetWareData(orderparams[1].value, "name"), {halign = "left"})
+      row[1]:createText(TradeConfigExchanger.validOrders[order.order], { halign = "left" })
+      row[2]:setColSpan(2):createText(GetWareData(orderparams[1].value, "name"), { halign = "left" })
       local amount = orderparams[5].value
       if order.order == "SingleSell" then
         amount = cargoCapacity - amount
       end
-      local percentage = (cargoCapacity > 0) and (amount * 100 / cargoCapacity ) or 0
-      row[4]:createText(string.format("%.2f%%", percentage), {halign = "right"})
-      row[5]:createText(orderparams[7].value, {halign = "right"})
+      local percentage = (cargoCapacity > 0) and (amount * 100 / cargoCapacity) or 0
+      row[4]:createText(string.format("%.2f%%", percentage), { halign = "right" })
+      row[5]:createText(orderparams[7].value, { halign = "right" })
       local locations = orderparams[4].value
       if type(locations) == "table" and #locations >= 1 then
         local locId = toUniverseId(locations[1])
@@ -318,18 +320,18 @@ function TradeConfigExchanger.cloneOrdersConfirm()
         if (#locations > 1) then
           locName = locName .. ", ..."
         end
-        row[6]:setColSpan(3):createText(locName )
+        row[6]:setColSpan(3):createText(locName)
       else
-        row[6]:setColSpan(3):createText("-", {halign = "center"})
+        row[6]:setColSpan(3):createText("-", { halign = "center" })
       end
     else
-      row[1]:setColSpan(8):createText("", {halign = "left"})
+      row[1]:setColSpan(8):createText("", { halign = "left" })
     end
     if i <= #targetIds then
       local targetName = getStationName(targetIds[i])
-      row[9]:setColSpan(5):createText(tostring(targetName), {halign = "left", color = Color["text_player_current"]})
+      row[9]:setColSpan(5):createText(tostring(targetName), { halign = "left", color = Color["text_player_current"] })
     else
-      row[9]:setColSpan(5):createText("", {halign = "center"})
+      row[9]:setColSpan(5):createText("", { halign = "center" })
     end
   end
 
@@ -337,23 +339,23 @@ function TradeConfigExchanger.cloneOrdersConfirm()
 
   local buttonRow = ftable:addRow(true, { fixed = true })
   buttonRow[10]:setColSpan(2):createButton():setText(ReadText(1001, 2821), { halign = "center" })
-  buttonRow[10].handlers.onClick = function ()
+  buttonRow[10].handlers.onClick = function()
     TradeConfigExchanger.cloneOrdersExecute()
     menu.closeContextMenu("back")
   end
   buttonRow[12]:setColSpan(2):createButton():setText(ReadText(1001, 64), { halign = "center" })
-  buttonRow[12].handlers.onClick = function ()
+  buttonRow[12].handlers.onClick = function()
     TradeConfigExchanger.cloneOrdersCancel()
     menu.closeContextMenu("back")
   end
   buttonRow[1]:setColSpan(2):createButton():setText(ReadText(1972092408, 10201), { halign = "center" })
-  buttonRow[1].handlers.onClick = function ()
+  buttonRow[1].handlers.onClick = function()
     TradeConfigExchanger.clearSource()
     menu.closeContextMenu("back")
   end
 
   buttonRow[4]:setColSpan(2):createButton():setText('Add Location', { halign = "center" })
-  buttonRow[4].handlers.onClick = function ()
+  buttonRow[4].handlers.onClick = function()
     return TradeConfigExchanger.SetOrderParam(1, 4, 1, nil, instance)
   end
   ftable:setSelectedCol(12)
@@ -362,7 +364,6 @@ function TradeConfigExchanger.cloneOrdersConfirm()
 
   frame:display()
 end
-
 
 local function computeProductionDetails(entry)
   if entry.productionSignature then
@@ -397,17 +398,18 @@ local function buildStationCache()
   local list = GetContainedStationsByOwner("player", nil, true) or {}
 
   for _, station in ipairs(list) do
-    local id = toIdString(station)
+    local id = station
     local id64 = toUniverseId(station)
     if id and id64 and (id64 ~= 0) then
       local entry = {
         id = id,
         id64 = id64,
       }
-      entry.displayName = getStationName(entry)
+      debugTrace("Found station: " .. tostring(id) .. " / " .. tostring(id64))
+      entry.displayName = getStationName(entry.id64)
       computeProductionDetails(entry)
       stations[id] = entry
-      table.insert(options, { id = id, text = entry.displayName })
+      options[#options + 1] = { id = id64, icon="", text = entry.displayName, displayremoveoption = false }
     end
   end
 
@@ -564,10 +566,10 @@ local function formatSide(info)
     return "-"
   end
   local parts = {}
-  parts[#parts+1] = info.allowed and labels.enabled or labels.disabled
-  parts[#parts+1] = string.format(labels.limit, formatLimit(info.limit, info.limitOverride))
-  parts[#parts+1] = string.format(labels.price, formatPrice(info.price, info.priceOverride))
-  parts[#parts+1] = string.format(labels.rule, formatTradeRuleLabel(info.tradeRule, info.hasOwnRule))
+  parts[#parts + 1] = info.allowed and labels.enabled or labels.disabled
+  parts[#parts + 1] = string.format(labels.limit, formatLimit(info.limit, info.limitOverride))
+  parts[#parts + 1] = string.format(labels.price, formatPrice(info.price, info.priceOverride))
+  parts[#parts + 1] = string.format(labels.rule, formatTradeRuleLabel(info.tradeRule, info.hasOwnRule))
   return table.concat(parts, "\n")
 end
 
@@ -598,7 +600,7 @@ local function updateTargetOptions(data)
       local qualifies = (not data.requireMatch) or (signature == nil) or (entry.productionSignature == signature)
       if qualifies then
         matches = matches + 1
-        options[#options+1] = { id = id, text = entry.displayName }
+        options[#options + 1] = { id = id, text = entry.displayName }
       end
     end
   end
@@ -650,14 +652,14 @@ local function buildUnion(sourceData, targetData)
   if sourceData then
     for ware, info in pairs(sourceData.map) do
       union[ware] = true
-      list[#list+1] = { ware = ware, name = info.name }
+      list[#list + 1] = { ware = ware, name = info.name }
     end
   end
   if targetData then
     for ware, info in pairs(targetData.map) do
       if not union[ware] then
         union[ware] = true
-        list[#list+1] = { ware = ware, name = info.name }
+        list[#list + 1] = { ware = ware, name = info.name }
       end
     end
   end
@@ -786,9 +788,11 @@ function TradeConfigExchanger.render()
     return
   end
   local data = menu.contextMenuData
-  if not data or data.mode ~= "trade_clone_exchanger" then
+  if not data or data.mode ~= "trade_config_exchanger" then
     return
   end
+
+  debugTrace("Rendering Trade Config Exchanger UI")
 
   Helper.removeAllWidgetScripts(menu, data.layer)
 
@@ -820,13 +824,15 @@ function TradeConfigExchanger.render()
     statusRow[1]:setColSpan(columns):createText(data.statusMessage, { wordwrap = true, color = data.statusColor })
   end
 
-  row = tableHandle:addRow(false, { fixed = true })
+  row = tableHandle:addRow(true, { fixed = true })
   row[1]:setColSpan(2):createText("Source station")
+  debugTrace("Rendering source dropdown with " .. tostring(#data.sourceOptions) .. " options, selected: " .. tostring(data.selectedSource))
   row[3]:setColSpan(4):createDropDown(data.sourceOptions, {
-    startOption = data.selectedSource,
+    startOption = data.selectedSource or -1,
     active = #data.sourceOptions > 0,
     textOverride = (#data.sourceOptions == 0) and "No player stations" or nil,
   })
+  debugTrace("Rendered source dropdown with " .. tostring(#data.sourceOptions) .. " options, selected: " .. tostring(data.selectedSource))
   row[3].handlers.onDropDownConfirmed = function(_, id)
     data.selectedSource = id
     data.pendingResetSelections = true
@@ -834,6 +840,7 @@ function TradeConfigExchanger.render()
     data.statusMessage = nil
     TradeConfigExchanger.render()
   end
+  -- row[3]:setColSpan(4):createText("DropDown")
 
   row = tableHandle:addRow(true, { fixed = true })
   row[1]:setColSpan(2):createText("Match production modules")
@@ -847,106 +854,110 @@ function TradeConfigExchanger.render()
 
   row = tableHandle:addRow(false, { fixed = true })
   row[1]:setColSpan(2):createText("Target station")
-  row[3]:setColSpan(4):createDropDown(data.targetOptions, {
-    startOption = data.selectedTarget,
-    active = #data.targetOptions > 0,
-    textOverride = (#data.targetOptions == 0) and "No matching stations" or nil,
-  })
-  row[3].handlers.onDropDownConfirmed = function(_, id)
-    data.selectedTarget = id
-    data.pendingResetSelections = true
-    data.statusMessage = nil
-    TradeConfigExchanger.render()
-  end
+  -- row[3]:setColSpan(4):createDropDown(data.targetOptions, {
+  --   startOption = data.selectedTarget or -1,
+  --   active = #data.targetOptions > 0,
+  --   textOverride = (#data.targetOptions == 0) and "No matching stations" or nil,
+  -- })
+  -- row[3].handlers.onDropDownConfirmed = function(_, id)
+  --   data.selectedTarget = id
+  --   data.pendingResetSelections = true
+  --   data.statusMessage = nil
+  --   TradeConfigExchanger.render()
+  -- end
+  row[3]:setColSpan(4):createText("DropDown")
 
-  if data.targetCounts then
-    local infoRow = tableHandle:addRow(false, { fixed = true })
-    local text
-    if data.targetCounts.total == 0 then
-      text = "No other player stations available."
-    else
-      text = string.format("%d matching station(s) out of %d.", data.targetCounts.matches, data.targetCounts.total)
-    end
-    infoRow[1]:setColSpan(columns):createText(text, { color = (data.targetCounts.matches > 0) and nil or (Color and Color["text_warning"]) })
-  end
+  -- if data.targetCounts then
+  --   local infoRow = tableHandle:addRow(false, { fixed = true })
+  --   local text
+  --   if data.targetCounts.total == 0 then
+  --     text = "No other player stations available."
+  --   else
+  --     text = string.format("%d matching station(s) out of %d.", data.targetCounts.matches, data.targetCounts.total)
+  --   end
+  --   infoRow[1]:setColSpan(columns):createText(text, { color = (data.targetCounts.matches > 0) and nil or (Color and Color["text_warning"]) })
+  -- end
 
-  local sourceEntry = data.selectedSource and data.stations[data.selectedSource]
-  local targetEntry = data.selectedTarget and data.stations[data.selectedTarget]
-  if sourceEntry then
-    local sourceRow = tableHandle:addRow(false, { fixed = true })
-    local summary = #sourceEntry.productionProductNames > 0 and table.concat(sourceEntry.productionProductNames, ", ") or "No production modules"
-    sourceRow[1]:setColSpan(columns):createText(string.format("Source produces: %s", summary), { wordwrap = true })
-  end
-  if targetEntry then
-    local targetRow = tableHandle:addRow(false, { fixed = true })
-    local summary = #targetEntry.productionProductNames > 0 and table.concat(targetEntry.productionProductNames, ", ") or "No production modules"
-    targetRow[1]:setColSpan(columns):createText(string.format("Target produces: %s", summary), { wordwrap = true })
-  end
+  -- local sourceEntry = data.selectedSource and data.stations[data.selectedSource]
+  -- local targetEntry = data.selectedTarget and data.stations[data.selectedTarget]
+  -- if sourceEntry then
+  --   local sourceRow = tableHandle:addRow(false, { fixed = true })
+  --   local summary = #sourceEntry.productionProductNames > 0 and table.concat(sourceEntry.productionProductNames, ", ") or "No production modules"
+  --   sourceRow[1]:setColSpan(columns):createText(string.format("Source produces: %s", summary), { wordwrap = true })
+  -- end
+  -- if targetEntry then
+  --   local targetRow = tableHandle:addRow(false, { fixed = true })
+  --   local summary = #targetEntry.productionProductNames > 0 and table.concat(targetEntry.productionProductNames, ", ") or "No production modules"
+  --   targetRow[1]:setColSpan(columns):createText(string.format("Target produces: %s", summary), { wordwrap = true })
+  -- end
 
-  tableHandle:addEmptyRow(Helper.standardTextHeight / 2)
+  -- tableHandle:addEmptyRow(Helper.standardTextHeight / 2)
 
-  row = tableHandle:addRow(false, { fixed = true, bgColor = Color and Color["row_background_blue"] or nil })
-  row[1]:createText("Ware", Helper.headerRowCenteredProperties)
-  row[2]:createText("Source Buy", Helper.headerRowCenteredProperties)
-  row[3]:createText("Target Buy", Helper.headerRowCenteredProperties)
-  row[4]:createText("Copy", Helper.headerRowCenteredProperties)
-  row[5]:createText("Source Sell", Helper.headerRowCenteredProperties)
-  row[6]:createText("Target Sell", Helper.headerRowCenteredProperties)
-  row[7]:createText("Copy", Helper.headerRowCenteredProperties)
+  -- row = tableHandle:addRow(false, { fixed = true, bgColor = Color and Color["row_background_blue"] or nil })
+  -- row[1]:createText("Ware", Helper.headerRowCenteredProperties)
+  -- row[2]:createText("Source Buy", Helper.headerRowCenteredProperties)
+  -- row[3]:createText("Target Buy", Helper.headerRowCenteredProperties)
+  -- row[4]:createText("Copy", Helper.headerRowCenteredProperties)
+  -- row[5]:createText("Source Sell", Helper.headerRowCenteredProperties)
+  -- row[6]:createText("Target Sell", Helper.headerRowCenteredProperties)
+  -- row[7]:createText("Copy", Helper.headerRowCenteredProperties)
 
-  local diffs = {}
-  local wareList = {}
+  -- local diffs = {}
+  -- local wareList = {}
 
-  if sourceEntry and targetEntry then
-    local sourceData = collectTradeData(sourceEntry)
-    local targetData = collectTradeData(targetEntry)
-    wareList = buildUnion(sourceData, targetData)
+  -- if sourceEntry and targetEntry then
+  --   local sourceData = collectTradeData(sourceEntry)
+  --   local targetData = collectTradeData(targetEntry)
+  --   wareList = buildUnion(sourceData, targetData)
 
-    for _, ware in ipairs(wareList) do
-      local sourceInfo = sourceData.map[ware]
-      local targetInfo = targetData.map[ware]
-      local diffBuy = not compareSide(sourceInfo and sourceInfo.buy, targetInfo and targetInfo.buy)
-      local diffSell = not compareSide(sourceInfo and sourceInfo.sell, targetInfo and targetInfo.sell)
-      diffs[ware] = { buy = diffBuy, sell = diffSell }
+  --   for _, ware in ipairs(wareList) do
+  --     local sourceInfo = sourceData.map[ware]
+  --     local targetInfo = targetData.map[ware]
+  --     local diffBuy = not compareSide(sourceInfo and sourceInfo.buy, targetInfo and targetInfo.buy)
+  --     local diffSell = not compareSide(sourceInfo and sourceInfo.sell, targetInfo and targetInfo.sell)
+  --     diffs[ware] = { buy = diffBuy, sell = diffSell }
 
-      local rowData = tableHandle:addRow(true, { rowData = ware })
-      rowData[1]:createText(sourceInfo and sourceInfo.name or (targetInfo and targetInfo.name) or ware)
-      rowData[2]:createText(formatSide(sourceInfo and sourceInfo.buy), { wordwrap = true, color = diffBuy and (Color and Color["text_warning"]) or nil })
-      rowData[3]:createText(formatSide(targetInfo and targetInfo.buy), { wordwrap = true, color = diffBuy and (Color and Color["text_warning"]) or nil })
-      rowData[4]:createCheckBox(data.cloneBuy[ware], { active = sourceInfo ~= nil })
-      rowData[4].handlers.onClick = function(_, checked)
-        data.cloneBuy[ware] = checked or nil
-      end
-      rowData[5]:createText(formatSide(sourceInfo and sourceInfo.sell), { wordwrap = true, color = diffSell and (Color and Color["text_warning"]) or nil })
-      rowData[6]:createText(formatSide(targetInfo and targetInfo.sell), { wordwrap = true, color = diffSell and (Color and Color["text_warning"]) or nil })
-      rowData[7]:createCheckBox(data.cloneSell[ware], { active = sourceInfo ~= nil })
-      rowData[7].handlers.onClick = function(_, checked)
-        data.cloneSell[ware] = checked or nil
-      end
-    end
-  else
-    local infoRow = tableHandle:addRow(false, { fixed = true })
-    infoRow[1]:setColSpan(columns):createText("Select source and target stations to view trade settings.", { wordwrap = true, color = Color and Color["text_warning"] or nil })
-  end
+  --     local rowData = tableHandle:addRow(true, { rowData = ware })
+  --     rowData[1]:createText(sourceInfo and sourceInfo.name or (targetInfo and targetInfo.name) or ware)
+  --     rowData[2]:createText(formatSide(sourceInfo and sourceInfo.buy), { wordwrap = true, color = diffBuy and (Color and Color["text_warning"]) or nil })
+  --     rowData[3]:createText(formatSide(targetInfo and targetInfo.buy), { wordwrap = true, color = diffBuy and (Color and Color["text_warning"]) or nil })
+  --     rowData[4]:createCheckBox(data.cloneBuy[ware], { active = sourceInfo ~= nil })
+  --     rowData[4].handlers.onClick = function(_, checked)
+  --       data.cloneBuy[ware] = checked or nil
+  --     end
+  --     rowData[5]:createText(formatSide(sourceInfo and sourceInfo.sell), { wordwrap = true, color = diffSell and (Color and Color["text_warning"]) or nil })
+  --     rowData[6]:createText(formatSide(targetInfo and targetInfo.sell), { wordwrap = true, color = diffSell and (Color and Color["text_warning"]) or nil })
+  --     rowData[7]:createCheckBox(data.cloneSell[ware], { active = sourceInfo ~= nil })
+  --     rowData[7].handlers.onClick = function(_, checked)
+  --       data.cloneSell[ware] = checked or nil
+  --     end
+  --   end
+  -- else
+  --   local infoRow = tableHandle:addRow(false, { fixed = true })
+  --   infoRow[1]:setColSpan(columns):createText("Select source and target stations to view trade settings.",
+  --     { wordwrap = true, color = Color and Color["text_warning"] or nil })
+  -- end
 
-  resetSelections(data, wareList, diffs)
+  -- resetSelections(data, wareList, diffs)
 
-  tableHandle:addEmptyRow(Helper.standardTextHeight / 2)
+  -- tableHandle:addEmptyRow(Helper.standardTextHeight / 2)
 
   row = tableHandle:addRow(true, { fixed = true })
-  row[3]:setColSpan(2):createButton({ active = function()
-    return hasSelection(data) and data.selectedSource ~= nil and data.selectedTarget ~= nil
-  end }):setText(labels.cloneButton, { halign = "center" })
+  row[3]:setColSpan(2):createButton({
+    active = function()
+      return hasSelection(data) and data.selectedSource ~= nil and data.selectedTarget ~= nil
+    end
+  }):setText(labels.cloneButton, { halign = "center" })
   row[3].handlers.onClick = function()
     if hasSelection(data) then
       applyClone(menu)
     end
   end
-  row[5]:setColSpan(2):createButton({  }):setText(labels.cancelButton, { halign = "center" })
+  row[5]:setColSpan(2):createButton({}):setText(labels.cancelButton, { halign = "center" })
   row[5].handlers.onClick = function()
     menu.closeContextMenu()
   end
-  tableHandle:setSelectedCol(5)
+  tableHandle:setSelectedCol(3)
 
   frame.properties.height = math.min(Helper.viewHeight - frame.properties.y, frame:getUsedHeight() + Helper.borderSize)
   frame:display()
@@ -984,9 +995,15 @@ function TradeConfigExchanger.show()
   }
 
   data.stations, data.sourceOptions = buildStationCache()
+  data.targetOptions = {}
 
-  data.selectedSource =  nil
-  data.selectedTarget = nil
+  data.selectedSource = -1
+  data.selectedTarget = -1
+
+  -- dbg.waitIDE()
+  -- debugTrace("BreakPoint")
+  -- dbg.breakHere()
+  -- debugTrace("BreakPoint")
 
   updateTargetOptions(data)
 
@@ -1004,6 +1021,7 @@ end
 
 
 function TradeConfigExchanger.Init()
+
   getPlayerId()
   ---@diagnostic disable-next-line: undefined-global
   RegisterEvent("TradeConfigExchanger.Request", TradeConfigExchanger.ProcessRequest)
