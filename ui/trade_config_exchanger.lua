@@ -8,6 +8,8 @@ ffi.cdef [[
   const char* GetComponentName(UniverseID componentid);
   const char* GetObjectIDCode(UniverseID objectid);
 
+	uint32_t GetNumCargoTransportTypes(UniverseID containerid, bool merge);
+
   bool GetContainerWareIsBuyable(UniverseID containerid, const char* wareid);
   bool GetContainerWareIsSellable(UniverseID containerid, const char* wareid);
 
@@ -105,6 +107,16 @@ local function toUniverseId(value)
   return ConvertStringTo64Bit(idStr)
 end
 
+local function copyAndEnrichTable(src, extraInfo)
+  local dest = {}
+  for k, v in pairs(src) do
+    dest[k] = v
+  end
+  for k, v in pairs(extraInfo) do
+    dest[k] = v
+  end
+  return dest
+end
 
 local function getStationName(id)
   if id == 0 then
@@ -125,92 +137,92 @@ local function centerFrameVertically(frame)
   end
 end
 
-function TradeConfigExchanger.alertMessage(options)
-  local menu = TradeConfigExchanger.mapMenu
-  if type(menu) ~= "table" or type(menu.closeContextMenu) ~= "function" then
-    debugTrace("alertMessage: Invalid menu instance")
-    return false, "Map menu instance is not available"
-  end
-  if type(Helper) ~= "table" then
-    debugTrace("alertMessage: Helper UI utilities are not available")
-    return false, "Helper UI utilities are not available"
-  end
+-- function TradeConfigExchanger.alertMessage(options)
+--   local menu = TradeConfigExchanger.mapMenu
+--   if type(menu) ~= "table" or type(menu.closeContextMenu) ~= "function" then
+--     debugTrace("alertMessage: Invalid menu instance")
+--     return false, "Map menu instance is not available"
+--   end
+--   if type(Helper) ~= "table" then
+--     debugTrace("alertMessage: Helper UI utilities are not available")
+--     return false, "Helper UI utilities are not available"
+--   end
 
-  if type(options) ~= "table" then
-    return false, "Options parameter is not a table"
-  end
+--   if type(options) ~= "table" then
+--     return false, "Options parameter is not a table"
+--   end
 
-  if options.title == nil then
-    return false, "Title option is required"
-  end
+--   if options.title == nil then
+--     return false, "Title option is required"
+--   end
 
-  if options.message == nil then
-    return false, "Message option is required"
-  end
+--   if options.message == nil then
+--     return false, "Message option is required"
+--   end
 
-  local width = options.width or Helper.scaleX(400)
-  local xoffset = options.xoffset or (Helper.viewWidth - width) / 2
-  local yoffset = options.yoffset or Helper.viewHeight / 2
-  local okLabel = options.okLabel or ReadText(1001, 14)
+--   local width = options.width or Helper.scaleX(400)
+--   local xoffset = options.xoffset or (Helper.viewWidth - width) / 2
+--   local yoffset = options.yoffset or Helper.viewHeight / 2
+--   local okLabel = options.okLabel or ReadText(1001, 14)
 
-  local title = options.title
-  local message = options.message
+--   local title = options.title
+--   local message = options.message
 
-  menu.closeContextMenu()
+--   menu.closeContextMenu()
 
-  menu.contextMenuMode = "tce_alert"
-  menu.contextMenuData = {
-    mode = "tce_alert",
-    width = width,
-    xoffset = xoffset,
-    yoffset = yoffset,
-  }
+--   menu.contextMenuMode = "tce_alert"
+--   menu.contextMenuData = {
+--     mode = "tce_alert",
+--     width = width,
+--     xoffset = xoffset,
+--     yoffset = yoffset,
+--   }
 
-  local contextLayer = menu.contextFrameLayer or 2
+--   local contextLayer = menu.contextFrameLayer or 2
 
-  menu.contextFrame = Helper.createFrameHandle(menu, {
-    x = xoffset - 2 * Helper.borderSize,
-    y = yoffset,
-    width = width + 2 * Helper.borderSize,
-    layer = contextLayer,
-    standardButtons = { close = true },
-    closeOnUnhandledClick = true,
-  })
-  local frame = menu.contextFrame
-  frame:setBackground("solid", { color = Color["frame_background_semitransparent"] })
+--   menu.contextFrame = Helper.createFrameHandle(menu, {
+--     x = xoffset - 2 * Helper.borderSize,
+--     y = yoffset,
+--     width = width + 2 * Helper.borderSize,
+--     layer = contextLayer,
+--     standardButtons = { close = true },
+--     closeOnUnhandledClick = true,
+--   })
+--   local frame = menu.contextFrame
+--   frame:setBackground("solid", { color = Color["frame_background_semitransparent"] })
 
-  local ftable = frame:addTable(5, { tabOrder = 1, x = Helper.borderSize, y = Helper.borderSize, width = width, reserveScrollBar = false, highlightMode = "off" })
+--   local ftable = frame:addTable(5, { tabOrder = 1, x = Helper.borderSize, y = Helper.borderSize, width = width, reserveScrollBar = false, highlightMode = "off" })
 
-  local headerRow = ftable:addRow(false, { fixed = true })
-  headerRow[1]:setColSpan(5):createText(title, copyAndEnrichTable(Helper.headerRowCenteredProperties, { color = Color["text_warning"] }))
+--   local headerRow = ftable:addRow(false, { fixed = true })
+--   headerRow[1]:setColSpan(5):createText(title, copyAndEnrichTable(Helper.headerRowCenteredProperties, { color = Color["text_warning"] }))
 
-  ftable:addEmptyRow(Helper.standardTextHeight / 2)
+--   ftable:addEmptyRow(Helper.standardTextHeight / 2)
 
-  local messageRow = ftable:addRow(false, { fixed = true })
-  messageRow[1]:setColSpan(5):createText(message, {
-    halign = "center",
-    wordwrap = true,
-    color = Color["text_normal"]
-  })
+--   local messageRow = ftable:addRow(false, { fixed = true })
+--   messageRow[1]:setColSpan(5):createText(message, {
+--     halign = "center",
+--     wordwrap = true,
+--     color = Color["text_normal"]
+--   })
 
-  ftable:addEmptyRow(Helper.standardTextHeight / 2)
+--   ftable:addEmptyRow(Helper.standardTextHeight / 2)
 
-  local buttonRow = ftable:addRow(true, { fixed = true })
-  buttonRow[3]:createButton():setText(okLabel, { halign = "center" })
-  buttonRow[3].handlers.onClick = function()
-    local shouldClose = true
-    if shouldClose then
-      menu.closeContextMenu("back")
-    end
-  end
-  ftable:setSelectedCol(3)
+--   local buttonRow = ftable:addRow(true, { fixed = true })
+--   buttonRow[3]:createButton():setText(okLabel, { halign = "center" })
+--   buttonRow[3].handlers.onClick = function()
+--     local shouldClose = true
+--     if shouldClose then
+--       menu.closeContextMenu("back")
+--     end
+--   end
+--   ftable:setSelectedCol(3)
 
-  centerFrameVertically(frame)
+--   centerFrameVertically(frame)
 
-  frame:display()
+--   frame:display()
 
-  return true
-end
+--   return true
+-- end
 
 function TradeConfigExchanger.showTargetAlert()
   local options = {}
@@ -407,9 +419,14 @@ local function buildStationCache()
       }
       debugTrace("Found station: " .. tostring(id) .. " / " .. tostring(id64))
       entry.displayName = getStationName(entry.id64)
-      computeProductionDetails(entry)
-      stations[id] = entry
-      options[#options + 1] = { id = id64, icon="", text = entry.displayName, displayremoveoption = false }
+      local numStorages = C.GetNumCargoTransportTypes(entry.id64, true)
+      if numStorages == 0 then
+        debugTrace("Skipping station without cargo capacity: " .. tostring(entry.displayName))
+      else
+        computeProductionDetails(entry)
+        stations[id] = entry
+        options[#options + 1] = { id = id64, icon = "", text = entry.displayName, displayremoveoption = false }
+      end
     end
   end
 
@@ -591,6 +608,11 @@ local function updateTargetOptions(data)
   local options = {}
   local total = 0
   local matches = 0
+  if (data.selectedSource == nil or data.selectedSource < 0) then
+    data.targetOptions = options
+    data.targetCounts = { matches = matches, total = total }
+    return
+  end
   local sourceEntry = data.selectedSource and data.stations[data.selectedSource]
   local signature = sourceEntry and sourceEntry.productionSignature or nil
 
@@ -787,8 +809,8 @@ function TradeConfigExchanger.render()
     debugTrace("TradeConfigExchanger: Render: Invalid menu instance or Helper UI utilities are not available")
     return
   end
-  local data = menu.contextMenuData
-  if not data or data.mode ~= "trade_config_exchanger" then
+  local data = menu.contextMenuData or {}
+  if data.mode ~= "trade_config_exchanger" then
     return
   end
 
@@ -806,15 +828,111 @@ function TradeConfigExchanger.render()
   })
   frame:setBackground("solid", { color = Color and Color["frame_background_semitransparent"] or nil })
 
-  local columns = 7
+  -- each ware will use three rows
+  -- first - only ware related
+  -- second - purchase order
+  -- third - sell order
+  -- column 1, thin: only for check boxes, which will contain checkbox for copiyng data
+
+  -- columns 2 - 7: related to left station, except ware name, it's equal for both
+
+  -- column 2: thin
+  -- line 1: ware name started column
+  -- line 2 and 3:
+  --  respective read-only checkbox for use station settings for rule
+  -- column 3:
+  -- line 1 - continue ware name
+  -- line 2 and 3 - appropriate rule name
+  -- column 4, thin :
+  -- line 1 - continue ware name
+  -- line 2 and 3 respective read-only checkbox for automatic pricing
+  -- column 5:
+  -- line 1 - continue ware name
+  -- line 2 and 3 - appropriate price value
+
+  -- column 6 - thin: read-only checkbox
+  -- on line 1 - for automatic storage allocation for ware
+  -- on line 2 and 3 -
+  -- for automatic buy or sell amount
+  -- column 7:
+  -- line 1 - storage allocation value
+  -- line 2 and 3
+  -- for value of amount, per line, respectivelly
+
+  -- columns  8 - 13 : related to right station
+  -- column 8: thin
+  -- line 1:  empty
+  -- line 2 and 3:
+  --  respective read-only checkbox for use station settings for rule
+  -- column 9:
+  -- line 1 - empty
+  -- line 2 and 3 - appropriate rule name
+  -- column 10, thin :
+  -- line 1 - empty
+  -- line 2 and 3 respective read-only checkbox for automatic pricing
+  -- column 11:
+  -- line 1 - empty
+  -- line 2 and 3 - appropriate price value
+
+  -- column 12 - thin: read-only checkbox
+  -- on line 1 - empty
+  -- on line 2 and 3 -
+  -- for automatic buy or sell amount
+  -- column 13:
+  -- line 1 - empty
+  -- line 2 and 3
+  -- for value of amount, per line, respectivelly
+
+
+  -- header rows are multiplied too
+  -- 1 row
+  -- 1 column: empty
+  -- column 2-7: "Left station"
+  -- column 8-13: "Right station"
+  -- 2 row
+  -- 1 column - empty
+  -- column 2 - 5 - "Ware"
+  -- column 6 : "Auto"
+  -- column 7: "Storage"
+  -- column 12: "Auto"
+  -- column 13: "Storage"
+  -- 3 row:
+  -- 1 column - empty
+  -- 2-13 : "Buy / Sell Offer"
+  -- 4 row:
+  -- 1 column - empty
+  -- column 2: "Station"
+  -- column 3: "Rule"
+  -- column 4: "Auto"
+  -- column 5: "Price"
+  -- column 6: "Auto"
+  -- column 7: "Amount"
+  -- column 8: "Station"
+  -- column 9: "Rule"
+  -- column 10: "Auto"
+  -- column 11: "Price"
+  -- column 12: "Auto"
+  -- column 13: "Amount"
+
+
+  local columns = 13
+  local ruleWidth = 140
+  local priceWidth = 120
+  local amountWidth = 100
   local tableHandle = frame:addTable(columns, { tabOrder = 1, reserveScrollBar = true, highlightMode = "off" })
-  tableHandle:setColWidthPercent(1, 18)
-  tableHandle:setColWidthPercent(2, 17)
-  tableHandle:setColWidthPercent(3, 17)
-  tableHandle:setColWidthPercent(4, 7)
-  tableHandle:setColWidthPercent(5, 17)
-  tableHandle:setColWidthPercent(6, 17)
-  tableHandle:setColWidthPercent(7, 7)
+  tableHandle:setColWidth(1, Helper.standardTextHeight, false)
+  tableHandle:setColWidth(2, Helper.standardTextHeight, false)
+  tableHandle:setColWidth(3, ruleWidth, true)
+  tableHandle:setColWidth(4, Helper.standardTextHeight, false)
+  tableHandle:setColWidth(5, priceWidth, true)
+  tableHandle:setColWidth(6, Helper.standardTextHeight, false)
+  tableHandle:setColWidth(7, amountWidth, true)
+  tableHandle:setColWidth(8, Helper.standardTextHeight, false)
+  tableHandle:setColWidth(9, ruleWidth, true)
+  tableHandle:setColWidth(10, Helper.standardTextHeight, false)
+  tableHandle:setColWidth(11, priceWidth, true)
+  tableHandle:setColWidth(12, Helper.standardTextHeight, false)
+  tableHandle:setColWidth(13, amountWidth, true)
 
   local row = tableHandle:addRow(false, { fixed = true })
   row[1]:setColSpan(columns):createText(data.title or "Clone Station Trade Settings", Helper.headerRowCenteredProperties)
@@ -825,47 +943,36 @@ function TradeConfigExchanger.render()
   end
 
   row = tableHandle:addRow(true, { fixed = true })
-  row[1]:setColSpan(2):createText("Source station")
+  row[1]:createText("")
+  row[2]:setColSpan(2):createText("Source station")
   debugTrace("Rendering source dropdown with " .. tostring(#data.sourceOptions) .. " options, selected: " .. tostring(data.selectedSource))
-  row[3]:setColSpan(4):createDropDown(data.sourceOptions, {
+  row[4]:setColSpan(4):createDropDown(data.sourceOptions, {
     startOption = data.selectedSource or -1,
     active = #data.sourceOptions > 0,
     textOverride = (#data.sourceOptions == 0) and "No player stations" or nil,
   })
   debugTrace("Rendered source dropdown with " .. tostring(#data.sourceOptions) .. " options, selected: " .. tostring(data.selectedSource))
-  row[3].handlers.onDropDownConfirmed = function(_, id)
-    data.selectedSource = id
+  row[4].handlers.onDropDownConfirmed = function(_, id)
+    data.selectedSource = tonumber(id)
     data.pendingResetSelections = true
     updateTargetOptions(data)
     data.statusMessage = nil
     TradeConfigExchanger.render()
   end
-  -- row[3]:setColSpan(4):createText("DropDown")
 
-  row = tableHandle:addRow(true, { fixed = true })
-  row[1]:setColSpan(2):createText("Match production modules")
-  row[3]:createCheckBox(data.requireMatch ~= false, { height = Helper.standardButtonHeight, active = data.selectedSource ~= nil })
-  row[3].handlers.onClick = function(_, checked)
-    data.requireMatch = checked
-    updateTargetOptions(data)
+  row[8]:setColSpan(2):createText("Target station")
+  row[10]:setColSpan(4):createDropDown(data.targetOptions, {
+    startOption = data.selectedTarget or -1,
+    active = #data.targetOptions > 0,
+    textOverride = (#data.targetOptions == 0) and "No matching stations" or nil,
+  })
+  row[10].handlers.onDropDownConfirmed = function(_, id)
+    data.selectedTarget = id
     data.pendingResetSelections = true
+    data.statusMessage = nil
     TradeConfigExchanger.render()
   end
-
-  row = tableHandle:addRow(false, { fixed = true })
-  row[1]:setColSpan(2):createText("Target station")
-  -- row[3]:setColSpan(4):createDropDown(data.targetOptions, {
-  --   startOption = data.selectedTarget or -1,
-  --   active = #data.targetOptions > 0,
-  --   textOverride = (#data.targetOptions == 0) and "No matching stations" or nil,
-  -- })
-  -- row[3].handlers.onDropDownConfirmed = function(_, id)
-  --   data.selectedTarget = id
-  --   data.pendingResetSelections = true
-  --   data.statusMessage = nil
-  --   TradeConfigExchanger.render()
-  -- end
-  row[3]:setColSpan(4):createText("DropDown")
+  -- row[3]:setColSpan(4):createText("DropDown")
 
   -- if data.targetCounts then
   --   local infoRow = tableHandle:addRow(false, { fixed = true })
@@ -957,7 +1064,7 @@ function TradeConfigExchanger.render()
   row[5].handlers.onClick = function()
     menu.closeContextMenu()
   end
-  tableHandle:setSelectedCol(3)
+  tableHandle:setSelectedCol(4)
 
   frame.properties.height = math.min(Helper.viewHeight - frame.properties.y, frame:getUsedHeight() + Helper.borderSize)
   frame:display()
@@ -1019,9 +1126,7 @@ function TradeConfigExchanger.ProcessRequest(_, _)
   return TradeConfigExchanger.show()
 end
 
-
 function TradeConfigExchanger.Init()
-
   getPlayerId()
   ---@diagnostic disable-next-line: undefined-global
   RegisterEvent("TradeConfigExchanger.Request", TradeConfigExchanger.ProcessRequest)
