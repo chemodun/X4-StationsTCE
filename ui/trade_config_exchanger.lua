@@ -377,31 +377,15 @@ function TradeConfigExchanger.cloneOrdersConfirm()
   frame:display()
 end
 
-local function computeProductionDetails(entry)
+local function computeProductionSignature(entry)
   if entry.productionSignature then
     return
   end
 
-  local macros = {}
-  local modules = GetProductionModules(entry.id64) or {}
-  for _, module in ipairs(modules) do
-    local macro = GetComponentData(module, "macro")
-    if type(macro) == "string" and macro ~= "" then
-      table.insert(macros, macro)
-    end
-  end
-  table.sort(macros)
-  entry.productionMacros = macros
-  entry.productionSignature = table.concat(macros, "|")
-
   local products = GetComponentData(entry.id, "products") or {}
   table.sort(products)
-  entry.productionProducts = products
-  entry.productionProductNames = {}
-  for _, ware in ipairs(products) do
-    local name = GetWareData(ware, "name")
-    table.insert(entry.productionProductNames, name)
-  end
+  entry.products = products
+  entry.productionSignature = table.concat(products, "|")
 end
 
 local function buildStationCache()
@@ -409,9 +393,9 @@ local function buildStationCache()
   local options = {}
   local list = GetContainedStationsByOwner("player", nil, true) or {}
 
-  for _, station in ipairs(list) do
-    local id = station
-    local id64 = toUniverseId(station)
+  for i = 1, #list do
+    local id = list[i]
+    local id64 = toUniverseId(id)
     if id and id64 and (id64 ~= 0) then
       local entry = {
         id = id,
@@ -423,8 +407,8 @@ local function buildStationCache()
       if numStorages == 0 then
         debugTrace("Skipping station without cargo capacity: " .. tostring(entry.displayName))
       else
-        computeProductionDetails(entry)
-        stations[id] = entry
+        computeProductionSignature(entry)
+        stations[id64] = entry
         options[#options + 1] = { id = id64, icon = "", text = entry.displayName, displayremoveoption = false }
       end
     end
@@ -608,7 +592,7 @@ local function updateTargetOptions(data)
   local options = {}
   local total = 0
   local matches = 0
-  if (data.selectedSource == nil or data.selectedSource < 0) then
+  if (data.selectedSource == nil) then
     data.targetOptions = options
     data.targetCounts = { matches = matches, total = total }
     return
@@ -622,7 +606,7 @@ local function updateTargetOptions(data)
       local qualifies = (not data.requireMatch) or (signature == nil) or (entry.productionSignature == signature)
       if qualifies then
         matches = matches + 1
-        options[#options + 1] = { id = id, text = entry.displayName }
+        options[#options + 1] = { id = id, icon = "", text = entry.displayName, displayremoveoption = false }
       end
     end
   end
@@ -954,6 +938,9 @@ function TradeConfigExchanger.render()
   debugTrace("Rendered source dropdown with " .. tostring(#data.sourceOptions) .. " options, selected: " .. tostring(data.selectedSource))
   row[4].handlers.onDropDownConfirmed = function(_, id)
     data.selectedSource = tonumber(id)
+    if data.selectedTarget == data.selectedSource then
+      data.selectedTarget = nil
+    end
     data.pendingResetSelections = true
     updateTargetOptions(data)
     data.statusMessage = nil
@@ -967,7 +954,7 @@ function TradeConfigExchanger.render()
     textOverride = (#data.targetOptions == 0) and "No matching stations" or nil,
   })
   row[10].handlers.onDropDownConfirmed = function(_, id)
-    data.selectedTarget = id
+    data.selectedTarget = tonumber(id)
     data.pendingResetSelections = true
     data.statusMessage = nil
     TradeConfigExchanger.render()
@@ -1104,8 +1091,8 @@ function TradeConfigExchanger.show()
   data.stations, data.sourceOptions = buildStationCache()
   data.targetOptions = {}
 
-  data.selectedSource = -1
-  data.selectedTarget = -1
+  data.selectedSource = nil
+  data.selectedTarget = nil
 
   -- dbg.waitIDE()
   -- debugTrace("BreakPoint")
