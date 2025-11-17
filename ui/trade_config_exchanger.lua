@@ -461,54 +461,56 @@ local function collectTradeData(entry, forceRefresh)
   end
 
   local container = entry.id64
-  local tradewares = GetComponentData(entry.id, "tradewares") or {}
+  local tradeWares = GetComponentData(entry.id, "tradewares") or {}
   local map = {}
   local set = {}
 
-  for _, ware in ipairs(tradewares) do
-    set[ware] = true
-    local name = GetWareData(ware, "name")
+  if #tradeWares > 0 then
+    for i = 1, #tradeWares do
+      local ware = tradeWares[i]
+      set[ware] = true
+      local name = GetWareData(ware, "name")
+      local wareType = Helper.getContainerWareType(container, ware)
+      local buyAllowed = C.GetContainerWareIsBuyable(container, ware)
+      local buyLimit = C.GetContainerBuyLimit(container, ware)
+      local buyOverride = C.HasContainerBuyLimitOverride(container, ware)
+      local buyPrice = RoundTotalTradePrice(GetContainerWarePrice(container, ware, true))
+      local buyPriceOverride = HasContainerWarePriceOverride(container, ware, true)
+      local buyRuleId = C.GetContainerTradeRuleID(container, "buy", ware)
+      local buyOwnRule = C.HasContainerOwnTradeRule(container, "buy", ware)
 
-    local buyAllowed = C.GetContainerWareIsBuyable(container, ware)
-    local buyLimit = C.GetContainerBuyLimit(container, ware)
-    local buyOverride = C.HasContainerBuyLimitOverride(container, ware)
-    local buyPrice = RoundTotalTradePrice(GetContainerWarePrice(container, ware, true))
-    local buyPriceOverride = HasContainerWarePriceOverride(container, ware, true)
-    local buyRuleId = C.GetContainerTradeRuleID(container, "buy", ware)
-    local buyOwnRule = C.HasContainerOwnTradeRule(container, "buy", ware)
+      local sellAllowed = C.GetContainerWareIsSellable(container, ware)
+      local sellLimit = C.GetContainerSellLimit(container, ware)
+      local sellOverride = C.HasContainerSellLimitOverride(container, ware)
+      local sellPrice = RoundTotalTradePrice(GetContainerWarePrice(container, ware, false))
+      local sellPriceOverride = HasContainerWarePriceOverride(container, ware, false)
+      local sellRuleId = C.GetContainerTradeRuleID(container, "sell", ware)
+      local sellOwnRule = C.HasContainerOwnTradeRule(container, "sell", ware)
 
-    local sellAllowed = C.GetContainerWareIsSellable(container, ware)
-    local sellLimit = C.GetContainerSellLimit(container, ware)
-    local sellOverride = C.HasContainerSellLimitOverride(container, ware)
-    local sellPrice = RoundTotalTradePrice(GetContainerWarePrice(container, ware, false))
-    local sellPriceOverride = HasContainerWarePriceOverride(container, ware, false)
-    local sellRuleId = C.GetContainerTradeRuleID(container, "sell", ware)
-    local sellOwnRule = C.HasContainerOwnTradeRule(container, "sell", ware)
-
-    map[ware] = {
-      ware = ware,
-      name = name,
-      buy = {
-        allowed = buyAllowed,
-        limit = buyLimit,
-        limitOverride = buyOverride,
-        price = buyPrice,
-        priceOverride = buyPriceOverride,
-        tradeRule = buyRuleId,
-        hasOwnRule = buyOwnRule,
-      },
-      sell = {
-        allowed = sellAllowed,
-        limit = sellLimit,
-        limitOverride = sellOverride,
-        price = sellPrice,
-        priceOverride = sellPriceOverride,
-        tradeRule = sellRuleId,
-        hasOwnRule = sellOwnRule,
+      map[ware] = {
+        ware = ware,
+        name = name,
+        buy = {
+          allowed = (wareType == "resource") or (wareType == "intermediate") or buyAllowed or buyOverride,
+          limit = buyLimit,
+          limitOverride = buyOverride,
+          price = buyPrice,
+          priceOverride = buyPriceOverride,
+          tradeRule = buyRuleId,
+          hasOwnRule = buyOwnRule,
+        },
+        sell = {
+          allowed = (wareType == "product") or (wareType == "intermediate") or sellAllowed or sellOverride,
+          limit = sellLimit,
+          limitOverride = sellOverride,
+          price = sellPrice,
+          priceOverride = sellPriceOverride,
+          tradeRule = sellRuleId,
+          hasOwnRule = sellOwnRule,
+        }
       }
-    }
+    end
   end
-
   entry.tradeData = {
     map = map,
     set = set,
@@ -926,17 +928,20 @@ function TradeConfigExchanger.render()
     statusRow[1]:setColSpan(columns):createText(data.statusMessage, { wordwrap = true, color = data.statusColor })
   end
 
+
+  row = tableHandle:addRow(false, { fixed = true })
+  row[2]:setColSpan(6):createText("Station One", Helper.headerRowCenteredProperties)
+  row[8]:setColSpan(6):createText("Station Two", Helper.headerRowCenteredProperties)
   row = tableHandle:addRow(true, { fixed = true })
   row[1]:createText("")
-  row[2]:setColSpan(2):createText("Source station")
   debugTrace("Rendering source dropdown with " .. tostring(#data.sourceOptions) .. " options, selected: " .. tostring(data.selectedSource))
-  row[4]:setColSpan(4):createDropDown(data.sourceOptions, {
+  row[2]:setColSpan(6):createDropDown(data.sourceOptions, {
     startOption = data.selectedSource or -1,
     active = #data.sourceOptions > 0,
     textOverride = (#data.sourceOptions == 0) and "No player stations" or nil,
   })
   debugTrace("Rendered source dropdown with " .. tostring(#data.sourceOptions) .. " options, selected: " .. tostring(data.selectedSource))
-  row[4].handlers.onDropDownConfirmed = function(_, id)
+  row[2].handlers.onDropDownConfirmed = function(_, id)
     data.selectedSource = tonumber(id)
     if data.selectedTarget == data.selectedSource then
       data.selectedTarget = nil
@@ -947,33 +952,56 @@ function TradeConfigExchanger.render()
     TradeConfigExchanger.render()
   end
 
-  row[8]:setColSpan(2):createText("Target station")
-  row[10]:setColSpan(4):createDropDown(data.targetOptions, {
+  row[8]:setColSpan(6):createDropDown(data.targetOptions, {
     startOption = data.selectedTarget or -1,
     active = #data.targetOptions > 0,
     textOverride = (#data.targetOptions == 0) and "No matching stations" or nil,
   })
-  row[10].handlers.onDropDownConfirmed = function(_, id)
+  row[8].handlers.onDropDownConfirmed = function(_, id)
     data.selectedTarget = tonumber(id)
     data.pendingResetSelections = true
     data.statusMessage = nil
     TradeConfigExchanger.render()
   end
-  -- row[3]:setColSpan(4):createText("DropDown")
 
-  -- if data.targetCounts then
-  --   local infoRow = tableHandle:addRow(false, { fixed = true })
-  --   local text
-  --   if data.targetCounts.total == 0 then
-  --     text = "No other player stations available."
-  --   else
-  --     text = string.format("%d matching station(s) out of %d.", data.targetCounts.matches, data.targetCounts.total)
-  --   end
-  --   infoRow[1]:setColSpan(columns):createText(text, { color = (data.targetCounts.matches > 0) and nil or (Color and Color["text_warning"]) })
-  -- end
+  row = tableHandle:addRow(false, { fixed = true })
+  row[2]:setColSpan(4):createText("Ware", Helper.headerRowCenteredProperties)
+  row[6]:createText("A", Helper.headerRowCenteredProperties)
+  row[7]:createText("Storage allocation", Helper.headerRowCenteredProperties)
+  row[12]:createText("A", Helper.headerRowCenteredProperties)
+  row[13]:createText("Storage allocation", Helper.headerRowCenteredProperties)
+  row = tableHandle:addRow(false, { fixed = true })
+  row[2]:setColSpan(12):createText("Buy Offer / Sell Offer", Helper.headerRowCenteredProperties)
+  row = tableHandle:addRow(false, { fixed = true })
+  row[2]:createText("A", Helper.headerRow1Properties)
+  row[3]:createText("Rule", Helper.headerRow1Properties)
+  row[4]:createText("A", Helper.headerRow1Properties)
+  row[5]:createText("Price", Helper.headerRow1Properties)
+  row[6]:createText("A", Helper.headerRow1Properties)
+  row[7]:createText("Amount", Helper.headerRow1Properties)
+  row[8]:createText("A", Helper.headerRow1Properties)
+  row[9]:createText("Rule", Helper.headerRow1Properties)
+  row[10]:createText("A", Helper.headerRow1Properties)
+  row[11]:createText("Price", Helper.headerRow1Properties)
+  row[12]:createText("A", Helper.headerRow1Properties)
+  row[13]:createText("Amount", Helper.headerRow1Properties)
 
-  -- local sourceEntry = data.selectedSource and data.stations[data.selectedSource]
-  -- local targetEntry = data.selectedTarget and data.stations[data.selectedTarget]
+  tableHandle:addEmptyRow(Helper.standardTextHeight / 2)
+
+  local sourceEntry = data.selectedSource and data.stations[data.selectedSource]
+  local targetEntry = data.selectedTarget and data.stations[data.selectedTarget]
+  if sourceEntry == nil then
+    debugTrace("No source station selected")
+    row = tableHandle:addRow(false, { fixed = true })
+    row[1]:setColSpan(columns):createText("No source station selected.",
+      { color = Color and Color["text_warning"] or nil, halign = "center" })
+  else
+    debugTrace("Source station: " .. tostring(sourceEntry.displayName) .. " (" .. tostring(sourceEntry.id64) .. ")")
+    local sourceData = collectTradeData(sourceEntry)
+    local targetData = targetEntry and collectTradeData(targetEntry) or nil
+    local wareList = buildUnion(sourceData, targetData)
+    debugTrace("Processing " .. tostring(#wareList) .. " wares for comparison")
+  end
   -- if sourceEntry then
   --   local sourceRow = tableHandle:addRow(false, { fixed = true })
   --   local summary = #sourceEntry.productionProductNames > 0 and table.concat(sourceEntry.productionProductNames, ", ") or "No production modules"
@@ -1051,7 +1079,7 @@ function TradeConfigExchanger.render()
   row[5].handlers.onClick = function()
     menu.closeContextMenu()
   end
-  tableHandle:setSelectedCol(4)
+  tableHandle:setSelectedCol(2)
 
   frame.properties.height = math.min(Helper.viewHeight - frame.properties.y, frame:getUsedHeight() + Helper.borderSize)
   frame:display()
