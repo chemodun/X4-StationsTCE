@@ -63,10 +63,39 @@ local labels = {
 }
 
 
+local overrideIcons = {
+}
+overrideIcons[true] = "\27[menu_radio_button_on]\27X"
+overrideIcons[false] = "\27[menu_radio_button_off]\27X"
+
+local overrideIconsOptions = {
+}
+overrideIconsOptions[true] = { halign = "center" }
+overrideIconsOptions[false] = { halign = "center", color = Color["text_inactive"] }
+
 local dbg = nil
 
 TradeConfigExchanger.labels = labels
 
+local wareTypeSortOrder = {
+  resource = 1,
+  intermediate = 2,
+  product = 3,
+}
+
+
+local function copyAndEnrichTable(src, extraInfo)
+  local dest = {}
+  for k, v in pairs(src) do
+    dest[k] = v
+  end
+  for k, v in pairs(extraInfo) do
+    dest[k] = v
+  end
+  return dest
+end
+
+local wareNameProperties = copyAndEnrichTable(Helper.subHeaderTextProperties, { halign = "center" })
 
 local Lib = require("extensions.sn_mod_support_apis.ui.Library")
 
@@ -107,16 +136,6 @@ local function toUniverseId(value)
   return ConvertStringTo64Bit(idStr)
 end
 
-local function copyAndEnrichTable(src, extraInfo)
-  local dest = {}
-  for k, v in pairs(src) do
-    dest[k] = v
-  end
-  for k, v in pairs(extraInfo) do
-    dest[k] = v
-  end
-  return dest
-end
 
 local function getStationName(id)
   if id == 0 then
@@ -455,11 +474,6 @@ local function formatTradeRuleLabel(id, hasOwn)
   return label
 end
 
-local wareTypeSortOrder = {
-  resource = 1,
-  intermediate = 2,
-  product = 3,
-}
 local function collectTradeData(entry, forceRefresh)
   if entry.tradeData and not forceRefresh then
     return entry.tradeData
@@ -588,23 +602,6 @@ local function optionsRule(override)
   return { halign = "left", color = Color["text_inactive"] }
 end
 
-local overrideIcons = {
-}
-overrideIcons[true] = "\27[menu_radio_button_on]\27X"
-overrideIcons[false] = "\27[menu_radio_button_off]\27X"
-
-local overrideIconsOptions = {
-}
-overrideIconsOptions[true] = { halign = "center" }
-overrideIconsOptions[false] = { halign = "center", color = Color["text_inactive"] }
-
-
-local function optionsOverride(override)
-  if override then
-    return { halign = "center", color = Color["checkbox_background_default"] }
-  end
-  return { halign = "center", color = Color["checkbox_background_default"] }
-end
 
 local function formatSide(info)
   if not info then
@@ -856,6 +853,23 @@ local function renderOffer(row, offerData, isSource)
   row[idx + 5]:createText(formatLimit(offerData.limit, offerData.limitOverride), optionsNumber(offerData.limitOverride))
 end
 
+local function setTableColumnsWidth(tableHandle, main)
+  local valueWidth = 120
+  local overrideWidth = 30
+  local width = Helper.standardTextHeight
+  tableHandle:setColWidth(1, width, false)
+  for i = 2, 13 do
+    if main and i % 2 == 0 or not main and (i <= 7 and i % 2 == 1 or i > 7 and i % 2 == 0) then
+      width = width + overrideWidth
+      tableHandle:setColWidth(i, overrideWidth, false)
+    else
+      width = width + valueWidth
+      tableHandle:setColWidth(i, valueWidth, true)
+    end
+  end
+  return width
+end
+
 function TradeConfigExchanger.render()
   local menu = TradeConfigExchanger.mapMenu
   if type(menu) ~= "table" or type(Helper) ~= "table" then
@@ -969,37 +983,22 @@ function TradeConfigExchanger.render()
 
 
   local columns = 13
-  local ruleWidth = 120
-  local priceWidth = 120
-  local amountWidth = 120
-  local tableHandle = frame:addTable(columns, { tabOrder = 1, reserveScrollBar = true, highlightMode = "off" })
-  tableHandle:setColWidth(1, Helper.standardTextHeight, false)
-  tableHandle:setColWidth(2, 30, false)
-  tableHandle:setColWidth(3, ruleWidth, true)
-  tableHandle:setColWidth(4, 30, false)
-  tableHandle:setColWidth(5, priceWidth, true)
-  tableHandle:setColWidth(6, 30, false)
-  tableHandle:setColWidth(7, amountWidth, true)
-  tableHandle:setColWidth(8, 30, false)
-  tableHandle:setColWidth(9, ruleWidth, true)
-  tableHandle:setColWidth(10, 30, false)
-  tableHandle:setColWidth(11, priceWidth, true)
-  tableHandle:setColWidth(12, 30, false)
-  tableHandle:setColWidth(13, amountWidth, true)
+  local tableMain = frame:addTable(columns, { tabOrder = 1, reserveScrollBar = true, highlightMode = "on", x = Helper.borderSize, y = Helper.borderSize, })
+  setTableColumnsWidth(tableMain, true)
 
-  local row = tableHandle:addRow(false, { fixed = true })
+  local row = tableMain:addRow(false, { fixed = true })
   row[1]:setColSpan(columns):createText(data.title or "Clone Station Trade Settings", Helper.headerRowCenteredProperties)
 
   if data.statusMessage then
-    local statusRow = tableHandle:addRow(false, { fixed = true })
+    local statusRow = tableMain:addRow(false, { fixed = true })
     statusRow[1]:setColSpan(columns):createText(data.statusMessage, { wordwrap = true, color = data.statusColor })
   end
 
 
-  row = tableHandle:addRow(false, { fixed = true })
+  row = tableMain:addRow(false, { fixed = true })
   row[2]:setColSpan(6):createText("Station One", Helper.headerRowCenteredProperties)
   row[8]:setColSpan(6):createText("Station Two", Helper.headerRowCenteredProperties)
-  row = tableHandle:addRow(true, { fixed = true })
+  row = tableMain:addRow(true, { fixed = true })
   row[1]:createText("")
   debugTrace("Rendering source dropdown with " .. tostring(#data.sourceOptions) .. " options, selected: " .. tostring(data.selectedSource))
   row[2]:setColSpan(6):createDropDown(data.sourceOptions, {
@@ -1016,6 +1015,7 @@ function TradeConfigExchanger.render()
     data.pendingResetSelections = true
     updateTargetOptions(data)
     data.statusMessage = nil
+    data.clone = {}
     TradeConfigExchanger.render()
   end
 
@@ -1028,18 +1028,20 @@ function TradeConfigExchanger.render()
     data.selectedTarget = tonumber(id)
     data.pendingResetSelections = true
     data.statusMessage = nil
+    data.clone = {}
     TradeConfigExchanger.render()
   end
 
-  row = tableHandle:addRow(false, { fixed = true })
+
+  row = tableMain:addRow(false, { fixed = true })
   row[2]:setColSpan(4):createText("Ware", Helper.headerRowCenteredProperties)
   row[6]:createText("Ovr", Helper.headerRowCenteredProperties)
   row[7]:createText("Storage allocation", Helper.headerRowCenteredProperties)
   row[12]:createText("Ovr", Helper.headerRowCenteredProperties)
   row[13]:createText("Storage allocation", Helper.headerRowCenteredProperties)
-  row = tableHandle:addRow(false, { fixed = true })
+  row = tableMain:addRow(false, { fixed = true })
   row[2]:setColSpan(12):createText("Buy Offer / Sell Offer", Helper.headerRowCenteredProperties)
-  row = tableHandle:addRow(false, { fixed = true })
+  row = tableMain:addRow(false, { fixed = true })
   row[2]:createText("Ovr", Helper.headerRowCenteredProperties)
   row[3]:createText("Rule", Helper.headerRowCenteredProperties)
   row[4]:createText("Ovr", Helper.headerRowCenteredProperties)
@@ -1053,13 +1055,13 @@ function TradeConfigExchanger.render()
   row[12]:createText("Ovr", Helper.headerRowCenteredProperties)
   row[13]:createText("Amount", Helper.headerRowCenteredProperties)
 
-  tableHandle:addEmptyRow(Helper.standardTextHeight / 2)
+  tableMain:addEmptyRow(Helper.standardTextHeight / 2)
 
   local sourceEntry = data.selectedSource and data.stations[data.selectedSource]
   local targetEntry = data.selectedTarget and data.stations[data.selectedTarget]
   if sourceEntry == nil then
     debugTrace("No source station selected")
-    row = tableHandle:addRow(false, { fixed = true })
+    row = tableMain:addRow(false, { fixed = true })
     row[2]:setColSpan(columns - 1):createText("No source station selected.",
       { color = Color and Color["text_warning"] or nil, halign = "center" })
   else
@@ -1070,7 +1072,7 @@ function TradeConfigExchanger.render()
     debugTrace("Processing " .. tostring(#wareList) .. " wares for comparison")
     local wareType = nil
     if #wareList == 0 then
-      row = tableHandle:addRow(false, { fixed = true })
+      row = tableMain:addRow(false, { fixed = true })
       row[2]:setColSpan(columns - 1):createText("No wares available for trade configuration.",
         { color = Color and Color["text_warning"] or nil, halign = "center" })
     else
@@ -1083,17 +1085,43 @@ function TradeConfigExchanger.render()
         else
           if wareType ~= sourceInfo.type then
             wareType = sourceInfo.type
-            local typeRow = tableHandle:addRow(false, { fixed = true, bgColor = Color and Color["row_background_unselectable"] or nil })
+            local typeRow = tableMain:addRow(false, { fixed = false, bgColor = Color and Color["row_background_unselectable"] or nil })
             typeRow[2]:setColSpan(columns - 1):createText(string.upper(wareType), { font = Helper.standardFontBold, halign = "center" })
-            tableHandle:addEmptyRow(Helper.standardTextHeight / 2)
+            tableMain:addEmptyRow(Helper.standardTextHeight / 2, { fixed = false })
           end
-          local row = tableHandle:addRow(true)
-          row[2]:setColSpan(4):createText(ware.name, Helper.headerRowCenteredProperties)
+          if data.clone[ware.ware] == nil then
+            data.clone[ware.ware] = { storage = false, buy = false, sell = false }
+          end
+          local row = tableMain:addRow(true, { fixed = false })
+          row[1]:createCheckBox(data.clone[ware.ware].storage, {
+            active = sourceInfo ~= nil and targetInfo ~= nil,
+          })
+          row[1].handlers.onClick = function(_, checked)
+            local propagate = data.clone[ware.ware].storage == data.clone[ware.ware].buy and data.clone[ware.ware].storage == data.clone[ware.ware].sell
+            data.clone[ware.ware].storage = checked
+            if propagate then
+              data.clone[ware.ware].buy = checked
+              data.clone[ware.ware].sell = checked
+            end
+            debugTrace("Set clone for ware " .. tostring(ware.ware) .. " to " .. tostring(checked))
+            data.statusMessage = nil
+            TradeConfigExchanger.render()
+          end
+          row[2]:setColSpan(4):createText(ware.name, wareNameProperties)
           renderStorage(row, sourceInfo, true)
           if targetInfo then
             renderStorage(row, targetInfo, false)
           end
-          local row = tableHandle:addRow(true)
+          local row = tableMain:addRow(true, { fixed = false })
+          row[1]:createCheckBox(data.clone[ware.ware].buy, {
+            active = sourceInfo ~= nil and targetInfo ~= nil,
+          })
+          row[1].handlers.onClick = function(_, checked)
+            data.clone[ware.ware].buy = checked
+            debugTrace("Set clone for ware " .. tostring(ware.ware) .. " buy offer to " .. tostring(checked))
+            data.statusMessage = nil
+            TradeConfigExchanger.render()
+          end
           if sourceInfo.buy and sourceInfo.buy.allowed then
             renderOffer(row, sourceInfo.buy, true)
           else
@@ -1106,7 +1134,16 @@ function TradeConfigExchanger.render()
               row[8]:setColSpan(6):createText("No buy offer", { halign = "center" })
             end
           end
-          local row = tableHandle:addRow(true)
+          local row = tableMain:addRow(true, { fixed = false })
+          row[1]:createCheckBox(data.clone[ware.ware].sell, {
+            active = sourceInfo ~= nil and targetInfo ~= nil,
+          })
+          row[1].handlers.onClick = function(_, checked)
+            data.clone[ware.ware].sell = checked
+            debugTrace("Set clone for ware " .. tostring(ware.ware) .. " sell offer to " .. tostring(checked))
+            data.statusMessage = nil
+            TradeConfigExchanger.render()
+          end
           if sourceInfo.sell and sourceInfo.sell.allowed then
             renderOffer(row, sourceInfo.sell, true)
           else
@@ -1120,29 +1157,49 @@ function TradeConfigExchanger.render()
             end
           end
         end
-        tableHandle:addEmptyRow(Helper.standardTextHeight / 2)
+        tableMain:addEmptyRow(Helper.standardTextHeight / 2, { fixed = false })
       end
     end
   end
 
-  row = tableHandle:addRow(true, { fixed = true })
-  row[3]:setColSpan(2):createButton({
+  tableMain:setSelectedCol(2)
+  tableMain.properties.maxVisibleHeight = math.min(tableMain:getFullHeight(), data.height - Helper.borderSize * 2)
+  local tableButtons = frame:addTable(columns,
+    { tabOrder = 2, reserveScrollBar = false, highlightMode = "off", x = Helper.borderSize, y = tableMain.properties.maxVisibleHeight + Helper.borderSize * 2 })
+  setTableColumnsWidth(tableButtons, false)
+  row = tableButtons:addRow(true, { fixed = true })
+  row[5]:setColSpan(2):createButton({
     active = function()
       return hasSelection(data) and data.selectedSource ~= nil and data.selectedTarget ~= nil
     end
-  }):setText(labels.cloneButton, { halign = "center" })
-  row[3].handlers.onClick = function()
+  }):setText(labels.cloneButton .. "  \27[widget_arrow_right_01]\27X", { halign = "center" })
+  row[5].handlers.onClick = function()
     if hasSelection(data) then
       applyClone(menu)
     end
   end
-  row[5]:setColSpan(2):createButton({}):setText(labels.cancelButton, { halign = "center" })
-  row[5].handlers.onClick = function()
+  row[9]:setColSpan(2):createButton({
+    active = function()
+      return hasSelection(data) and data.selectedSource ~= nil and data.selectedTarget ~= nil
+    end
+  }):setText("\27[widget_arrow_left_01]\27X  " .. labels.cloneButton, { halign = "center" })
+  row[9].handlers.onClick = function()
+    if hasSelection(data) then
+      applyClone(menu)
+    end
+  end
+  row[12]:setColSpan(2):createButton({}):setText(labels.cancelButton, { halign = "center" })
+  row[12].handlers.onClick = function()
     menu.closeContextMenu()
   end
-  tableHandle:setSelectedCol(2)
+  tableButtons:setSelectedCol(12)
 
-  frame.properties.height = math.min(Helper.viewHeight - frame.properties.y, frame:getUsedHeight() + Helper.borderSize)
+  frame.properties.width = tableMain.properties.width + Helper.borderSize * 2
+  frame.properties.height = tableMain.properties.maxVisibleHeight + tableButtons:getFullHeight() + Helper.borderSize * 3
+
+  frame.properties.y = math.floor((Helper.viewHeight - frame.properties.height) / 2)
+  frame.properties.x = math.floor((Helper.viewWidth - frame.properties.width) / 2)
+
   frame:display()
   data.frame = frame
   menu.contextFrame = frame
@@ -1169,6 +1226,7 @@ function TradeConfigExchanger.show()
     mode = "trade_config_exchanger",
     layer = menu.contextFrameLayer or 2,
     width = Helper.scaleX(1024),
+    height = Helper.scaleY(600),
     xoffset = Helper.viewWidth / 2 - Helper.scaleX(450),
     yoffset = Helper.viewHeight / 6,
     requireMatch = true,
