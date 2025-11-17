@@ -563,7 +563,7 @@ local function formatLimit(value, override)
   if not override then
     return labels.auto
   end
-  return ConvertIntegerString(value, true, 3, false, false, false)
+  return ConvertIntegerString(value, true, 12, true)
 end
 
 local function formatPrice(value, override)
@@ -1058,6 +1058,7 @@ function TradeConfigExchanger.render()
             wareType = sourceInfo.type
             local typeRow = tableHandle:addRow(false, { fixed = true, bgColor = Color and Color["row_background_unselectable"] or nil })
             typeRow[2]:setColSpan(columns - 1):createText(string.upper(wareType), { font = Helper.standardFontBold, halign = "center" })
+            tableHandle:addEmptyRow(Helper.standardTextHeight / 2)
           end
           local row = tableHandle:addRow(true)
           row[2]:setColSpan(4):createText(ware.name, Helper.headerRowCenteredProperties)
@@ -1079,7 +1080,7 @@ function TradeConfigExchanger.render()
             row[7]:createText(formatLimit(sourceInfo.buy.limit, sourceInfo.buy.limitOverride),
               optionsNumber(sourceInfo.buy.limitOverride))
           else
-            row[5]:createText("No buy offer", { halign = "center" })
+            row[2]:setColSpan(6):createText("No buy offer", { halign = "center" })
           end
           if targetInfo then
             if targetInfo.buy and targetInfo.buy.allowed then
@@ -1119,74 +1120,14 @@ function TradeConfigExchanger.render()
               row[13]:createText(formatLimit(targetInfo.sell.limit, targetInfo.sell.limitOverride),
                 optionsNumber(targetInfo.sell.limitOverride))
             else
-              row[11]:createText("No sell offer", { halign = "center" })
+              row[8]:setColSpan(6):createText("No sell offer", { halign = "center" })
             end
           end
         end
+        tableHandle:addEmptyRow(Helper.standardTextHeight / 2)
       end
     end
   end
-  -- if sourceEntry then
-  --   local sourceRow = tableHandle:addRow(false, { fixed = true })
-  --   local summary = #sourceEntry.productionProductNames > 0 and table.concat(sourceEntry.productionProductNames, ", ") or "No production modules"
-  --   sourceRow[1]:setColSpan(columns):createText(string.format("Source produces: %s", summary), { wordwrap = true })
-  -- end
-  -- if targetEntry then
-  --   local targetRow = tableHandle:addRow(false, { fixed = true })
-  --   local summary = #targetEntry.productionProductNames > 0 and table.concat(targetEntry.productionProductNames, ", ") or "No production modules"
-  --   targetRow[1]:setColSpan(columns):createText(string.format("Target produces: %s", summary), { wordwrap = true })
-  -- end
-
-  -- tableHandle:addEmptyRow(Helper.standardTextHeight / 2)
-
-  -- row = tableHandle:addRow(false, { fixed = true, bgColor = Color and Color["row_background_blue"] or nil })
-  -- row[1]:createText("Ware", Helper.headerRowCenteredProperties)
-  -- row[2]:createText("Source Buy", Helper.headerRowCenteredProperties)
-  -- row[3]:createText("Target Buy", Helper.headerRowCenteredProperties)
-  -- row[4]:createText("Copy", Helper.headerRowCenteredProperties)
-  -- row[5]:createText("Source Sell", Helper.headerRowCenteredProperties)
-  -- row[6]:createText("Target Sell", Helper.headerRowCenteredProperties)
-  -- row[7]:createText("Copy", Helper.headerRowCenteredProperties)
-
-  -- local diffs = {}
-  -- local wareList = {}
-
-  -- if sourceEntry and targetEntry then
-  --   local sourceData = collectTradeData(sourceEntry)
-  --   local targetData = collectTradeData(targetEntry)
-  --   wareList = buildUnion(sourceData, targetData)
-
-  --   for _, ware in ipairs(wareList) do
-  --     local sourceInfo = sourceData.map[ware]
-  --     local targetInfo = targetData.map[ware]
-  --     local diffBuy = not compareSide(sourceInfo and sourceInfo.buy, targetInfo and targetInfo.buy)
-  --     local diffSell = not compareSide(sourceInfo and sourceInfo.sell, targetInfo and targetInfo.sell)
-  --     diffs[ware] = { buy = diffBuy, sell = diffSell }
-
-  --     local rowData = tableHandle:addRow(true, { rowData = ware })
-  --     rowData[1]:createText(sourceInfo and sourceInfo.name or (targetInfo and targetInfo.name) or ware)
-  --     rowData[2]:createText(formatSide(sourceInfo and sourceInfo.buy), { wordwrap = true, color = diffBuy and (Color and Color["text_warning"]) or nil })
-  --     rowData[3]:createText(formatSide(targetInfo and targetInfo.buy), { wordwrap = true, color = diffBuy and (Color and Color["text_warning"]) or nil })
-  --     rowData[4]:createCheckBox(data.cloneBuy[ware], { active = sourceInfo ~= nil })
-  --     rowData[4].handlers.onClick = function(_, checked)
-  --       data.cloneBuy[ware] = checked or nil
-  --     end
-  --     rowData[5]:createText(formatSide(sourceInfo and sourceInfo.sell), { wordwrap = true, color = diffSell and (Color and Color["text_warning"]) or nil })
-  --     rowData[6]:createText(formatSide(targetInfo and targetInfo.sell), { wordwrap = true, color = diffSell and (Color and Color["text_warning"]) or nil })
-  --     rowData[7]:createCheckBox(data.cloneSell[ware], { active = sourceInfo ~= nil })
-  --     rowData[7].handlers.onClick = function(_, checked)
-  --       data.cloneSell[ware] = checked or nil
-  --     end
-  --   end
-  -- else
-  --   local infoRow = tableHandle:addRow(false, { fixed = true })
-  --   infoRow[1]:setColSpan(columns):createText("Select source and target stations to view trade settings.",
-  --     { wordwrap = true, color = Color and Color["text_warning"] or nil })
-  -- end
-
-  -- resetSelections(data, wareList, diffs)
-
-  -- tableHandle:addEmptyRow(Helper.standardTextHeight / 2)
 
   row = tableHandle:addRow(true, { fixed = true })
   row[3]:setColSpan(2):createButton({
