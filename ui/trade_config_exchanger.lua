@@ -835,6 +835,27 @@ local function applyClone(menu)
   TradeConfigExchanger.render()
 end
 
+local function renderStorage(row, entry, isSource)
+  if (entry == nil) or (row == nil) then
+    return
+  end
+  local idx = isSource and 6 or 12
+  row[idx]:createText(overrideIcons[entry.storageLimitOverride], overrideIconsOptions[entry.storageLimitOverride])
+  row[idx + 1]:createText(formatLimit(entry.storageLimit, entry.storageLimitOverride), optionsNumber(entry.storageLimitOverride))
+end
+local function renderOffer(row, offerData, isSource)
+  if (offerData == nil) or (not offerData.allowed) or (row == nil) then
+    return
+  end
+  local idx = isSource and 2 or 8
+  row[idx]:createText(overrideIcons[offerData.ruleOverride], overrideIconsOptions[offerData.ruleOverride])
+  row[idx + 1]:createText(formatTradeRuleLabel(offerData.rule, offerData.ruleOverride), optionsRule(offerData.ruleOverride))
+  row[idx + 2]:createText(overrideIcons[offerData.priceOverride], overrideIconsOptions[offerData.priceOverride])
+  row[idx + 3]:createText(formatPrice(offerData.price, offerData.priceOverride), optionsNumber(offerData.priceOverride))
+  row[idx + 4]:createText(overrideIcons[offerData.limitOverride], overrideIconsOptions[offerData.limitOverride])
+  row[idx + 5]:createText(formatLimit(offerData.limit, offerData.limitOverride), optionsNumber(offerData.limitOverride))
+end
+
 function TradeConfigExchanger.render()
   local menu = TradeConfigExchanger.mapMenu
   if type(menu) ~= "table" or type(Helper) ~= "table" then
@@ -1068,64 +1089,32 @@ function TradeConfigExchanger.render()
           end
           local row = tableHandle:addRow(true)
           row[2]:setColSpan(4):createText(ware.name, Helper.headerRowCenteredProperties)
-          row[6]:createText(overrideIcons[sourceInfo.storageLimitOverride], overrideIconsOptions[sourceInfo.storageLimitOverride])
-          row[7]:createText(formatLimit(sourceInfo.storageLimit, sourceInfo.storageLimitOverride),
-            optionsNumber(sourceInfo.storageLimitOverride))
+          renderStorage(row, sourceInfo, true)
           if targetInfo then
-            row[12]:createText(overrideIcons[targetInfo.storageLimitOverride], overrideIconsOptions[targetInfo.storageLimitOverride])
-            row[13]:createText(formatLimit(targetInfo.storageLimit, targetInfo.storageLimitOverride),
-              optionsNumber(targetInfo.storageLimitOverride))
+            renderStorage(row, targetInfo, false)
           end
           local row = tableHandle:addRow(true)
           if sourceInfo.buy and sourceInfo.buy.allowed then
-            row[2]:createText(overrideIcons[sourceInfo.buy.ruleOverride], overrideIconsOptions[sourceInfo.buy.ruleOverride])
-            row[3]:createText(formatTradeRuleLabel(sourceInfo.buy.rule, sourceInfo.buy.ruleOverride), optionsRule(sourceInfo.buy.ruleOverride))
-            row[4]:createText(overrideIcons[sourceInfo.buy.priceOverride], overrideIconsOptions[sourceInfo.buy.priceOverride])
-            row[5]:createText(formatPrice(sourceInfo.buy.price, sourceInfo.buy.priceOverride),
-              optionsNumber(sourceInfo.buy.priceOverride))
-            row[6]:createText(overrideIcons[sourceInfo.buy.limitOverride], overrideIconsOptions[sourceInfo.buy.limitOverride])
-            row[7]:createText(formatLimit(sourceInfo.buy.limit, sourceInfo.buy.limitOverride),
-              optionsNumber(sourceInfo.buy.limitOverride))
+            renderOffer(row, sourceInfo.buy, true)
           else
             row[2]:setColSpan(6):createText("No buy offer", { halign = "center" })
           end
           if targetInfo then
             if targetInfo.buy and targetInfo.buy.allowed then
-              row[8]:createText(overrideIcons[targetInfo.buy.ruleOverride],  overrideIconsOptions[targetInfo.buy.ruleOverride])
-              row[9]:createText(formatTradeRuleLabel(targetInfo.buy.rule, targetInfo.buy.ruleOverride), optionsRule(targetInfo.buy.ruleOverride))
-              row[10]:createText(overrideIcons[targetInfo.buy.priceOverride], overrideIconsOptions[targetInfo.buy.priceOverride])
-              row[11]:createText(formatPrice(targetInfo.buy.price, targetInfo.buy.priceOverride),
-                optionsNumber(targetInfo.buy.priceOverride))
-              row[12]:createText(overrideIcons[targetInfo.buy.limitOverride], overrideIconsOptions[targetInfo.buy.limitOverride])
-              row[13]:createText(formatLimit(targetInfo.buy.limit, targetInfo.buy.limitOverride),
-                optionsNumber(targetInfo.buy.limitOverride))
+              renderOffer(row, targetInfo.buy, false)
             else
               row[8]:setColSpan(6):createText("No buy offer", { halign = "center" })
             end
           end
           local row = tableHandle:addRow(true)
           if sourceInfo.sell and sourceInfo.sell.allowed then
-            row[2]:createText(overrideIcons[sourceInfo.sell.ruleOverride], overrideIconsOptions[sourceInfo.sell.ruleOverride])
-            row[3]:createText(formatTradeRuleLabel(sourceInfo.sell.rule, sourceInfo.sell.ruleOverride), optionsRule(sourceInfo.sell.ruleOverride))
-            row[4]:createText(overrideIcons[sourceInfo.sell.priceOverride], overrideIconsOptions[sourceInfo.sell.priceOverride])
-            row[5]:createText(formatPrice(sourceInfo.sell.price, sourceInfo.sell.priceOverride),
-              optionsNumber(sourceInfo.sell.priceOverride))
-            row[6]:createText(overrideIcons[sourceInfo.sell.limitOverride], overrideIconsOptions[sourceInfo.sell.limitOverride])
-            row[7]:createText(formatLimit(sourceInfo.sell.limit, sourceInfo.sell.limitOverride),
-              optionsNumber(sourceInfo.sell.limitOverride))
+            renderOffer(row, sourceInfo.sell, true)
           else
             row[2]:setColSpan(6):createText("No sell offer", { halign = "center" })
           end
           if targetInfo then
             if targetInfo.sell and targetInfo.sell.allowed then
-              row[8]:createText(overrideIcons[targetInfo.sell.ruleOverride], overrideIconsOptions[targetInfo.sell.ruleOverride])
-              row[9]:createText(formatTradeRuleLabel(targetInfo.sell.rule, targetInfo.sell.ruleOverride), optionsRule(targetInfo.sell.ruleOverride))
-              row[10]:createText(overrideIcons[targetInfo.sell.priceOverride], overrideIconsOptions[targetInfo.sell.priceOverride])
-              row[11]:createText(formatPrice(targetInfo.sell.price, targetInfo.sell.priceOverride),
-                optionsNumber(targetInfo.sell.priceOverride))
-              row[12]:createText(overrideIcons[targetInfo.sell.limitOverride], overrideIconsOptions[targetInfo.sell.limitOverride])
-              row[13]:createText(formatLimit(targetInfo.sell.limit, targetInfo.sell.limitOverride),
-                optionsNumber(targetInfo.sell.limitOverride))
+              renderOffer(row, targetInfo.sell, false)
             else
               row[8]:setColSpan(6):createText("No sell offer", { halign = "center" })
             end
