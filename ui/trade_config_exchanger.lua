@@ -54,6 +54,7 @@ local labels = {
   price = ReadText(1972092405, 1104),
   amount = ReadText(1972092405, 1105),
   overrideTag = ReadText(1972092405, 1109),
+  buyOfferSellOffer = ReadText(1972092405, 1111),
   selectStationOnePrompt = ReadText(1972092405, 1201),
   selectStationTwoPrompt = ReadText(1972092405, 1202),
   noWaresAvailable = ReadText(1972092405, 1203),
@@ -649,24 +650,29 @@ local function renderOffer(row, offerData, isStationOne)
     return
   end
   local idx = isStationOne and 2 or 8
-  row[idx]:createText(overrideIcons[offerData.ruleOverride], overrideIconsOptions[offerData.ruleOverride])
-  row[idx + 1]:createText(formatTradeRuleLabel(offerData.rule, offerData.ruleOverride), optionsRule(offerData.ruleOverride))
-  row[idx + 2]:createText(overrideIcons[offerData.priceOverride], overrideIconsOptions[offerData.priceOverride])
-  row[idx + 3]:createText(formatPrice(offerData.price, offerData.priceOverride), optionsNumber(offerData.priceOverride))
-  row[idx + 4]:createText(overrideIcons[offerData.limitOverride], overrideIconsOptions[offerData.limitOverride])
-  row[idx + 5]:createText(formatLimit(offerData.limit, offerData.limitOverride), optionsNumber(offerData.limitOverride))
+  row[idx]:createText(overrideIcons[offerData.priceOverride], overrideIconsOptions[offerData.priceOverride])
+  row[idx + 1]:createText(formatPrice(offerData.price, offerData.priceOverride), optionsNumber(offerData.priceOverride))
+  row[idx + 2]:createText(overrideIcons[offerData.limitOverride], overrideIconsOptions[offerData.limitOverride])
+  row[idx + 3]:createText(formatLimit(offerData.limit, offerData.limitOverride), optionsNumber(offerData.limitOverride))
+  row[idx + 4]:createText(overrideIcons[offerData.ruleOverride], overrideIconsOptions[offerData.ruleOverride])
+  row[idx + 5]:createText(formatTradeRuleLabel(offerData.rule, offerData.ruleOverride), optionsRule(offerData.ruleOverride))
 end
 
-local function setTableColumnsWidth(tableHandle, main)
-  local valueWidth = 130
+local function setMainTableColumnsWidth(tableHandle)
+  local numberWidth = 100
+  local textWidth = 130
   local overrideWidth = 54
   local width = Helper.standardTextHeight
   tableHandle:setColWidth(1, width, false)
   for i = 2, 13 do
-    if main and i % 2 == 0 or not main and (i <= 7 and i % 2 == 1 or i > 7 and i % 2 == 0) then
+    if i % 2 == 0 then
       width = width + overrideWidth
       tableHandle:setColWidth(i, overrideWidth, false)
     else
+      local valueWidth = numberWidth
+      if (i == 7) or (i == 13) then
+        valueWidth = textWidth
+      end
       width = width + valueWidth
       tableHandle:setColWidth(i, valueWidth, true)
     end
@@ -701,7 +707,7 @@ function TradeConfigExchanger.render()
 
   local columns = 13
   local tableMain = frame:addTable(columns, { tabOrder = 1, reserveScrollBar = true, highlightMode = "on", x = Helper.borderSize, y = Helper.borderSize, })
-  setTableColumnsWidth(tableMain, true)
+  setMainTableColumnsWidth(tableMain)
 
   local row = tableMain:addRow(false, { fixed = true })
   row[1]:setColSpan(columns):createText(labels.title, Helper.headerRowCenteredProperties)
@@ -753,20 +759,20 @@ function TradeConfigExchanger.render()
   row[12]:createText(labels.overrideTag, Helper.headerRowCenteredProperties)
   row[13]:createText(labels.storage, Helper.headerRowCenteredProperties)
   row = tableMain:addRow(false, { fixed = true })
-  row[2]:setColSpan(12):createText("Buy Offer / Sell Offer", Helper.headerRowCenteredProperties)
+  row[2]:setColSpan(12):createText(labels.buyOfferSellOffer, Helper.headerRowCenteredProperties)
   row = tableMain:addRow(false, { fixed = true })
   row[2]:createText(labels.overrideTag, Helper.headerRowCenteredProperties)
-  row[3]:createText(labels.rule, Helper.headerRowCenteredProperties)
+  row[3]:createText(labels.price, Helper.headerRowCenteredProperties)
   row[4]:createText(labels.overrideTag, Helper.headerRowCenteredProperties)
-  row[5]:createText(labels.price, Helper.headerRowCenteredProperties)
+  row[5]:createText(labels.amount, Helper.headerRowCenteredProperties)
   row[6]:createText(labels.overrideTag, Helper.headerRowCenteredProperties)
-  row[7]:createText(labels.amount, Helper.headerRowCenteredProperties)
+  row[7]:createText(labels.rule, Helper.headerRowCenteredProperties)
   row[8]:createText(labels.overrideTag, Helper.headerRowCenteredProperties)
-  row[9]:createText(labels.rule, Helper.headerRowCenteredProperties)
+  row[9]:createText(labels.price, Helper.headerRowCenteredProperties)
   row[10]:createText(labels.overrideTag, Helper.headerRowCenteredProperties)
-  row[11]:createText(labels.price, Helper.headerRowCenteredProperties)
+  row[11]:createText(labels.amount, Helper.headerRowCenteredProperties)
   row[12]:createText(labels.overrideTag, Helper.headerRowCenteredProperties)
-  row[13]:createText(labels.amount, Helper.headerRowCenteredProperties)
+  row[13]:createText(labels.rule, Helper.headerRowCenteredProperties)
 
   tableMain:addEmptyRow(Helper.standardTextHeight / 2)
 
@@ -895,50 +901,63 @@ function TradeConfigExchanger.render()
   tableMain:setSelectedCol(2)
   tableMain.properties.maxVisibleHeight = math.min(tableMain:getFullHeight(), data.height - Helper.borderSize * 2)
 
-  local tableConfirm = frame:addTable(columns,
+  local tableConfirm = frame:addTable(9,
     { tabOrder = 2, reserveScrollBar = false, highlightMode = "off", x = Helper.borderSize, y = tableMain.properties.maxVisibleHeight + Helper.borderSize * 2 })
-  setTableColumnsWidth(tableConfirm, false)
+  local cellWidth = math.floor((tableMain.properties.width - Helper.standardTextHeight) / 8) - 3
+  for i = 1, 3 do
+    tableConfirm:setColWidth(i, cellWidth, true)
+  end
+  tableConfirm:setColWidth(4, Helper.standardTextHeight, false)
+  for i = 5, 9 do
+    tableConfirm:setColWidth(i, cellWidth, true)
+  end
 
   row = tableConfirm:addRow(true, { fixed = true })
 
-  row[1]:createCheckBox(data.cloneConfirmed, { active = selectedCount > 0 })
-  row[1].handlers.onClick = function(_, checked)
+  row[4]:createCheckBox(data.cloneConfirmed, { active = selectedCount > 0 })
+  row[4].handlers.onClick = function(_, checked)
     data.cloneConfirmed = checked
     debugTrace("Set clone confirmed to " .. tostring(checked))
     data.statusMessage = nil
     TradeConfigExchanger.render()
   end
-  row[2]:setColSpan(6):createText(labels.confirmClone, { halign = "left" })
+  row[5]:setColSpan(2):createText(labels.confirmClone, { halign = "left" })
 
-  local tableBottom = frame:addTable(columns,
+  local tableBottom = frame:addTable(8,
     { tabOrder = 3, reserveScrollBar = false, highlightMode = "off", x = Helper.borderSize, y = tableMain.properties.maxVisibleHeight + tableConfirm:getFullHeight() + Helper.borderSize * 3 })
-  setTableColumnsWidth(tableBottom, false)
+  -- setTableColumnsWidth(tableBottom, false)
 
+  tableBottom:setColWidth(1, Helper.standardTextHeight, false)
+  local buttonWidth = math.floor((tableMain.properties.width - Helper.standardTextHeight) / 7) - 3
+  for i = 2, 8 do
+    tableBottom:setColWidth(i, buttonWidth, true)
+
+  end
 
   row = tableBottom:addRow(true, { fixed = true })
 
-  row[5]:setColSpan(2):createButton({ active = selectedCount > 0 and data.cloneConfirmed }):setText(labels.cloneButton .. "  \27[widget_arrow_right_01]\27X", { halign = "center" })
-  row[5].handlers.onClick = function()
+  row[4]:createButton({ active = selectedCount > 0 and data.cloneConfirmed }):setText(labels.cloneButton .. "  \27[widget_arrow_right_01]\27X", { halign = "center" })
+  row[4].handlers.onClick = function()
     if selectedCount > 0 then
       applyClone(menu, true)
     end
   end
-  row[9]:setColSpan(2):createButton({ active = selectedCount > 0 and data.cloneConfirmed }):setText("\27[widget_arrow_left_01]\27X  " .. labels.cloneButton, { halign = "center" })
-  row[9].handlers.onClick = function()
+  row[6]:createButton({ active = selectedCount > 0 and data.cloneConfirmed }):setText("\27[widget_arrow_left_01]\27X  " .. labels.cloneButton, { halign = "center" })
+  row[6].handlers.onClick = function()
     if selectedCount > 0 then
       applyClone(menu, false)
     end
   end
-  row[12]:setColSpan(2):createButton({}):setText(labels.cancelButton, { halign = "center" })
-  row[12].handlers.onClick = function()
+  row[8]:createButton({}):setText(labels.cancelButton, { halign = "center" })
+  row[8].handlers.onClick = function()
     menu.closeContextMenu()
   end
 
   if data.statusMessage then
     local statusRow = tableBottom:addRow(false, { fixed = true })
-    statusRow[1]:setColSpan(columns):createText(data.statusMessage, { wordwrap = true, color = data.statusColor })
+    statusRow[1]:setColSpan(8):createText(data.statusMessage, { wordwrap = true, color = data.statusColor })
   end
-  tableBottom:setSelectedCol(12)
+  tableBottom:setSelectedCol(8)
 
   frame.properties.width = tableMain.properties.width + Helper.borderSize * 2
   frame.properties.height = tableMain.properties.maxVisibleHeight + tableConfirm:getFullHeight() + tableBottom:getFullHeight() + Helper.borderSize * 4
