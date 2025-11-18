@@ -44,13 +44,22 @@ local TradeConfigExchanger = {
 }
 
 local labels = {
-  enabled = "Enabled",
-  disabled = "Disabled",
-  limit = "Limit: %s",
-  price = "Price: %s",
-  rule = "Rule: %s",
+  title = "Station Trade Config Exchanger",
+  stationOne = "Station One",
+  stationTwo = "Station Two",
+  noMatchingStations = "No matching stations",
+  ware = "Ware",
+  storage = "Storage Allocation",
+  rule = "Rule",
+  price = "Price",
+  amount = "Amount",
   auto = "Auto",
-  overrideTag = "Override",
+  overrideTag = "Cust.",
+  selectStationOnePrompt = "Select Station One to begin.",
+  selectStationTwoPrompt = "Select Station Two to continue.",
+  noBuyOffer = "No buy offer",
+  noSellOffer = "No sell offer",
+  noWaresAvailable = "No wares available for managing.",
   cloneButton = "Clone",
   confirmClone = "Confirm before proceeding with cloning",
   cancelButton = "Cancel",
@@ -648,7 +657,7 @@ end
 
 local function setTableColumnsWidth(tableHandle, main)
   local valueWidth = 120
-  local overrideWidth = 30
+  local overrideWidth = 40
   local width = Helper.standardTextHeight
   tableHandle:setColWidth(1, width, false)
   for i = 2, 13 do
@@ -693,12 +702,12 @@ function TradeConfigExchanger.render()
   setTableColumnsWidth(tableMain, true)
 
   local row = tableMain:addRow(false, { fixed = true })
-  row[1]:setColSpan(columns):createText(data.title or "Clone Station Trade Settings", Helper.headerRowCenteredProperties)
+  row[1]:setColSpan(columns):createText(labels.title, Helper.headerRowCenteredProperties)
 
 
   row = tableMain:addRow(false, { fixed = true })
-  row[2]:setColSpan(6):createText("Station One", Helper.headerRowCenteredProperties)
-  row[8]:setColSpan(6):createText("Station Two", Helper.headerRowCenteredProperties)
+  row[2]:setColSpan(6):createText(labels.stationOne, Helper.headerRowCenteredProperties)
+  row[8]:setColSpan(6):createText(labels.stationTwo, Helper.headerRowCenteredProperties)
   row = tableMain:addRow(true, { fixed = true })
   row[1]:createText("")
   debugTrace("Rendering station One DropDown with " .. tostring(#data.stationOneOptions) .. " options, selected: " .. tostring(data.selectedStationOne))
@@ -723,7 +732,7 @@ function TradeConfigExchanger.render()
   row[8]:setColSpan(6):createDropDown(data.stationTwoOptions, {
     startOption = data.selectedStationTwo or -1,
     active = #data.stationTwoOptions > 0,
-    textOverride = (#data.stationTwoOptions == 0) and "No matching stations" or nil,
+    textOverride = (#data.stationTwoOptions == 0) and labels.noMatchingStations or nil,
   })
   row[8].handlers.onDropDownConfirmed = function(_, id)
     data.selectedStationTwo = tonumber(id)
@@ -736,26 +745,26 @@ function TradeConfigExchanger.render()
 
 
   row = tableMain:addRow(false, { fixed = true })
-  row[2]:setColSpan(4):createText("Ware", Helper.headerRowCenteredProperties)
-  row[6]:createText("Ovr", Helper.headerRowCenteredProperties)
-  row[7]:createText("Storage allocation", Helper.headerRowCenteredProperties)
-  row[12]:createText("Ovr", Helper.headerRowCenteredProperties)
-  row[13]:createText("Storage allocation", Helper.headerRowCenteredProperties)
+  row[2]:setColSpan(4):createText(labels.ware, Helper.headerRowCenteredProperties)
+  row[6]:createText(labels.overrideTag, Helper.headerRowCenteredProperties)
+  row[7]:createText(labels.storage, Helper.headerRowCenteredProperties)
+  row[12]:createText(labels.overrideTag, Helper.headerRowCenteredProperties)
+  row[13]:createText(labels.storage, Helper.headerRowCenteredProperties)
   row = tableMain:addRow(false, { fixed = true })
   row[2]:setColSpan(12):createText("Buy Offer / Sell Offer", Helper.headerRowCenteredProperties)
   row = tableMain:addRow(false, { fixed = true })
-  row[2]:createText("Ovr", Helper.headerRowCenteredProperties)
-  row[3]:createText("Rule", Helper.headerRowCenteredProperties)
-  row[4]:createText("Ovr", Helper.headerRowCenteredProperties)
-  row[5]:createText("Price", Helper.headerRowCenteredProperties)
-  row[6]:createText("Ovr", Helper.headerRowCenteredProperties)
-  row[7]:createText("Amount", Helper.headerRowCenteredProperties)
-  row[8]:createText("Ovr", Helper.headerRowCenteredProperties)
-  row[9]:createText("Rule", Helper.headerRowCenteredProperties)
-  row[10]:createText("Ovr", Helper.headerRowCenteredProperties)
-  row[11]:createText("Price", Helper.headerRowCenteredProperties)
-  row[12]:createText("Ovr", Helper.headerRowCenteredProperties)
-  row[13]:createText("Amount", Helper.headerRowCenteredProperties)
+  row[2]:createText(labels.overrideTag, Helper.headerRowCenteredProperties)
+  row[3]:createText(labels.rule, Helper.headerRowCenteredProperties)
+  row[4]:createText(labels.overrideTag, Helper.headerRowCenteredProperties)
+  row[5]:createText(labels.price, Helper.headerRowCenteredProperties)
+  row[6]:createText(labels.overrideTag, Helper.headerRowCenteredProperties)
+  row[7]:createText(labels.amount, Helper.headerRowCenteredProperties)
+  row[8]:createText(labels.overrideTag, Helper.headerRowCenteredProperties)
+  row[9]:createText(labels.rule, Helper.headerRowCenteredProperties)
+  row[10]:createText(labels.overrideTag, Helper.headerRowCenteredProperties)
+  row[11]:createText(labels.price, Helper.headerRowCenteredProperties)
+  row[12]:createText(labels.overrideTag, Helper.headerRowCenteredProperties)
+  row[13]:createText(labels.amount, Helper.headerRowCenteredProperties)
 
   tableMain:addEmptyRow(Helper.standardTextHeight / 2)
 
@@ -765,7 +774,7 @@ function TradeConfigExchanger.render()
   if stationOneEntry == nil then
     debugTrace("No stations are selected")
     row = tableMain:addRow(false, { fixed = true })
-    row[2]:setColSpan(columns - 1):createText("No stations are selected.",
+    row[2]:setColSpan(columns - 1):createText(labels.selectStationOnePrompt,
       { color = Color and Color["text_warning"] or nil, halign = "center" })
   else
     debugTrace("Station One: " .. tostring(stationOneEntry.displayName) .. " (" .. tostring(stationOneEntry.id64) .. ")")
@@ -776,7 +785,7 @@ function TradeConfigExchanger.render()
     local wareType = nil
     if #wareList == 0 then
       row = tableMain:addRow(false, { fixed = true })
-      row[2]:setColSpan(columns - 1):createText("No wares available for trade configuration.",
+      row[2]:setColSpan(columns - 1):createText(labels.noWaresAvailable,
         { color = Color and Color["text_warning"] or nil, halign = "center" })
     else
       for i = 1, #wareList do
@@ -820,7 +829,7 @@ function TradeConfigExchanger.render()
             renderStorage(row, stationTwoInfo, false)
           else
             if i == 1 then
-              row[8]:setColSpan(6):createText("Station Two not selected", { color = Color and Color["text_warning"] or nil, halign = "center" })
+              row[8]:setColSpan(6):createText(labels.selectStationTwoPrompt, { color = Color and Color["text_warning"] or nil, halign = "center" })
             end
           end
           local row = tableMain:addRow(true, { fixed = false })
@@ -840,13 +849,13 @@ function TradeConfigExchanger.render()
           if stationOneInfo.buy and stationOneInfo.buy.allowed then
             renderOffer(row, stationOneInfo.buy, true)
           else
-            row[2]:setColSpan(6):createText("No buy offer", { halign = "center" })
+            row[2]:setColSpan(6):createText(labels.noBuyOffer, { halign = "center" })
           end
           if stationTwoInfo then
             if stationTwoInfo.buy and stationTwoInfo.buy.allowed then
               renderOffer(row, stationTwoInfo.buy, false)
             else
-              row[8]:setColSpan(6):createText("No buy offer", { halign = "center" })
+              row[8]:setColSpan(6):createText(labels.noBuyOffer, { halign = "center" })
             end
           end
           local row = tableMain:addRow(true, { fixed = false })
@@ -866,13 +875,13 @@ function TradeConfigExchanger.render()
           if stationOneInfo.sell and stationOneInfo.sell.allowed then
             renderOffer(row, stationOneInfo.sell, true)
           else
-            row[2]:setColSpan(6):createText("No sell offer", { halign = "center" })
+            row[2]:setColSpan(6):createText(labels.noSellOffer, { halign = "center" })
           end
           if stationTwoInfo then
             if stationTwoInfo.sell and stationTwoInfo.sell.allowed then
               renderOffer(row, stationTwoInfo.sell, false)
             else
-              row[8]:setColSpan(6):createText("No sell offer", { halign = "center" })
+              row[8]:setColSpan(6):createText(labels.noSellOffer, { halign = "center" })
             end
           end
         end
