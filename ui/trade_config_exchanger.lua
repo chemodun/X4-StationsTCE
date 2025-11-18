@@ -492,24 +492,6 @@ local function updateStationTwoOptions(data)
   end
 end
 
-local function resetSelections(data, wareList, diffs)
-  if not data.pendingResetSelections then
-    return
-  end
-  data.cloneBuy = {}
-  data.cloneSell = {}
-  for _, ware in ipairs(wareList) do
-    local diff = diffs[ware]
-    if diff then
-      data.cloneBuy[ware] = diff.buy
-      data.cloneSell[ware] = diff.sell
-    else
-      data.cloneBuy[ware] = false
-      data.cloneSell[ware] = false
-    end
-  end
-  data.pendingResetSelections = false
-end
 local function sortWareList(a, b)
   local oa = wareTypeSortOrder[a.type] or 4
   local ob = wareTypeSortOrder[b.type] or 4
