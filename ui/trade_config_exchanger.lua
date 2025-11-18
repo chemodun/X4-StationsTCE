@@ -41,12 +41,6 @@ local TradeConfigExchanger = {
   args = {},
   playerId = 0,
   mapMenu = {},
-  validOrders = {
-    SingleBuy  = "",
-    SingleSell = "",
-  },
-  sourceId = 0,
-  targetIds = {},
 }
 
 local labels = {
@@ -397,37 +391,6 @@ local function collectTradeData(entry, forceRefresh)
   return entry.tradeData
 end
 
-local function compareSide(source, target)
-  if not source and not target then
-    return true
-  end
-  if not source or not target then
-    return false
-  end
-  if source.allowed ~= target.allowed then
-    return false
-  end
-  if source.limitOverride ~= target.limitOverride then
-    return false
-  end
-  if source.limitOverride and (source.limit ~= target.limit) then
-    return false
-  end
-  if source.priceOverride ~= target.priceOverride then
-    return false
-  end
-  if source.priceOverride and (source.price ~= target.price) then
-    return false
-  end
-  if source.hasOwnRule ~= target.hasOwnRule then
-    return false
-  end
-  if source.hasOwnRule and (source.tradeRule ~= target.tradeRule) then
-    return false
-  end
-  return true
-end
-
 local function formatLimit(value, override)
   if not override then
     return labels.auto
@@ -484,20 +447,20 @@ local function hasSelection(data)
   return false
 end
 
-local function updateTargetOptions(data)
+local function updateStationTwoOptions(data)
   local options = {}
   local total = 0
   local matches = 0
-  if (data.selectedSource == nil) then
-    data.targetOptions = options
-    data.targetCounts = { matches = matches, total = total }
+  if (data.selectedStationOne == nil) then
+    data.stationTwoOptions = options
+    data.stationTwoCounts = { matches = matches, total = total }
     return
   end
-  local sourceEntry = data.selectedSource and data.stations[data.selectedSource]
-  local signature = sourceEntry and sourceEntry.productionSignature or nil
+  local stationOneEntry = data.selectedStationOne and data.stations[data.selectedStationOne]
+  local signature = stationOneEntry and stationOneEntry.productionSignature or nil
 
   for id, entry in pairs(data.stations) do
-    if id ~= data.selectedSource then
+    if id ~= data.selectedStationOne then
       total = total + 1
       local qualifies = (not data.requireMatch) or (signature == nil) or (entry.productionSignature == signature)
       if qualifies then
@@ -511,19 +474,19 @@ local function updateTargetOptions(data)
     return a.text < b.text
   end)
 
-  data.targetOptions = options
-  data.targetCounts = { matches = matches, total = total }
+  data.stationTwoOptions = options
+  data.stationTwoCounts = { matches = matches, total = total }
 
-  if data.selectedTarget then
+  if data.selectedStationTwo then
     local present = false
     for _, option in ipairs(options) do
-      if option.id == data.selectedTarget then
+      if option.id == data.selectedStationTwo then
         present = true
         break
       end
     end
     if not present then
-      data.selectedTarget = nil
+      data.selectedStationTwo = nil
       data.pendingResetSelections = true
     end
   end
@@ -554,17 +517,17 @@ local function sortWareList(a, b)
   return a.name < b.name
 end
 
-local function buildUnion(sourceData, targetData)
+local function buildUnion(stationOneData, stationTwoData)
   local union = {}
   local list = {}
-  if sourceData then
-    for ware, info in pairs(sourceData.map) do
+  if stationOneData then
+    for ware, info in pairs(stationOneData.map) do
       union[ware] = true
       list[#list + 1] = { ware = ware, name = info.name, type = info.type }
     end
   end
-  if targetData then
-    for ware, info in pairs(targetData.map) do
+  if stationTwoData then
+    for ware, info in pairs(stationTwoData.map) do
       if not union[ware] then
         union[ware] = true
         list[#list + 1] = { ware = ware, name = info.name, type = info.type }
@@ -575,48 +538,48 @@ local function buildUnion(sourceData, targetData)
   return list
 end
 
-local function applyTradeRule(target, ware, sourceSide)
-  if sourceSide.hasOwnRule then
-    local id = sourceSide.tradeRule
+local function applyTradeRule(target, ware, stationOneSide)
+  if stationOneSide.hasOwnRule then
+    local id = stationOneSide.tradeRule
     if id == 0 then
       id = -1
     end
-    C.SetContainerTradeRule(target, id, sourceSide.isbuy and "buy" or "sell", ware, true)
+    C.SetContainerTradeRule(target, id, stationOneSide.isbuy and "buy" or "sell", ware, true)
   else
-    C.SetContainerTradeRule(target, -1, sourceSide.isbuy and "buy" or "sell", ware, false)
+    C.SetContainerTradeRule(target, -1, stationOneSide.isbuy and "buy" or "sell", ware, false)
   end
 end
 
-local function cloneSide(target, ware, sourceSide)
-  if sourceSide.allowed ~= nil then
-    if sourceSide.isbuy then
-      C.SetContainerWareIsBuyable(target, ware, sourceSide.allowed)
+local function cloneSide(target, ware, stationOneSide)
+  if stationOneSide.allowed ~= nil then
+    if stationOneSide.isbuy then
+      C.SetContainerWareIsBuyable(target, ware, stationOneSide.allowed)
     else
-      C.SetContainerWareIsSellable(target, ware, sourceSide.allowed)
+      C.SetContainerWareIsSellable(target, ware, stationOneSide.allowed)
     end
   end
 
-  if sourceSide.limitOverride then
-    if sourceSide.isbuy then
-      C.SetContainerBuyLimitOverride(target, ware, sourceSide.limit)
+  if stationOneSide.limitOverride then
+    if stationOneSide.isbuy then
+      C.SetContainerBuyLimitOverride(target, ware, stationOneSide.limit)
     else
-      C.SetContainerSellLimitOverride(target, ware, sourceSide.limit)
+      C.SetContainerSellLimitOverride(target, ware, stationOneSide.limit)
     end
   else
-    if sourceSide.isbuy then
+    if stationOneSide.isbuy then
       C.ClearContainerBuyLimitOverride(target, ware)
     else
       C.ClearContainerSellLimitOverride(target, ware)
     end
   end
 
-  if sourceSide.priceOverride then
-    C.SetContainerWarePriceOverride(target, ware, sourceSide.isbuy, sourceSide.price)
+  if stationOneSide.priceOverride then
+    C.SetContainerWarePriceOverride(target, ware, stationOneSide.isbuy, stationOneSide.price)
   else
-    C.ClearContainerWarePriceOverride(target, ware, sourceSide.isbuy)
+    C.ClearContainerWarePriceOverride(target, ware, stationOneSide.isbuy)
   end
 
-  applyTradeRule(target, ware, sourceSide)
+  applyTradeRule(target, ware, stationOneSide)
 end
 
 local function sideFromInfo(info, isbuy)
@@ -636,36 +599,36 @@ local function applyClone(menu, leftToRight)
   if not data then
     return
   end
-  local sourceEntry = data.selectedSource and data.stations[data.selectedSource]
-  local targetEntry = data.selectedTarget and data.stations[data.selectedTarget]
-  if not sourceEntry or not targetEntry then
-    data.statusMessage = "Select source and target stations first."
+  local stationOneEntry = data.selectedStationOne and data.stations[data.selectedStationOne]
+  local stationTwoEntry = data.selectedStationTwo and data.stations[data.selectedStationTwo]
+  if not stationOneEntry or not stationTwoEntry then
+    data.statusMessage = "Select Station One and Station Two first."
     data.statusColor = Color and Color["text_warning"] or nil
     TradeConfigExchanger.render()
     return
   end
 
-  local sourceData = collectTradeData(sourceEntry)
-  local targetData = collectTradeData(targetEntry)
-  local wareList = buildUnion(sourceData, targetData)
+  local stationOneData = collectTradeData(stationOneEntry)
+  local stationTwoData = collectTradeData(stationTwoEntry)
+  local wareList = buildUnion(stationOneData, stationTwoData)
 
   local changes = 0
   for _, ware in ipairs(wareList) do
     local cloneBuy = data.cloneBuy and data.cloneBuy[ware]
     local cloneSell = data.cloneSell and data.cloneSell[ware]
     if cloneBuy or cloneSell then
-      local sourceInfo = sourceData.map[ware]
+      local sourceInfo = stationOneData.map[ware]
       if sourceInfo then
-        if not targetData.set[ware] then
-          C.AddTradeWare(targetEntry.id64, ware)
-          targetData.set[ware] = true
+        if not stationTwoData.set[ware] then
+          C.AddTradeWare(stationTwoEntry.id64, ware)
+          stationTwoData.set[ware] = true
         end
         if cloneBuy then
-          cloneSide(targetEntry.id64, ware, sideFromInfo(sourceInfo.buy, true))
+          cloneSide(stationTwoEntry.id64, ware, sideFromInfo(sourceInfo.buy, true))
           changes = changes + 1
         end
         if cloneSell then
-          cloneSide(targetEntry.id64, ware, sideFromInfo(sourceInfo.sell, false))
+          cloneSide(stationTwoEntry.id64, ware, sideFromInfo(sourceInfo.sell, false))
           changes = changes + 1
         end
       end
@@ -673,9 +636,9 @@ local function applyClone(menu, leftToRight)
   end
 
   if changes > 0 then
-    C.UpdateProductionTradeOffers(targetEntry.id64)
-    collectTradeData(targetEntry, true)
-    collectTradeData(sourceEntry, true)
+    C.UpdateProductionTradeOffers(stationTwoEntry.id64)
+    collectTradeData(stationTwoEntry, true)
+    collectTradeData(stationOneEntry, true)
     data.statusMessage = string.format("Applied %d setting(s).", changes)
     data.statusColor = Color and Color["text_normal"] or nil
     data.pendingResetSelections = true
@@ -687,19 +650,19 @@ local function applyClone(menu, leftToRight)
   TradeConfigExchanger.render()
 end
 
-local function renderStorage(row, entry, isSource)
+local function renderStorage(row, entry, isStationOne)
   if (entry == nil) or (row == nil) then
     return
   end
-  local idx = isSource and 6 or 12
+  local idx = isStationOne and 6 or 12
   row[idx]:createText(overrideIcons[entry.storageLimitOverride], overrideIconsOptions[entry.storageLimitOverride])
   row[idx + 1]:createText(formatLimit(entry.storageLimit, entry.storageLimitOverride), optionsNumber(entry.storageLimitOverride))
 end
-local function renderOffer(row, offerData, isSource)
+local function renderOffer(row, offerData, isStationOne)
   if (offerData == nil) or (not offerData.allowed) or (row == nil) then
     return
   end
-  local idx = isSource and 2 or 8
+  local idx = isStationOne and 2 or 8
   row[idx]:createText(overrideIcons[offerData.ruleOverride], overrideIconsOptions[offerData.ruleOverride])
   row[idx + 1]:createText(formatTradeRuleLabel(offerData.rule, offerData.ruleOverride), optionsRule(offerData.ruleOverride))
   row[idx + 2]:createText(overrideIcons[offerData.priceOverride], overrideIconsOptions[offerData.priceOverride])
@@ -763,33 +726,32 @@ function TradeConfigExchanger.render()
   row[8]:setColSpan(6):createText("Station Two", Helper.headerRowCenteredProperties)
   row = tableMain:addRow(true, { fixed = true })
   row[1]:createText("")
-  debugTrace("Rendering source DropDown with " .. tostring(#data.sourceOptions) .. " options, selected: " .. tostring(data.selectedSource))
-  row[2]:setColSpan(6):createDropDown(data.sourceOptions, {
-    startOption = data.selectedSource or -1,
-    active = #data.sourceOptions > 0,
-    textOverride = (#data.sourceOptions == 0) and "No player stations" or nil,
+  debugTrace("Rendering station One DropDown with " .. tostring(#data.stationOneOptions) .. " options, selected: " .. tostring(data.selectedStationOne))
+  row[2]:setColSpan(6):createDropDown(data.stationOneOptions, {
+    startOption = data.selectedStationOne or -1,
+    active = #data.stationOneOptions > 0,
+    textOverride = (#data.stationOneOptions == 0) and "No player stations" or nil,
   })
-  debugTrace("Rendered source DropDown with " .. tostring(#data.sourceOptions) .. " options, selected: " .. tostring(data.selectedSource))
   row[2].handlers.onDropDownConfirmed = function(_, id)
-    data.selectedSource = tonumber(id)
-    if data.selectedTarget == data.selectedSource then
-      data.selectedTarget = nil
+    data.selectedStationOne = tonumber(id)
+    if data.selectedStationTwo == data.selectedStationOne then
+      data.selectedStationTwo = nil
     end
     data.pendingResetSelections = true
-    updateTargetOptions(data)
+    updateStationTwoOptions(data)
     data.statusMessage = nil
     data.clone = {}
     data.cloneConfirmed = false
     TradeConfigExchanger.render()
   end
 
-  row[8]:setColSpan(6):createDropDown(data.targetOptions, {
-    startOption = data.selectedTarget or -1,
-    active = #data.targetOptions > 0,
-    textOverride = (#data.targetOptions == 0) and "No matching stations" or nil,
+  row[8]:setColSpan(6):createDropDown(data.stationTwoOptions, {
+    startOption = data.selectedStationTwo or -1,
+    active = #data.stationTwoOptions > 0,
+    textOverride = (#data.stationTwoOptions == 0) and "No matching stations" or nil,
   })
   row[8].handlers.onDropDownConfirmed = function(_, id)
-    data.selectedTarget = tonumber(id)
+    data.selectedStationTwo = tonumber(id)
     data.pendingResetSelections = true
     data.statusMessage = nil
     data.clone = {}
@@ -822,19 +784,19 @@ function TradeConfigExchanger.render()
 
   tableMain:addEmptyRow(Helper.standardTextHeight / 2)
 
-  local sourceEntry = data.selectedSource and data.stations[data.selectedSource]
-  local targetEntry = data.selectedTarget and data.stations[data.selectedTarget]
+  local stationOneEntry = data.selectedStationOne and data.stations[data.selectedStationOne]
+  local stationTwoEntry = data.selectedStationTwo and data.stations[data.selectedStationTwo]
   local selectedCount = 0
-  if sourceEntry == nil then
+  if stationOneEntry == nil then
     debugTrace("No stations are selected")
     row = tableMain:addRow(false, { fixed = true })
     row[2]:setColSpan(columns - 1):createText("No stations are selected.",
       { color = Color and Color["text_warning"] or nil, halign = "center" })
   else
-    debugTrace("Source station: " .. tostring(sourceEntry.displayName) .. " (" .. tostring(sourceEntry.id64) .. ")")
-    local sourceData = collectTradeData(sourceEntry)
-    local targetData = targetEntry and collectTradeData(targetEntry) or nil
-    local wareList = buildUnion(sourceData, targetData)
+    debugTrace("Station One: " .. tostring(stationOneEntry.displayName) .. " (" .. tostring(stationOneEntry.id64) .. ")")
+    local stationOneData = collectTradeData(stationOneEntry)
+    local stationTwoData = stationTwoEntry and collectTradeData(stationTwoEntry) or nil
+    local wareList = buildUnion(stationOneData, stationTwoData)
     debugTrace("Processing " .. tostring(#wareList) .. " wares for comparison")
     local wareType = nil
     if #wareList == 0 then
@@ -844,13 +806,13 @@ function TradeConfigExchanger.render()
     else
       for i = 1, #wareList do
         local ware = wareList[i]
-        local sourceInfo = ware.ware and sourceData.map[ware.ware]
-        local targetInfo = ware.ware and targetData and targetData.map[ware.ware] or nil
-        if (sourceInfo or targetInfo) == nil then
+        local stationOneInfo = ware.ware and stationOneData.map[ware.ware]
+        local stationTwoInfo = ware.ware and stationTwoData and stationTwoData.map[ware.ware] or nil
+        if (stationOneInfo or stationTwoInfo) == nil then
           debugTrace("Skipping ware " .. tostring(ware.ware) .. " - no data on either station")
         else
-          if wareType ~= sourceInfo.type then
-            wareType = sourceInfo.type
+          if wareType ~= stationOneInfo.type then
+            wareType = stationOneInfo.type
             local typeRow = tableMain:addRow(false, { fixed = false, bgColor = Color and Color["row_background_unselectable"] or nil })
             typeRow[2]:setColSpan(columns - 1):createText(string.upper(wareType), { font = Helper.standardFontBold, halign = "center" })
             tableMain:addEmptyRow(Helper.standardTextHeight / 2, { fixed = false })
@@ -863,7 +825,7 @@ function TradeConfigExchanger.render()
             selectedCount = selectedCount + 1
           end
           row[1]:createCheckBox(data.clone[ware.ware].storage, {
-            active = sourceInfo ~= nil and targetInfo ~= nil,
+            active = stationOneInfo ~= nil and stationTwoInfo ~= nil,
           })
           row[1].handlers.onClick = function(_, checked)
             local propagate = data.clone[ware.ware].storage == data.clone[ware.ware].buy and data.clone[ware.ware].storage == data.clone[ware.ware].sell
@@ -878,9 +840,9 @@ function TradeConfigExchanger.render()
             TradeConfigExchanger.render()
           end
           row[2]:setColSpan(4):createText(ware.name, wareNameProperties)
-          renderStorage(row, sourceInfo, true)
-          if targetInfo then
-            renderStorage(row, targetInfo, false)
+          renderStorage(row, stationOneInfo, true)
+          if stationTwoInfo then
+            renderStorage(row, stationTwoInfo, false)
           else
             if i == 1 then
               row[8]:setColSpan(6):createText("Station Two not selected", { color = Color and Color["text_warning"] or nil, halign = "center" })
@@ -891,7 +853,7 @@ function TradeConfigExchanger.render()
             selectedCount = selectedCount + 1
           end
           row[1]:createCheckBox(data.clone[ware.ware].buy, {
-            active = sourceInfo ~= nil and targetInfo ~= nil,
+            active = stationOneInfo ~= nil and stationTwoInfo ~= nil,
           })
           row[1].handlers.onClick = function(_, checked)
             data.clone[ware.ware].buy = checked
@@ -900,14 +862,14 @@ function TradeConfigExchanger.render()
             data.statusMessage = nil
             TradeConfigExchanger.render()
           end
-          if sourceInfo.buy and sourceInfo.buy.allowed then
-            renderOffer(row, sourceInfo.buy, true)
+          if stationOneInfo.buy and stationOneInfo.buy.allowed then
+            renderOffer(row, stationOneInfo.buy, true)
           else
             row[2]:setColSpan(6):createText("No buy offer", { halign = "center" })
           end
-          if targetInfo then
-            if targetInfo.buy and targetInfo.buy.allowed then
-              renderOffer(row, targetInfo.buy, false)
+          if stationTwoInfo then
+            if stationTwoInfo.buy and stationTwoInfo.buy.allowed then
+              renderOffer(row, stationTwoInfo.buy, false)
             else
               row[8]:setColSpan(6):createText("No buy offer", { halign = "center" })
             end
@@ -917,7 +879,7 @@ function TradeConfigExchanger.render()
             selectedCount = selectedCount + 1
           end
           row[1]:createCheckBox(data.clone[ware.ware].sell, {
-            active = sourceInfo ~= nil and targetInfo ~= nil,
+            active = stationOneInfo ~= nil and stationTwoInfo ~= nil,
           })
           row[1].handlers.onClick = function(_, checked)
             data.clone[ware.ware].sell = checked
@@ -926,14 +888,14 @@ function TradeConfigExchanger.render()
             data.statusMessage = nil
             TradeConfigExchanger.render()
           end
-          if sourceInfo.sell and sourceInfo.sell.allowed then
-            renderOffer(row, sourceInfo.sell, true)
+          if stationOneInfo.sell and stationOneInfo.sell.allowed then
+            renderOffer(row, stationOneInfo.sell, true)
           else
             row[2]:setColSpan(6):createText("No sell offer", { halign = "center" })
           end
-          if targetInfo then
-            if targetInfo.sell and targetInfo.sell.allowed then
-              renderOffer(row, targetInfo.sell, false)
+          if stationTwoInfo then
+            if stationTwoInfo.sell and stationTwoInfo.sell.allowed then
+              renderOffer(row, stationTwoInfo.sell, false)
             else
               row[8]:setColSpan(6):createText("No sell offer", { halign = "center" })
             end
@@ -1027,18 +989,18 @@ function TradeConfigExchanger.show()
     pendingResetSelections = true,
   }
 
-  data.stations, data.sourceOptions = buildStationCache()
-  data.targetOptions = {}
+  data.stations, data.stationOneOptions = buildStationCache()
+  data.stationTwoOptions = {}
 
-  data.selectedSource = nil
-  data.selectedTarget = nil
+  data.selectedStationOne = nil
+  data.selectedStationTwo = nil
 
   -- dbg.waitIDE()
   -- debugTrace("BreakPoint")
   -- dbg.breakHere()
   -- debugTrace("BreakPoint")
 
-  updateTargetOptions(data)
+  updateStationTwoOptions(data)
 
   menu.contextMenuMode = data.mode
   menu.contextMenuData = data
