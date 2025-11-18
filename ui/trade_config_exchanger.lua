@@ -421,32 +421,6 @@ local function optionsRule(override)
 end
 
 
-local function formatSide(info)
-  if not info then
-    return "-"
-  end
-  local parts = {}
-  parts[#parts + 1] = info.allowed and labels.enabled or labels.disabled
-  parts[#parts + 1] = string.format(labels.limit, formatLimit(info.limit, info.limitOverride))
-  parts[#parts + 1] = string.format(labels.price, formatPrice(info.price, info.priceOverride))
-  parts[#parts + 1] = string.format(labels.rule, formatTradeRuleLabel(info.tradeRule, info.hasOwnRule))
-  return table.concat(parts, "\n")
-end
-
-local function hasSelection(data)
-  for _, value in pairs(data.cloneBuy or {}) do
-    if value then
-      return true
-    end
-  end
-  for _, value in pairs(data.cloneSell or {}) do
-    if value then
-      return true
-    end
-  end
-  return false
-end
-
 local function updateStationTwoOptions(data)
   local options = {}
   local total = 0
