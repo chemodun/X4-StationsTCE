@@ -54,7 +54,6 @@ local labels = {
   cloneButton = "Clone",
   confirmClone = "Confirm before proceeding with cloning",
   cancelButton = "Cancel",
-  globalRule = "Global rule",
 }
 
 
@@ -333,9 +332,6 @@ end
 
 local function formatTradeRuleLabel(id, hasOwn)
   ensureTradeRuleNames()
-  if not hasOwn then
-    return labels.globalRule
-  end
   if id == 0 then
     id = -1
   end
