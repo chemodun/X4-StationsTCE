@@ -44,25 +44,29 @@ local TradeConfigExchanger = {
 }
 
 local labels = {
-  title = "Station Trade Config Exchanger",
-  stationOne = "Station One",
-  stationTwo = "Station Two",
-  noMatchingStations = "No matching stations",
-  ware = "Ware",
-  storage = "Storage Allocation",
-  rule = "Rule",
-  price = "Price",
-  amount = "Amount",
-  auto = "Auto",
-  overrideTag = "Cust.",
-  selectStationOnePrompt = "Select Station One to begin.",
-  selectStationTwoPrompt = "Select Station Two to continue.",
-  noBuyOffer = "No buy offer",
-  noSellOffer = "No sell offer",
-  noWaresAvailable = "No wares available for managing.",
-  cloneButton = "Clone",
-  confirmClone = "Confirm before proceeding with cloning",
-  cancelButton = "Cancel",
+  title = ReadText(1972092405, 1001),
+  stationOne = ReadText(1972092405, 1011),
+  stationTwo = ReadText(1972092405, 1012),
+  noMatchingStations = ReadText(1972092405, 1019),
+  ware = ReadText(1972092405, 1101),
+  storage = ReadText(1972092405, 1102),
+  rule = ReadText(1972092405, 1103),
+  price = ReadText(1972092405, 1104),
+  amount = ReadText(1972092405, 1105),
+  overrideTag = ReadText(1972092405, 1109),
+  selectStationOnePrompt = ReadText(1972092405, 1201),
+  selectStationTwoPrompt = ReadText(1972092405, 1202),
+  noWaresAvailable = ReadText(1972092405, 1203),
+  auto = ReadText(1972092405, 1211),
+  noBuyOffer = ReadText(1972092405, 1212),
+  noSellOffer = ReadText(1972092405, 1213),
+  confirmClone = ReadText(1972092405, 1301),
+  cloneButton = ReadText(1972092405, 1311),
+  cancelButton = ReadText(1972092405, 1319),
+  resource = ReadText(1972092405, 1121),
+  intermediate = ReadText(1972092405, 1122),
+  product = ReadText(1972092405, 1123),
+  trade = ReadText(1972092405, 1124),
 }
 
 
@@ -84,6 +88,7 @@ local wareTypeSortOrder = {
   resource = 1,
   intermediate = 2,
   product = 3,
+  trade = 4
 }
 
 
@@ -281,7 +286,9 @@ local function computeProductionSignature(entry)
     end
   end
   table.sort(wares)
-  entry.wares = wares
+  entry.tradeData = {}
+  entry.tradeData.wares = wares
+  entry.tradeData.waresSet = waresSet
 end
 
 local function buildStationCache()
@@ -352,19 +359,17 @@ local function formatTradeRuleLabel(id, hasOwn)
 end
 
 local function collectTradeData(entry, forceRefresh)
-  if entry.tradeData and not forceRefresh then
+  if entry.tradeData and entry.tradeData.waresMap and not forceRefresh then
     return entry.tradeData
   end
 
   local container = entry.id64
-  local wares = entry.wares or {}
+  local wares = entry.tradeData and entry.tradeData.wares or {}
   local map = {}
-  local set = {}
 
   if #wares > 0 then
     for i = 1, #wares do
       local ware = wares[i]
-      set[ware] = true
       local name = GetWareData(ware, "name")
       local wareType = Helper.getContainerWareType(container, ware)
       local storageLimit = GetWareProductionLimit(container, ware)
@@ -412,10 +417,7 @@ local function collectTradeData(entry, forceRefresh)
       }
     end
   end
-  entry.tradeData = {
-    map = map,
-    set = set,
-  }
+  entry.tradeData.waresMap = map
   return entry.tradeData
 end
 
@@ -495,8 +497,8 @@ local function updateStationTwoOptions(data)
 end
 
 local function sortWareList(a, b)
-  local oa = wareTypeSortOrder[a.type] or 4
-  local ob = wareTypeSortOrder[b.type] or 4
+  local oa = wareTypeSortOrder[a.type]
+  local ob = wareTypeSortOrder[b.type]
   if oa ~= ob then return oa < ob end
   return a.name < b.name
 end
@@ -505,13 +507,13 @@ local function buildUnion(stationOneData, stationTwoData)
   local union = {}
   local list = {}
   if stationOneData then
-    for ware, info in pairs(stationOneData.map) do
+    for ware, info in pairs(stationOneData.waresMap) do
       union[ware] = true
       list[#list + 1] = { ware = ware, name = info.name, type = info.type }
     end
   end
   if stationTwoData then
-    for ware, info in pairs(stationTwoData.map) do
+    for ware, info in pairs(stationTwoData.waresMap) do
       if not union[ware] then
         union[ware] = true
         list[#list + 1] = { ware = ware, name = info.name, type = info.type }
@@ -601,11 +603,11 @@ local function applyClone(menu, leftToRight)
     local cloneBuy = data.cloneBuy and data.cloneBuy[ware]
     local cloneSell = data.cloneSell and data.cloneSell[ware]
     if cloneBuy or cloneSell then
-      local sourceInfo = stationOneData.map[ware]
+      local sourceInfo = stationOneData.waresMap[ware]
       if sourceInfo then
-        if not stationTwoData.set[ware] then
+        if not stationTwoData.waresSet[ware] then
           C.AddTradeWare(stationTwoEntry.id64, ware)
-          stationTwoData.set[ware] = true
+          stationTwoData.waresSet[ware] = true
         end
         if cloneBuy then
           cloneSide(stationTwoEntry.id64, ware, sideFromInfo(sourceInfo.buy, true))
@@ -656,8 +658,8 @@ local function renderOffer(row, offerData, isStationOne)
 end
 
 local function setTableColumnsWidth(tableHandle, main)
-  local valueWidth = 120
-  local overrideWidth = 40
+  local valueWidth = 130
+  local overrideWidth = 54
   local width = Helper.standardTextHeight
   tableHandle:setColWidth(1, width, false)
   for i = 2, 13 do
@@ -790,15 +792,15 @@ function TradeConfigExchanger.render()
     else
       for i = 1, #wareList do
         local ware = wareList[i]
-        local stationOneInfo = ware.ware and stationOneData.map[ware.ware]
-        local stationTwoInfo = ware.ware and stationTwoData and stationTwoData.map[ware.ware] or nil
+        local stationOneInfo = ware.ware and stationOneData.waresMap[ware.ware]
+        local stationTwoInfo = ware.ware and stationTwoData and stationTwoData.waresMap[ware.ware] or nil
         if (stationOneInfo or stationTwoInfo) == nil then
           debugTrace("Skipping ware " .. tostring(ware.ware) .. " - no data on either station")
         else
           if wareType ~= stationOneInfo.type then
             wareType = stationOneInfo.type
             local typeRow = tableMain:addRow(false, { fixed = false, bgColor = Color and Color["row_background_unselectable"] or nil })
-            typeRow[2]:setColSpan(columns - 1):createText(string.upper(wareType), { font = Helper.standardFontBold, halign = "center" })
+            typeRow[2]:setColSpan(columns - 1):createText(labels[wareType], { font = Helper.standardFontBold, halign = "center" })
             tableMain:addEmptyRow(Helper.standardTextHeight / 2, { fixed = false })
           end
           if data.clone[ware.ware] == nil then
