@@ -714,7 +714,7 @@ function TradeConfigExchanger.render()
   frame:setBackground("solid", { color = Color and Color["frame_background_semitransparent"] or nil })
 
   local columns = 13
-  local tableMain = frame:addTable(columns, { tabOrder = 1, reserveScrollBar = true, highlightMode = "on", x = Helper.borderSize, y = Helper.borderSize, })
+  local tableMain = frame:addTable(columns, { tabOrder = 1, reserveScrollBar = false, highlightMode = "off", x = Helper.borderSize, y = Helper.borderSize, })
   setMainTableColumnsWidth(tableMain)
 
   local row = tableMain:addRow(false, { fixed = true })
@@ -781,13 +781,20 @@ function TradeConfigExchanger.render()
   row[13]:createText(labels.rule, Helper.headerRowCenteredProperties)
 
   tableMain:addEmptyRow(Helper.standardTextHeight / 2, { fixed = true })
+  tableMain:setSelectedCol(2)
+
+  local currentY = tableMain:getFullHeight() + Helper.borderSize * 2
+
+  local tableContent = frame:addTable(columns, { tabOrder = 2, reserveScrollBar = true, highlightMode = "on", x = Helper.borderSize, y = currentY, })
+  setMainTableColumnsWidth(tableContent)
 
   local stationOneEntry = data.selectedStationOne and data.stations[data.selectedStationOne]
   local stationTwoEntry = data.selectedStationTwo and data.stations[data.selectedStationTwo]
   local selectedCount = 0
+  local activeContent = false
   if stationOneEntry == nil then
     debugTrace("No stations are selected")
-    row = tableMain:addRow(false, { fixed = true })
+    row = tableContent:addRow(false, { fixed = true })
     row[2]:setColSpan(columns - 1):createText(labels.selectStationOnePrompt,
       { color = Color and Color["text_warning"] or nil, halign = "center" })
   else
@@ -798,7 +805,7 @@ function TradeConfigExchanger.render()
     debugTrace("Processing " .. tostring(#wareList) .. " wares for comparison")
     local wareType = nil
     if #wareList == 0 then
-      row = tableMain:addRow(false, { fixed = true })
+      row = tableContent:addRow(false, { fixed = true })
       row[2]:setColSpan(columns - 1):createText(labels.noWaresAvailable,
         { color = Color and Color["text_warning"] or nil, halign = "center" })
     else
@@ -813,9 +820,12 @@ function TradeConfigExchanger.render()
         else
           if wareType ~= wareInfo.type then
             wareType = wareInfo.type
-            local typeRow = tableMain:addRow(true, { fixed = false, bgColor = Color and Color["row_background_unselectable"] or nil })
+            local typeRow = tableContent:addRow(true, { fixed = false, bgColor = Color and Color["row_background_unselectable"] or nil })
             if data.clone.types[wareType] == nil then
               data.clone.types[wareType] = false
+            end
+            if not activeContent then
+              activeContent = true
             end
             typeRow[1]:createCheckBox(data.clone.types[wareType], {
               active = stationOneInfo ~= nil and stationTwoInfo ~= nil,
@@ -836,12 +846,12 @@ function TradeConfigExchanger.render()
               TradeConfigExchanger.render()
             end
             typeRow[2]:setColSpan(columns - 1):createText(labels[wareType], { font = Helper.standardFontBold, halign = "center" })
-            tableMain:addEmptyRow(Helper.standardTextHeight / 2, { fixed = false })
+            tableContent:addEmptyRow(Helper.standardTextHeight / 2, { fixed = false })
           end
           if data.clone.wares[ware.ware] == nil then
             data.clone.wares[ware.ware] = { storage = false, buy = false, sell = false }
           end
-          local row = tableMain:addRow(true, { fixed = false })
+          local row = tableContent:addRow(true, { fixed = false })
           if data.clone.wares[ware.ware].storage then
             selectedCount = selectedCount + 1
           end
@@ -874,7 +884,7 @@ function TradeConfigExchanger.render()
               row[8]:setColSpan(6):createText(labels.selectStationTwoPrompt, { color = Color and Color["text_warning"] or nil, halign = "center" })
             end
           end
-          local row = tableMain:addRow(true, { fixed = false })
+          local row = tableContent:addRow(true, { fixed = false })
           if data.clone.wares[ware.ware].buy then
             selectedCount = selectedCount + 1
           end
@@ -905,7 +915,7 @@ function TradeConfigExchanger.render()
               row[8]:setColSpan(6):createText(labels.noBuyOffer, { halign = "center" })
             end
           end
-          local row = tableMain:addRow(true, { fixed = false })
+          local row = tableContent:addRow(true, { fixed = false })
           if data.clone.wares[ware.ware].sell then
             selectedCount = selectedCount + 1
           end
@@ -937,16 +947,20 @@ function TradeConfigExchanger.render()
             end
           end
         end
-        tableMain:addEmptyRow(Helper.standardTextHeight / 2, { fixed = false })
+        tableContent:addEmptyRow(Helper.standardTextHeight / 2, { fixed = false })
       end
     end
   end
 
-  tableMain:setSelectedCol(2)
-  tableMain.properties.maxVisibleHeight = math.min(tableMain:getFullHeight(), data.height - Helper.borderSize * 2)
+  if activeContent then
+    tableContent:setSelectedCol(1)
+  end
+  tableContent.properties.maxVisibleHeight = math.min(tableContent:getFullHeight(), data.contentHeight)
+
+  currentY = currentY + tableContent.properties.maxVisibleHeight + Helper.borderSize
 
   local tableConfirm = frame:addTable(9,
-    { tabOrder = 2, reserveScrollBar = false, highlightMode = "off", x = Helper.borderSize, y = tableMain.properties.maxVisibleHeight + Helper.borderSize * 2 })
+    { tabOrder = 3, reserveScrollBar = false, highlightMode = "off", x = Helper.borderSize, y = currentY })
   local cellWidth = math.floor((tableMain.properties.width - Helper.standardTextHeight) / 8) - 3
   for i = 1, 3 do
     tableConfirm:setColWidth(i, cellWidth, true)
@@ -968,8 +982,11 @@ function TradeConfigExchanger.render()
   end
   row[5]:setColSpan(2):createText(labels.confirmClone, { halign = "left" })
 
+  currentY = currentY + tableConfirm:getFullHeight() + Helper.borderSize
+
+
   local tableBottom = frame:addTable(8,
-    { tabOrder = 3, reserveScrollBar = false, highlightMode = "off", x = Helper.borderSize, y = tableMain.properties.maxVisibleHeight + tableConfirm:getFullHeight() + Helper.borderSize * 3 })
+    { tabOrder = 4, reserveScrollBar = false, highlightMode = "off", x = Helper.borderSize, y = currentY })
   -- setTableColumnsWidth(tableBottom, false)
 
   tableBottom:setColWidth(1, Helper.standardTextHeight, false)
@@ -1005,7 +1022,7 @@ function TradeConfigExchanger.render()
   tableBottom:setSelectedCol(8)
 
   frame.properties.width = tableMain.properties.width + Helper.borderSize * 2
-  frame.properties.height = tableMain.properties.maxVisibleHeight + tableConfirm:getFullHeight() + tableBottom:getFullHeight() + Helper.borderSize * 4
+  frame.properties.height = currentY + tableBottom:getFullHeight() + Helper.borderSize
 
   frame.properties.y = math.floor((Helper.viewHeight - frame.properties.height) / 2)
   frame.properties.x = math.floor((Helper.viewWidth - frame.properties.width) / 2)
@@ -1036,7 +1053,7 @@ function TradeConfigExchanger.show()
     mode = "trade_config_exchanger",
     layer = menu.contextFrameLayer or 2,
     width = Helper.scaleX(1024),
-    height = Helper.scaleY(600),
+    contentHeight = Helper.scaleY(480),
     xoffset = Helper.viewWidth / 2 - Helper.scaleX(450),
     yoffset = Helper.viewHeight / 6,
     requireMatch = true,
