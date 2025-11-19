@@ -680,13 +680,13 @@ local function setMainTableColumnsWidth(tableHandle)
   return width
 end
 
-local function reInitClone(data)
+local function reInitData(data)
   data.clone = {}
   data.clone.wares = {}
   data.clone.types = {}
   data.clone.confirmed = false
+  data.content = {}
 end
-
 
 function TradeConfigExchanger.render()
   local menu = TradeConfigExchanger.mapMenu
@@ -698,7 +698,6 @@ function TradeConfigExchanger.render()
   if data.mode ~= "trade_config_exchanger" then
     return
   end
-
   debugTrace("Rendering Trade Config Exchanger UI")
 
   Helper.removeAllWidgetScripts(menu, data.layer)
@@ -714,17 +713,17 @@ function TradeConfigExchanger.render()
   frame:setBackground("solid", { color = Color and Color["frame_background_semitransparent"] or nil })
 
   local columns = 13
-  local tableMain = frame:addTable(columns, { tabOrder = 1, reserveScrollBar = false, highlightMode = "off", x = Helper.borderSize, y = Helper.borderSize, })
-  setMainTableColumnsWidth(tableMain)
+  local tableTop = frame:addTable(columns, { tabOrder = 1, reserveScrollBar = false, highlightMode = "off", x = Helper.borderSize, y = Helper.borderSize, })
+  setMainTableColumnsWidth(tableTop)
 
-  local row = tableMain:addRow(false, { fixed = true })
+  local row = tableTop:addRow(false, { fixed = true })
   row[1]:setColSpan(columns):createText(labels.title, Helper.headerRowCenteredProperties)
 
 
-  row = tableMain:addRow(false, { fixed = true })
+  row = tableTop:addRow(false, { fixed = true })
   row[2]:setColSpan(6):createText(labels.stationOne, Helper.headerRowCenteredProperties)
   row[8]:setColSpan(6):createText(labels.stationTwo, Helper.headerRowCenteredProperties)
-  row = tableMain:addRow(true, { fixed = true })
+  row = tableTop:addRow(true, { fixed = true })
   row[1]:createText("")
   debugTrace("Rendering station One DropDown with " .. tostring(#data.stationOneOptions) .. " options, selected: " .. tostring(data.selectedStationOne))
   row[2]:setColSpan(6):createDropDown(data.stationOneOptions, {
@@ -740,7 +739,7 @@ function TradeConfigExchanger.render()
     data.pendingResetSelections = true
     updateStationTwoOptions(data)
     data.statusMessage = nil
-    reInitClone(data)
+    reInitData(data)
     TradeConfigExchanger.render()
   end
 
@@ -753,20 +752,20 @@ function TradeConfigExchanger.render()
     data.selectedStationTwo = tonumber(id)
     data.pendingResetSelections = true
     data.statusMessage = nil
-    reInitClone(data)
+    reInitData(data)
     TradeConfigExchanger.render()
   end
 
 
-  row = tableMain:addRow(false, { fixed = true })
+  row = tableTop:addRow(false, { fixed = true })
   row[2]:setColSpan(4):createText(labels.ware, Helper.headerRowCenteredProperties)
   row[6]:createText(labels.overrideTag, Helper.headerRowCenteredProperties)
   row[7]:createText(labels.storage, Helper.headerRowCenteredProperties)
   row[12]:createText(labels.overrideTag, Helper.headerRowCenteredProperties)
   row[13]:createText(labels.storage, Helper.headerRowCenteredProperties)
-  row = tableMain:addRow(false, { fixed = true })
+  row = tableTop:addRow(false, { fixed = true })
   row[2]:setColSpan(12):createText(labels.buyOfferSellOffer, Helper.headerRowCenteredProperties)
-  row = tableMain:addRow(false, { fixed = true })
+  row = tableTop:addRow(false, { fixed = true })
   row[2]:createText(labels.overrideTag, Helper.headerRowCenteredProperties)
   row[3]:createText(labels.price, Helper.headerRowCenteredProperties)
   row[4]:createText(labels.overrideTag, Helper.headerRowCenteredProperties)
@@ -780,10 +779,10 @@ function TradeConfigExchanger.render()
   row[12]:createText(labels.overrideTag, Helper.headerRowCenteredProperties)
   row[13]:createText(labels.rule, Helper.headerRowCenteredProperties)
 
-  tableMain:addEmptyRow(Helper.standardTextHeight / 2, { fixed = true })
-  tableMain:setSelectedCol(2)
+  tableTop:addEmptyRow(Helper.standardTextHeight / 2, { fixed = true })
+  tableTop:setSelectedCol(2)
 
-  local currentY = tableMain:getFullHeight() + Helper.borderSize * 2
+  local currentY = tableTop:getFullHeight() + Helper.borderSize * 2
 
   local tableContent = frame:addTable(columns, { tabOrder = 2, reserveScrollBar = true, highlightMode = "on", x = Helper.borderSize, y = currentY, })
   setMainTableColumnsWidth(tableContent)
@@ -957,12 +956,22 @@ function TradeConfigExchanger.render()
     tableContent:setSelectedCol(1)
   end
   tableContent.properties.maxVisibleHeight = math.min(tableContent:getFullHeight(), data.contentHeight)
+  if data.content and data.content.tableContentId then
+    local topRow = GetTopRow(data.content.tableContentId)
+    if topRow and topRow > 0 then
+      tableContent:setTopRow(topRow)
+    end
+    local selectedRow = Helper.currentTableRow[data.content.tableContentId]
+    if selectedRow ~= nil and selectedRow > 0 then
+      tableContent:setSelectedRow(selectedRow)
+    end
+  end
 
   currentY = currentY + tableContent.properties.maxVisibleHeight + Helper.borderSize
 
   local tableConfirm = frame:addTable(9,
     { tabOrder = 3, reserveScrollBar = false, highlightMode = "off", x = Helper.borderSize, y = currentY })
-  local cellWidth = math.floor((tableMain.properties.width - Helper.standardTextHeight) / 8) - 3
+  local cellWidth = math.floor((tableTop.properties.width - Helper.standardTextHeight) / 8) - 3
   for i = 1, 3 do
     tableConfirm:setColWidth(i, cellWidth, true)
   end
@@ -991,7 +1000,7 @@ function TradeConfigExchanger.render()
   -- setTableColumnsWidth(tableBottom, false)
 
   tableBottom:setColWidth(1, Helper.standardTextHeight, false)
-  local buttonWidth = math.floor((tableMain.properties.width - Helper.standardTextHeight) / 7) - 3
+  local buttonWidth = math.floor((tableTop.properties.width - Helper.standardTextHeight) / 7) - 3
   for i = 2, 8 do
     tableBottom:setColWidth(i, buttonWidth, true)
 
@@ -1022,13 +1031,18 @@ function TradeConfigExchanger.render()
   end
   tableBottom:setSelectedCol(8)
 
-  frame.properties.width = tableMain.properties.width + Helper.borderSize * 2
+  frame.properties.width = tableTop.properties.width + Helper.borderSize * 2
   frame.properties.height = currentY + tableBottom:getFullHeight() + Helper.borderSize
 
   frame.properties.y = math.floor((Helper.viewHeight - frame.properties.height) / 2)
   frame.properties.x = math.floor((Helper.viewWidth - frame.properties.width) / 2)
 
   frame:display()
+  data.content = {}
+  data.content.tableTopId = tableTop.id
+  data.content.tableContentId = tableContent.id
+  data.content.tableConfirmId = tableConfirm.id
+  data.content.tableBottomId = tableBottom.id
   data.frame = frame
   menu.contextFrame = frame
 end
@@ -1069,7 +1083,7 @@ function TradeConfigExchanger.show()
   data.selectedStationOne = nil
   data.selectedStationTwo = nil
 
-  reInitClone(data)
+  reInitData(data)
 
   -- dbg.waitIDE()
   -- debugTrace("BreakPoint")
