@@ -645,11 +645,12 @@ local function renderStorage(row, entry, isStationOne)
   row[idx]:createText(overrideIcons[entry.storageLimitOverride], overrideIconsOptions[entry.storageLimitOverride])
   row[idx + 1]:createText(formatLimit(entry.storageLimit, entry.storageLimitOverride), optionsNumber(entry.storageLimitOverride))
 end
-local function renderOffer(row, offerData, isStationOne)
+local function renderOffer(row, offerData, isBuy, isStationOne)
+  local idx = isStationOne and 2 or 8
   if (offerData == nil) or (not offerData.allowed) or (row == nil) then
+    row[idx]:setColSpan(6):createText(isBuy and labels.noBuyOffer or labels.noSellOffer, { halign = "center" })
     return
   end
-  local idx = isStationOne and 2 or 8
   row[idx]:createText(overrideIcons[offerData.priceOverride], overrideIconsOptions[offerData.priceOverride])
   row[idx + 1]:createText(formatPrice(offerData.price, offerData.priceOverride), optionsNumber(offerData.priceOverride))
   row[idx + 2]:createText(overrideIcons[offerData.limitOverride], overrideIconsOptions[offerData.limitOverride])
@@ -800,11 +801,8 @@ function TradeConfigExchanger.render()
     debugTrace("Station One: " .. tostring(stationOneEntry.displayName) .. " (" .. tostring(stationOneEntry.id64) .. ")")
     local stationOneData = collectTradeData(stationOneEntry)
     local stationTwoData = stationTwoEntry and collectTradeData(stationTwoEntry) or nil
-    if stationTwoEntry and stationTwoData == nil then
-      stationTwoData = {}
-    end
-    local readyToSelectWares = stationOneData ~= nil and stationTwoData ~= nil
     local wareList = buildUnion(stationOneData, stationTwoData)
+    local readyToSelectWares = stationOneEntry ~= nil and stationTwoEntry ~= nil and #wareList > 0
     debugTrace("Processing " .. tostring(#wareList) .. " wares for comparison")
     local wareType = nil
     if #wareList == 0 then
@@ -876,7 +874,9 @@ function TradeConfigExchanger.render()
             TradeConfigExchanger.render()
           end
           row[2]:setColSpan(4):createText(ware.name, wareNameProperties)
-          renderStorage(row, stationOneInfo, true)
+          if stationOneInfo then
+            renderStorage(row, stationOneInfo, true)
+          end
           if stationTwoInfo then
             renderStorage(row, stationTwoInfo, false)
           elseif stationTwoData == nil then
@@ -901,17 +901,11 @@ function TradeConfigExchanger.render()
             data.statusMessage = nil
             TradeConfigExchanger.render()
           end
-          if stationOneInfo.buy and stationOneInfo.buy.allowed then
-            renderOffer(row, stationOneInfo.buy, true)
-          else
-            row[2]:setColSpan(6):createText(labels.noBuyOffer, { halign = "center" })
+          if stationOneInfo then
+            renderOffer(row, stationOneInfo.buy, true, true)
           end
           if stationTwoInfo then
-            if stationTwoInfo.buy and stationTwoInfo.buy.allowed then
-              renderOffer(row, stationTwoInfo.buy, false)
-            else
-              row[8]:setColSpan(6):createText(labels.noBuyOffer, { halign = "center" })
-            end
+            renderOffer(row, stationTwoInfo.buy, true, false)
           end
           local row = tableContent:addRow(true, { fixed = false })
           if data.clone.wares[ware.ware].sell then
@@ -930,17 +924,11 @@ function TradeConfigExchanger.render()
             data.statusMessage = nil
             TradeConfigExchanger.render()
           end
-          if stationOneInfo.sell and stationOneInfo.sell.allowed then
-            renderOffer(row, stationOneInfo.sell, true)
-          else
-            row[2]:setColSpan(6):createText(labels.noSellOffer, { halign = "center" })
+          if stationOneInfo then
+            renderOffer(row, stationOneInfo.sell, false, true)
           end
           if stationTwoInfo then
-            if stationTwoInfo.sell and stationTwoInfo.sell.allowed then
-              renderOffer(row, stationTwoInfo.sell, false)
-            else
-              row[8]:setColSpan(6):createText(labels.noSellOffer, { halign = "center" })
-            end
+            renderOffer(row, stationTwoInfo.sell, false, false)
           end
         end
         tableContent:addEmptyRow(Helper.standardTextHeight / 2, { fixed = false })
