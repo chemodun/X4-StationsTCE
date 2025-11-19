@@ -594,46 +594,70 @@ local function applyClone(menu, leftToRight)
     TradeConfigExchanger.render()
     return
   end
+  local sourceEntry = leftToRight and stationOneEntry or stationTwoEntry
+  local targetEntry = leftToRight and stationTwoEntry or stationOneEntry
 
-  local stationOneData = collectTradeData(stationOneEntry)
-  local stationTwoData = collectTradeData(stationTwoEntry)
-  local wareList = buildUnion(stationOneData, stationTwoData)
+  local sourceData = collectTradeData(sourceEntry)
+  local targetData = collectTradeData(targetEntry)
+  local toClone = data.clone.wares
+  if toClone == nil or data.clone.confirmed ~= true then
+    data.statusMessage = "No wares selected to clone."
+    data.statusColor = Color and Color["text_warning"] or nil
+    TradeConfigExchanger.render()
+    return
+  end
 
-  local changes = 0
-  for _, ware in ipairs(wareList) do
-    local cloneBuy = data.cloneBuy and data.cloneBuy[ware]
-    local cloneSell = data.cloneSell and data.cloneSell[ware]
-    if cloneBuy or cloneSell then
-      local sourceInfo = stationOneData.waresMap[ware]
-      if sourceInfo then
-        if not stationTwoData.waresSet[ware] then
-          C.AddTradeWare(stationTwoEntry.id64, ware)
-          stationTwoData.waresSet[ware] = true
+  local skipped = {}
+  for ware, parts in pairs(toClone) do
+    local sourceWareData = sourceData.waresMap[ware]
+    local targetWareData = targetData.waresMap[ware]
+    if (sourceWareData or targetWareData) and (parts.storage or parts.buy or parts.sell) then
+      if not sourceWareData and not (parts.storage and parts.buy and parts.sell) then
+        debugTrace("Skipping ware " .. tostring(ware) .. " as it is not present in source station and not fully selected for removal")
+        skipped[#skipped + 1] = targetWareData.name or ware
+      elseif not sourceWareData and (parts.storage and parts.buy and parts.sell) then
+        debugTrace("Removing ware " .. tostring(ware) .. " from target station as it is not present in source station")
+        C.RemoveTradeWare(targetEntry.id64, ware)
+      elseif sourceWareData and not targetWareData and not (parts.storage and parts.buy and parts.sell) then
+        debugTrace("Skipping ware " .. tostring(ware) .. " as it is not present in target station and not fully selected for addition")
+        skipped[#skipped + 1] = sourceWareData.name or ware
+      else
+        if sourceWareData and not targetWareData then
+          debugTrace("Adding ware " .. tostring(ware) .. " to target station")
+          C.AddTradeWare(targetEntry.id64, ware)
         end
-        if cloneBuy then
-          cloneSide(stationTwoEntry.id64, ware, sideFromInfo(sourceInfo.buy, true))
-          changes = changes + 1
+        if parts.storage then
+          if sourceWareData and not sourceWareData.storageLimitOverride and (targetWareData == nil or not targetWareData.storageLimitOverride) then
+            debugTrace("Skipping storage limit clone for ware " .. tostring(ware) .. " as both source and target have no override")
+          elseif sourceWareData and not sourceWareData.storageLimitOverride and targetWareData and targetWareData.storageLimitOverride then
+            debugTrace("Clearing storage limit override for ware " .. tostring(ware) .. " on target station")
+            ClearContainerStockLimitOverride(targetEntry.id64, ware)
+          else
+            local sourceLimit = sourceWareData and sourceWareData.storageLimit or 0
+            local targetLimit = targetWareData and targetWareData.storageLimit or 0
+            debugTrace("Setting storage limit override for ware " .. tostring(ware) .. " on target station to " .. tostring(sourceLimit) .. " (was " .. tostring(targetLimit) .. ")")
+          end
+          debugTrace("Cloning storage limit for ware " .. tostring(ware))
         end
-        if cloneSell then
-          cloneSide(stationTwoEntry.id64, ware, sideFromInfo(sourceInfo.sell, false))
-          changes = changes + 1
+        if parts.buy then
+          debugTrace("Cloning buy offer for ware " .. tostring(ware))
+        end
+        if parts.sell then
+          debugTrace("Cloning sell offer for ware " .. tostring(ware))
         end
       end
     end
   end
 
-  if changes > 0 then
-    C.UpdateProductionTradeOffers(stationTwoEntry.id64)
-    collectTradeData(stationTwoEntry, true)
-    collectTradeData(stationOneEntry, true)
-    data.statusMessage = string.format("Applied %d setting(s).", changes)
-    data.statusColor = Color and Color["text_normal"] or nil
-    data.pendingResetSelections = true
-  else
-    data.statusMessage = "No settings selected to clone."
+  collectTradeData(targetEntry, true)
+  TradeConfigExchanger.reInitData(true)
+  if #skipped > 0 then
+    data.statusMessage = "Skipped wares: " .. table.concat(skipped, ", ")
     data.statusColor = Color and Color["text_warning"] or nil
+  else
+    data.statusMessage = "Clone operation completed successfully."
+    data.statusColor = Color and Color["text_success"] or nil
   end
-
   TradeConfigExchanger.render()
 end
 
@@ -999,18 +1023,19 @@ function TradeConfigExchanger.render()
   local buttonWidth = math.floor((tableTop.properties.width - Helper.standardTextHeight) / 7) - 3
   for i = 2, 8 do
     tableBottom:setColWidth(i, buttonWidth, true)
-
   end
 
   row = tableBottom:addRow(true, { fixed = true })
 
-  row[4]:createButton({ active = selectedCount > 0 and data.clone.confirmed }):setText(labels.cloneButton .. "  \27[widget_arrow_right_01]\27X", { halign = "center" })
+  row[4]:createButton({ active = selectedCount > 0 and data.clone.confirmed }):setText(labels.cloneButton .. "  \27[widget_arrow_right_01]\27X",
+    { halign = "center" })
   row[4].handlers.onClick = function()
     if selectedCount > 0 then
       applyClone(menu, true)
     end
   end
-  row[6]:createButton({ active = selectedCount > 0 and data.clone.confirmed }):setText("\27[widget_arrow_left_01]\27X  " .. labels.cloneButton, { halign = "center" })
+  row[6]:createButton({ active = selectedCount > 0 and data.clone.confirmed }):setText("\27[widget_arrow_left_01]\27X  " .. labels.cloneButton,
+  { halign = "center" })
   row[6].handlers.onClick = function()
     if selectedCount > 0 then
       applyClone(menu, false)
