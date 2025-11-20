@@ -110,6 +110,12 @@ local wareNameTextProperties = copyAndEnrichTable(Helper.subHeaderTextProperties
 local cargoAmountTextProperties = copyAndEnrichTable(Helper.subHeaderTextProperties, { halign = "right", color = Color["table_row_highlight"] })
 local textDelimiterTextProperties = { halign = "center", color = Color["text_notification_text_lowlight"], fontsize = 8, height = Helper.standardTextHeight / 2 }
 
+local tradeRulesRoots = {
+  global = ReadText(1001, 8366),
+  station = ReadText(1001, 3),
+  ware = ReadText(1001, 45),
+}
+
 local Lib = require("extensions.sn_mod_support_apis.ui.Library")
 
 local function debugTrace(message)
@@ -361,7 +367,7 @@ local function ensureTradeRuleNames()
   TradeConfigExchanger.tradeRuleNames = mapping
 end
 
-local function formatTradeRuleLabel(id, hasOwn)
+local function formatTradeRuleLabel(id, hasOwn, root)
   ensureTradeRuleNames()
   if id == 0 then
     id = -1
@@ -369,6 +375,9 @@ local function formatTradeRuleLabel(id, hasOwn)
   local label = TradeConfigExchanger.tradeRuleNames and TradeConfigExchanger.tradeRuleNames[id]
   if not label or label == "" then
     label = string.format("Rule %s", tostring(id))
+  end
+  if hasOwn == false then
+    label = label .. " (" .. tradeRulesRoots[root or "global"] .. ")"
   end
   return label
 end
@@ -381,6 +390,10 @@ local function collectTradeData(entry, forceRefresh)
   local container = entry.id64
   local wares = entry.tradeData and entry.tradeData.wares or {}
   local map = {}
+  local stationBuyRule = C.GetContainerTradeRuleID(container, "buy", "")
+  local stationBuyOwnRule = C.HasContainerOwnTradeRule(container, "buy", "")
+  local stationSellRule = C.GetContainerTradeRuleID(container, "sell", "")
+  local stationSellOwnRule = C.HasContainerOwnTradeRule(container, "sell", "")
 
   if #wares > 0 then
     for i = 1, #wares do
@@ -396,6 +409,7 @@ local function collectTradeData(entry, forceRefresh)
       local buyPriceOverride = HasContainerWarePriceOverride(container, ware, true)
       local buyRuleId = C.GetContainerTradeRuleID(container, "buy", ware)
       local buyOwnRule = C.HasContainerOwnTradeRule(container, "buy", ware)
+      local buyRuleRoot = buyOwnRule and "ware" or stationBuyOwnRule and "station" or "global"
 
       local sellAllowed = C.GetContainerWareIsSellable(container, ware)
       local sellLimit = C.GetContainerSellLimit(container, ware)
@@ -404,6 +418,7 @@ local function collectTradeData(entry, forceRefresh)
       local sellPriceOverride = HasContainerWarePriceOverride(container, ware, false)
       local sellRuleId = C.GetContainerTradeRuleID(container, "sell", ware)
       local sellOwnRule = C.HasContainerOwnTradeRule(container, "sell", ware)
+      local sellRuleRoot = sellOwnRule and "ware" or stationSellOwnRule and "station" or "global"
 
       map[ware] = {
         ware = ware,
@@ -421,6 +436,7 @@ local function collectTradeData(entry, forceRefresh)
           priceOverride = buyPriceOverride,
           rule = buyRuleId,
           ruleOverride = buyOwnRule,
+          ruleRoot = buyRuleRoot,
         },
         sell = {
           allowed = (wareType == "product") or (wareType == "intermediate") or sellAllowed or sellOverride,
@@ -431,10 +447,15 @@ local function collectTradeData(entry, forceRefresh)
           priceOverride = sellPriceOverride,
           rule = sellRuleId,
           ruleOverride = sellOwnRule,
+          ruleRoot = sellRuleRoot,
         }
       }
     end
   end
+  entry.buyRule = stationBuyRule
+  entry.buyRuleOverride = stationBuyOwnRule
+  entry.sellRule = stationSellRule
+  entry.sellRuleOverride = stationSellOwnRule
   entry.tradeData.waresMap = map
   return entry.tradeData
 end
@@ -699,7 +720,7 @@ local function renderOffer(row, offerData, isBuy, isStationOne)
   row[idx + 2]:createText(overrideIcons[offerData.limitOverride], overrideIconsTextProperties[offerData.limitOverride])
   row[idx + 3]:createText(formatLimitWithPercentage(offerData), optionsNumber(offerData.limitOverride))
   row[idx + 4]:createText(overrideIcons[offerData.ruleOverride], overrideIconsTextProperties[offerData.ruleOverride])
-  row[idx + 5]:createText(formatTradeRuleLabel(offerData.rule, offerData.ruleOverride), optionsRule(offerData.ruleOverride))
+  row[idx + 5]:createText(formatTradeRuleLabel(offerData.rule, offerData.ruleOverride, offerData.ruleRoot), optionsRule(offerData.ruleOverride))
 end
 
 local function setMainTableColumnsWidth(tableHandle)
