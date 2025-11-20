@@ -474,7 +474,6 @@ local function updateStationTwoOptions(data)
   local matches = 0
   if (data.selectedStationOne == nil) then
     data.stationTwoOptions = options
-    data.stationTwoCounts = { matches = matches, total = total }
     return
   end
   local stationOneEntry = data.selectedStationOne and data.stations[data.selectedStationOne]
@@ -483,8 +482,7 @@ local function updateStationTwoOptions(data)
   for id, entry in pairs(data.stations) do
     if id ~= data.selectedStationOne then
       total = total + 1
-      local qualifies = (not data.requireMatch) or (signature == nil) or (entry.productionSignature == signature)
-      if qualifies then
+      if entry.productionSignature == signature then
         matches = matches + 1
         options[#options + 1] = { id = id, icon = "", text = entry.displayName, displayremoveoption = false }
       end
@@ -496,7 +494,6 @@ local function updateStationTwoOptions(data)
   end)
 
   data.stationTwoOptions = options
-  data.stationTwoCounts = { matches = matches, total = total }
 
   if data.selectedStationTwo then
     local present = false
@@ -508,7 +505,6 @@ local function updateStationTwoOptions(data)
     end
     if not present then
       data.selectedStationTwo = nil
-      data.pendingResetSelections = true
     end
   end
 end
@@ -790,7 +786,6 @@ function TradeConfigExchanger.render()
     if data.selectedStationTwo == data.selectedStationOne then
       data.selectedStationTwo = nil
     end
-    data.pendingResetSelections = true
     updateStationTwoOptions(data)
     data.statusMessage = nil
     TradeConfigExchanger.reInitData()
@@ -804,7 +799,6 @@ function TradeConfigExchanger.render()
   })
   row[8].handlers.onDropDownConfirmed = function(_, id)
     data.selectedStationTwo = tonumber(id)
-    data.pendingResetSelections = true
     data.statusMessage = nil
     TradeConfigExchanger.reInitData()
     TradeConfigExchanger.render()
@@ -1113,14 +1107,7 @@ function TradeConfigExchanger.show()
   local data = {
     mode = "trade_config_exchanger",
     layer = menu.contextFrameLayer or 2,
-    width = Helper.scaleX(1024),
-    contentHeight = Helper.scaleY(480),
-    xoffset = Helper.viewWidth / 2 - Helper.scaleX(450),
-    yoffset = Helper.viewHeight / 6,
-    requireMatch = true,
-    cloneBuy = {},
-    cloneSell = {},
-    pendingResetSelections = true,
+    contentHeight = math.floor(Helper.viewHeight * 0.6),
   }
 
   data.stations, data.stationOneOptions = buildStationCache()
