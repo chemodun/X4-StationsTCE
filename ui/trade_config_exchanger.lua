@@ -619,61 +619,47 @@ local function applyClone(menu, leftToRight)
           end
           debugTrace("Cloning storage limit for ware " .. tostring(ware))
         end
-        if parts.buy then
-          debugTrace("Cloning buy offer for ware " .. tostring(ware))
-          if not sourceWareData.buy.allowed and (targetWareData == nil or not targetWareData.buy.allowed) then
-            debugTrace("Skipping buy offer clone for ware " .. tostring(ware) .. " as both source and target have no buy offer")
-          elseif not sourceWareData.buy.allowed and targetWareData and targetWareData.buy.allowed then
-            debugTrace("Removing buy offer for ware " .. tostring(ware) .. " on target station")
-            C.ClearContainerBuyLimitOverride(targetEntry.id64, ware)
-            C.SetContainerWareIsBuyable(targetEntry.id64, ware, false)
-          else
-            if not sourceWareData.buy.priceOverride and targetWareData and targetWareData.buy.priceOverride then
-              debugTrace("Clearing buy price override for ware " .. tostring(ware) .. " on target station")
-              C.ClearContainerWarePriceOverride(targetEntry.id64, ware, true)
-            elseif sourceWareData.buy.priceOverride then
-              debugTrace("Setting buy price override for ware " .. tostring(ware) .. " on target station to " .. tostring(sourceWareData.buy.price) .. " (was " .. tostring(targetWareData and targetWareData.buy.price or 0) .. ")")
-              SetContainerWarePriceOverride(targetEntry.id64, ware, true, sourceWareData.buy.price)
-            end
-            if not sourceWareData.buy.limitOverride and targetWareData and targetWareData.buy.limitOverride then
-              debugTrace("Clearing buy limit override for ware " .. tostring(ware) .. " on target station")
-              C.ClearContainerBuyLimitOverride(targetEntry.id64, ware)
-            elseif sourceWareData.buy.limitOverride then
-              local newLimit = sourceWareData.buy.limit
-              if (targetWareData ~= nil) and math.abs(targetWareData.buy.limitPercentage - sourceWareData.buy.limitPercentage) > 0.01 then
-                newLimit = math.floor(sourceWareData.buy.limitPercentage * targetWareData.storageLimit / 100)
+        for key, value in pairs({ buy = true, sell = true }) do
+          if parts[key] then
+            debugTrace("Cloning " .. key .. " offer for ware " .. tostring(ware))
+            if not sourceWareData[key].allowed and (targetWareData == nil or not targetWareData[key].allowed) then
+              debugTrace("Skipping " .. key .. " offer clone for ware " .. tostring(ware) .. " as both source and target have no " .. key .. " offer")
+            elseif not sourceWareData[key].allowed and targetWareData and targetWareData[key].allowed then
+              debugTrace("Removing " .. key .. " offer for ware " .. tostring(ware) .. " on target station")
+              if key == "buy" then
+                C.ClearContainerBuyLimitOverride(targetEntry.id64, ware)
+                C.SetContainerWareIsBuyable(targetEntry.id64, ware, false)
+              else
+                C.ClearContainerSellLimitOverride(targetEntry.id64, ware)
+                C.SetContainerWareIsSellable(targetEntry.id64, ware, false)
               end
-              debugTrace("Setting buy limit override for ware " .. tostring(ware) .. " on target station to " .. tostring(newLimit) .. " (was " .. tostring(targetWareData and targetWareData.buy.limit or 0) .. ")")
-              C.SetContainerBuyLimitOverride(targetEntry.id64, ware, newLimit)
-            end
-          end
-        end
-        if parts.sell then
-          debugTrace("Cloning sell offer for ware " .. tostring(ware))
-          if not sourceWareData.sell.allowed and (targetWareData == nil or not targetWareData.sell.allowed) then
-            debugTrace("Skipping sell offer clone for ware " .. tostring(ware) .. " as both source and target have no sell offer")
-          elseif not sourceWareData.sell.allowed and targetWareData and targetWareData.sell.allowed then
-            debugTrace("Removing sell offer for ware " .. tostring(ware) .. " on target station")
-            C.ClearContainerSellLimitOverride(targetEntry.id64, ware)
-            C.SetContainerWareIsSellable(targetEntry.id64, ware, false)
-          else
-            if not sourceWareData.sell.priceOverride and targetWareData and targetWareData.sell.priceOverride then
-              debugTrace("Clearing sell price override for ware " .. tostring(ware) .. " on target station")
-              C.ClearContainerWarePriceOverride(targetEntry.id64, ware, false)
-            elseif sourceWareData.sell.priceOverride then
-              debugTrace("Setting sell price override for ware " .. tostring(ware) .. " on target station to " .. tostring(sourceWareData.sell.price) .. " (was " .. tostring(targetWareData and targetWareData.sell.price or 0) .. ")")
-              SetContainerWarePriceOverride(targetEntry.id64, ware, false, sourceWareData.sell.price)
-            end
-            if not sourceWareData.sell.limitOverride and targetWareData and targetWareData.sell.limitOverride then
-              debugTrace("Clearing sell limit override for ware " .. tostring(ware) .. " on target station")
-              C.ClearContainerSellLimitOverride(targetEntry.id64, ware)
-            elseif sourceWareData.sell.limitOverride then
-              local newLimit = sourceWareData.sell.limit
-              if (targetWareData ~= nil) and math.abs(targetWareData.sell.limitPercentage - sourceWareData.sell.limitPercentage) > 0.01 then
-                newLimit = math.floor(sourceWareData.sell.limitPercentage * targetWareData.storageLimit / 100)
+            else
+              if not sourceWareData[key].priceOverride and targetWareData and targetWareData[key].priceOverride then
+                debugTrace("Clearing " .. key .. " price override for ware " .. tostring(ware) .. " on target station")
+                ClearContainerWarePriceOverride(targetEntry.id64, ware, key == "buy")
+              elseif sourceWareData[key].priceOverride then
+                debugTrace("Setting " .. key .. " price override for ware " .. tostring(ware) .. " on target station to " .. tostring(sourceWareData[key].price) .. " (was " .. tostring(targetWareData and targetWareData[key].price or 0) .. ")")
+                SetContainerWarePriceOverride(targetEntry.id64, ware, key == "buy", sourceWareData[key].price)
               end
-              debugTrace("Setting sell limit override for ware " .. tostring(ware) .. " on target station to " .. tostring(newLimit) .. " (was " .. tostring(targetWareData and targetWareData.sell.limit or 0) .. ")")
-              C.SetContainerSellLimitOverride(targetEntry.id64, ware, newLimit)
+              if not sourceWareData[key].limitOverride and targetWareData and targetWareData[key].limitOverride then
+                debugTrace("Clearing " .. key .. " limit override for ware " .. tostring(ware) .. " on target station")
+                if key == "buy" then
+                  C.ClearContainerBuyLimitOverride(targetEntry.id64, ware)
+                else
+                  C.ClearContainerSellLimitOverride(targetEntry.id64, ware)
+                end
+              elseif sourceWareData[key].limitOverride then
+                local newLimit = sourceWareData[key].limit
+                if (targetWareData ~= nil) and math.abs(targetWareData[key].limitPercentage - sourceWareData[key].limitPercentage) > 0.01 then
+                  newLimit = math.floor(sourceWareData[key].limitPercentage * targetWareData.storageLimit / 100)
+                end
+                debugTrace("Setting " .. key .. " limit override for ware " .. tostring(ware) .. " on target station to " .. tostring(newLimit) .. " (was " .. tostring(targetWareData and targetWareData[key].limit or 0) .. ")")
+                if key == "buy" then
+                  C.SetContainerBuyLimitOverride(targetEntry.id64, ware, newLimit)
+                else
+                  C.SetContainerSellLimitOverride(targetEntry.id64, ware, newLimit)
+                end
+              end
             end
           end
         end
