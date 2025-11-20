@@ -545,62 +545,6 @@ local function buildUnion(stationOneData, stationTwoData)
   return list
 end
 
-local function applyTradeRule(target, ware, stationOneSide)
-  if stationOneSide.hasOwnRule then
-    local id = stationOneSide.tradeRule
-    if id == 0 then
-      id = -1
-    end
-    C.SetContainerTradeRule(target, id, stationOneSide.isbuy and "buy" or "sell", ware, true)
-  else
-    C.SetContainerTradeRule(target, -1, stationOneSide.isbuy and "buy" or "sell", ware, false)
-  end
-end
-
-local function cloneSide(target, ware, stationOneSide)
-  if stationOneSide.allowed ~= nil then
-    if stationOneSide.isbuy then
-      C.SetContainerWareIsBuyable(target, ware, stationOneSide.allowed)
-    else
-      C.SetContainerWareIsSellable(target, ware, stationOneSide.allowed)
-    end
-  end
-
-  if stationOneSide.limitOverride then
-    if stationOneSide.isbuy then
-      C.SetContainerBuyLimitOverride(target, ware, stationOneSide.limit)
-    else
-      C.SetContainerSellLimitOverride(target, ware, stationOneSide.limit)
-    end
-  else
-    if stationOneSide.isbuy then
-      C.ClearContainerBuyLimitOverride(target, ware)
-    else
-      C.ClearContainerSellLimitOverride(target, ware)
-    end
-  end
-
-  if stationOneSide.priceOverride then
-    C.SetContainerWarePriceOverride(target, ware, stationOneSide.isbuy, stationOneSide.price)
-  else
-    C.ClearContainerWarePriceOverride(target, ware, stationOneSide.isbuy)
-  end
-
-  applyTradeRule(target, ware, stationOneSide)
-end
-
-local function sideFromInfo(info, isbuy)
-  if not info then
-    return nil
-  end
-  local copy = {}
-  for k, v in pairs(info) do
-    copy[k] = v
-  end
-  copy.isbuy = isbuy
-  return copy
-end
-
 local function applyClone(menu, leftToRight)
   local data = menu.contextMenuData
   if not data then
