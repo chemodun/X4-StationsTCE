@@ -629,7 +629,23 @@ local function applyClone(menu, leftToRight)
         skipped[#skipped + 1] = targetWareData.name or ware
       elseif not sourceWareData and (parts.storage and parts.buy and parts.sell) then
         debugTrace("Removing ware " .. tostring(ware) .. " from target station as it is not present in source station")
-        C.RemoveTradeWare(targetEntry.id64, ware)
+        if targetData.storageLimitOverride then
+          debugTrace("Clearing storage limit override for ware " .. tostring(ware) .. " on target station")
+          ClearContainerStockLimitOverride(targetEntry.id64, ware)
+        end
+        if targetWareData.buy.allowed then
+          debugTrace("Removing buy offer for ware " .. tostring(ware) .. " on target station")
+          C.ClearContainerBuyLimitOverride(targetEntry.id64, ware)
+          C.SetContainerWareIsBuyable(targetEntry.id64, ware, false)
+        end
+        if targetWareData.sell.allowed then
+          debugTrace("Removing sell offer for ware " .. tostring(ware) .. " on target station")
+          C.ClearContainerSellLimitOverride(targetEntry.id64, ware)
+          C.SetContainerWareIsSellable(targetEntry.id64, ware, false)
+        end
+        if targetWareData.amount == 0 then
+          C.RemoveTradeWare(targetEntry.id64, ware)
+        end
       elseif sourceWareData and not targetWareData and not (parts.storage and parts.buy and parts.sell) then
         debugTrace("Skipping ware " .. tostring(ware) .. " as it is not present in target station and not fully selected for addition")
         skipped[#skipped + 1] = sourceWareData.name or ware
