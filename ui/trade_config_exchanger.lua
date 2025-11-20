@@ -165,15 +165,6 @@ local function getStationName(id)
   return string.format("%s (%s)", name, idCode)
 end
 
-local function centerFrameVertically(frame)
-  frame.properties.height = frame:getUsedHeight() + Helper.borderSize
-  if (frame.properties.height > Helper.viewHeight) then
-    frame.properties.y = Helper.borderSize
-    frame.properties.height = Helper.viewHeight - 2 * Helper.borderSize
-  else
-    frame.properties.y = (Helper.viewHeight - frame.properties.height) / 2
-  end
-end
 
 -- function TradeConfigExchanger.alertMessage(options)
 --   local menu = TradeConfigExchanger.mapMenu
