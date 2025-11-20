@@ -669,9 +669,35 @@ local function applyClone(menu, leftToRight)
         end
         if parts.buy then
           debugTrace("Cloning buy offer for ware " .. tostring(ware))
+          if not sourceWareData.buy.allowed and (targetWareData == nil or not targetWareData.buy.allowed) then
+            debugTrace("Skipping buy offer clone for ware " .. tostring(ware) .. " as both source and target have no buy offer")
+          elseif not sourceWareData.buy.allowed and targetWareData and targetWareData.buy.allowed then
+            debugTrace("Removing buy offer for ware " .. tostring(ware) .. " on target station")
+            C.ClearContainerBuyLimitOverride(targetEntry.id64, ware)
+            C.SetContainerWareIsBuyable(targetEntry.id64, ware, false)
+          else
+            local sourceLimit = sourceWareData.buy.limitOverride and sourceWareData.buy.limit or 0
+            local targetLimit = targetWareData.buy.limitOverride and targetWareData.buy.limit or 0
+            local sourcePrice = sourceWareData.buy.priceOverride and sourceWareData.buy.price or 0
+            local targetPrice = targetWareData.buy.priceOverride and targetWareData.buy.price or 0
+            debugTrace("Setting buy offer for ware " .. tostring(ware) .. " on target station to limit " .. tostring(sourceLimit) .. " (was " .. tostring(targetLimit) .. "), price " .. tostring(sourcePrice) .. " (was " .. tostring(targetPrice) .. ")")
+          end
         end
         if parts.sell then
           debugTrace("Cloning sell offer for ware " .. tostring(ware))
+          if not sourceWareData.sell.allowed and (targetWareData == nil or not targetWareData.sell.allowed) then
+            debugTrace("Skipping sell offer clone for ware " .. tostring(ware) .. " as both source and target have no sell offer")
+          elseif not sourceWareData.sell.allowed and targetWareData and targetWareData.sell.allowed then
+            debugTrace("Removing sell offer for ware " .. tostring(ware) .. " on target station")
+            C.ClearContainerSellLimitOverride(targetEntry.id64, ware)
+            C.SetContainerWareIsSellable(targetEntry.id64, ware, false)
+          else
+            local sourceLimit = sourceWareData.sell.limitOverride and sourceWareData.sell.limit or 0
+            local targetLimit = targetWareData.sell.limitOverride and targetWareData.sell.limit or 0
+            local sourcePrice = sourceWareData.sell.priceOverride and sourceWareData.sell.price or 0
+            local targetPrice = targetWareData.sell.priceOverride and targetWareData.sell.price or 0
+            debugTrace("Setting sell offer for ware " .. tostring(ware) .. " on target station to limit " .. tostring(sourceLimit) .. " (was " .. tostring(targetLimit) .. "), price " .. tostring(sourcePrice) .. " (was " .. tostring(targetPrice) .. ")")
+          end
         end
       end
     end
