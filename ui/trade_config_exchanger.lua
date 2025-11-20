@@ -29,7 +29,6 @@ ffi.cdef [[
   void SetContainerTradeRule(UniverseID containerid, TradeRuleID id, const char* ruletype, const char* wareid, bool value);
   void SetContainerWareIsBuyable(UniverseID containerid, const char* wareid, bool allowed);
   void SetContainerWareIsSellable(UniverseID containerid, const char* wareid, bool allowed);
-  void SetContainerWarePriceOverride(UniverseID containerid, const char* wareid, bool isbuy, int32_t price);
 
   TradeRuleID GetContainerTradeRuleID(UniverseID containerid, const char* ruletype, const char* wareid);
 
@@ -447,11 +446,11 @@ local function formatLimit(value, override)
   return ConvertIntegerString(value, true, 12, true)
 end
 
-local function formatLimitPercentage(value, override)
-  if not override then
+local function formatLimitWithPercentage(offerData)
+  if not offerData.limitOverride then
     return labels.auto
   end
-  return string.format("%.2f%%", value)
+  return ConvertIntegerString(offerData.limit, true, 12, true) .. " | " .. string.format("%.2f%%", offerData.limitPercentage)
 end
 
 local function formatPrice(value, override)
@@ -685,11 +684,24 @@ local function applyClone(menu, leftToRight)
             C.ClearContainerBuyLimitOverride(targetEntry.id64, ware)
             C.SetContainerWareIsBuyable(targetEntry.id64, ware, false)
           else
-            local sourceLimit = sourceWareData.buy.limitOverride and sourceWareData.buy.limit or 0
-            local targetLimit = targetWareData.buy.limitOverride and targetWareData.buy.limit or 0
-            local sourcePrice = sourceWareData.buy.priceOverride and sourceWareData.buy.price or 0
-            local targetPrice = targetWareData.buy.priceOverride and targetWareData.buy.price or 0
-            debugTrace("Setting buy offer for ware " .. tostring(ware) .. " on target station to limit " .. tostring(sourceLimit) .. " (was " .. tostring(targetLimit) .. "), price " .. tostring(sourcePrice) .. " (was " .. tostring(targetPrice) .. ")")
+            if not sourceWareData.buy.priceOverride and targetWareData and targetWareData.buy.priceOverride then
+              debugTrace("Clearing buy price override for ware " .. tostring(ware) .. " on target station")
+              C.ClearContainerWarePriceOverride(targetEntry.id64, ware, true)
+            elseif sourceWareData.buy.priceOverride then
+              debugTrace("Setting buy price override for ware " .. tostring(ware) .. " on target station to " .. tostring(sourceWareData.buy.price) .. " (was " .. tostring(targetWareData and targetWareData.buy.price or 0) .. ")")
+              SetContainerWarePriceOverride(targetEntry.id64, ware, true, sourceWareData.buy.price)
+            end
+            if not sourceWareData.buy.limitOverride and targetWareData and targetWareData.buy.limitOverride then
+              debugTrace("Clearing buy limit override for ware " .. tostring(ware) .. " on target station")
+              C.ClearContainerBuyLimitOverride(targetEntry.id64, ware)
+            elseif sourceWareData.buy.limitOverride then
+              local newLimit = sourceWareData.buy.limit
+              if (targetWareData ~= nil) and math.abs(targetWareData.buy.limitPercentage - sourceWareData.buy.limitPercentage) > 0.01 then
+                newLimit = math.floor(sourceWareData.buy.limitPercentage * targetWareData.storageLimit / 100)
+              end
+              debugTrace("Setting buy limit override for ware " .. tostring(ware) .. " on target station to " .. tostring(newLimit) .. " (was " .. tostring(targetWareData and targetWareData.buy.limit or 0) .. ")")
+              C.SetContainerBuyLimitOverride(targetEntry.id64, ware, newLimit)
+            end
           end
         end
         if parts.sell then
@@ -701,11 +713,24 @@ local function applyClone(menu, leftToRight)
             C.ClearContainerSellLimitOverride(targetEntry.id64, ware)
             C.SetContainerWareIsSellable(targetEntry.id64, ware, false)
           else
-            local sourceLimit = sourceWareData.sell.limitOverride and sourceWareData.sell.limit or 0
-            local targetLimit = targetWareData.sell.limitOverride and targetWareData.sell.limit or 0
-            local sourcePrice = sourceWareData.sell.priceOverride and sourceWareData.sell.price or 0
-            local targetPrice = targetWareData.sell.priceOverride and targetWareData.sell.price or 0
-            debugTrace("Setting sell offer for ware " .. tostring(ware) .. " on target station to limit " .. tostring(sourceLimit) .. " (was " .. tostring(targetLimit) .. "), price " .. tostring(sourcePrice) .. " (was " .. tostring(targetPrice) .. ")")
+            if not sourceWareData.sell.priceOverride and targetWareData and targetWareData.sell.priceOverride then
+              debugTrace("Clearing sell price override for ware " .. tostring(ware) .. " on target station")
+              C.ClearContainerWarePriceOverride(targetEntry.id64, ware, false)
+            elseif sourceWareData.sell.priceOverride then
+              debugTrace("Setting sell price override for ware " .. tostring(ware) .. " on target station to " .. tostring(sourceWareData.sell.price) .. " (was " .. tostring(targetWareData and targetWareData.sell.price or 0) .. ")")
+              SetContainerWarePriceOverride(targetEntry.id64, ware, false, sourceWareData.sell.price)
+            end
+            if not sourceWareData.sell.limitOverride and targetWareData and targetWareData.sell.limitOverride then
+              debugTrace("Clearing sell limit override for ware " .. tostring(ware) .. " on target station")
+              C.ClearContainerSellLimitOverride(targetEntry.id64, ware)
+            elseif sourceWareData.sell.limitOverride then
+              local newLimit = sourceWareData.sell.limit
+              if (targetWareData ~= nil) and math.abs(targetWareData.sell.limitPercentage - sourceWareData.sell.limitPercentage) > 0.01 then
+                newLimit = math.floor(sourceWareData.sell.limitPercentage * targetWareData.storageLimit / 100)
+              end
+              debugTrace("Setting sell limit override for ware " .. tostring(ware) .. " on target station to " .. tostring(newLimit) .. " (was " .. tostring(targetWareData and targetWareData.sell.limit or 0) .. ")")
+              C.SetContainerSellLimitOverride(targetEntry.id64, ware, newLimit)
+            end
           end
         end
       end
@@ -742,7 +767,7 @@ local function renderOffer(row, offerData, isBuy, isStationOne)
   row[idx]:createText(overrideIcons[offerData.priceOverride], overrideIconsTextProperties[offerData.priceOverride])
   row[idx + 1]:createText(formatPrice(offerData.price, offerData.priceOverride), optionsNumber(offerData.priceOverride))
   row[idx + 2]:createText(overrideIcons[offerData.limitOverride], overrideIconsTextProperties[offerData.limitOverride])
-  row[idx + 3]:createText(formatLimitPercentage(offerData.limitPercentage, offerData.limitOverride), optionsNumber(offerData.limitOverride))
+  row[idx + 3]:createText(formatLimitWithPercentage(offerData), optionsNumber(offerData.limitOverride))
   row[idx + 4]:createText(overrideIcons[offerData.ruleOverride], overrideIconsTextProperties[offerData.ruleOverride])
   row[idx + 5]:createText(formatTradeRuleLabel(offerData.rule, offerData.ruleOverride), optionsRule(offerData.ruleOverride))
 end
