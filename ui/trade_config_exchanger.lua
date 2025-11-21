@@ -1019,8 +1019,11 @@ function TradeConfigExchanger.render()
   end
   tableBottom:setSelectedCol(8)
 
-  tableContent.properties.reserveScrollBar = true
-  frame.properties.width = tableContent.properties.width + Helper.borderSize * 2 + Helper.scrollbarWidth
+  frame.properties.width = tableContent.properties.width + Helper.borderSize * 2
+  if not tableContent.properties.reserveScrollBar then
+    tableContent.properties.reserveScrollBar = true
+    frame.properties.width = frame.properties.width + Helper.scrollBarWidth
+  end
   frame.properties.height = currentY + tableBottom:getFullHeight() + Helper.borderSize
 
   frame.properties.y = math.floor((Helper.viewHeight - frame.properties.height) / 2)
