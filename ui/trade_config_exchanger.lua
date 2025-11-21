@@ -75,8 +75,8 @@ local labels = {
 
 local overrideIcons = {
 }
-overrideIcons[true] = "\27[menu_radio_button_on]\27X"
-overrideIcons[false] = "\27[menu_radio_button_off]\27X"
+overrideIcons[true] = "\27[menu_radio_button_off]\27X"
+overrideIcons[false] = "\27[menu_radio_button_on]\27X"
 
 local overrideIconsTextProperties = {
 }
@@ -644,7 +644,7 @@ end
 local function setMainTableColumnsWidth(tableHandle)
   local numberWidth = 100
   local textWidth = 150
-  local overrideWidth = 54
+  local overrideWidth = 40
   local width = Helper.standardTextHeight
   tableHandle:setColWidth(1, width, false)
   for i = 2, 13 do
@@ -756,25 +756,25 @@ function TradeConfigExchanger.render()
   row = tableTop:addRow(false, { fixed = true })
   row[2]:setColSpan(3):createText(labels.ware, tableHeadersTextProperties)
   row[5]:createText(labels.amount, tableHeadersTextProperties)
-  row[6]:createText(labels.overrideTag, tableHeadersTextProperties)
+  row[6]:createText(labels.auto, tableHeadersTextProperties)
   row[7]:createText(labels.storage, tableHeadersTextProperties)
   row[11]:createText(labels.amount, tableHeadersTextProperties)
-  row[12]:createText(labels.overrideTag, tableHeadersTextProperties)
+  row[12]:createText(labels.auto, tableHeadersTextProperties)
   row[13]:createText(labels.storage, tableHeadersTextProperties)
   row = tableTop:addRow(false, { fixed = true })
   row[2]:setColSpan(12):createText(labels.buyOfferSellOffer, tableHeadersTextProperties)
   row = tableTop:addRow(false, { fixed = true })
-  row[2]:createText(labels.overrideTag, tableHeadersTextProperties)
+  row[2]:createText(labels.auto, tableHeadersTextProperties)
   row[3]:createText(labels.price, tableHeadersTextProperties)
-  row[4]:createText(labels.overrideTag, tableHeadersTextProperties)
+  row[4]:createText(labels.auto, tableHeadersTextProperties)
   row[5]:createText(labels.amount, tableHeadersTextProperties)
-  row[6]:createText(labels.overrideTag, tableHeadersTextProperties)
+  row[6]:createText(labels.auto, tableHeadersTextProperties)
   row[7]:createText(labels.rule, tableHeadersTextProperties)
-  row[8]:createText(labels.overrideTag, tableHeadersTextProperties)
+  row[8]:createText(labels.auto, tableHeadersTextProperties)
   row[9]:createText(labels.price, tableHeadersTextProperties)
-  row[10]:createText(labels.overrideTag, tableHeadersTextProperties)
+  row[10]:createText(labels.auto, tableHeadersTextProperties)
   row[11]:createText(labels.amount, tableHeadersTextProperties)
-  row[12]:createText(labels.overrideTag, tableHeadersTextProperties)
+  row[12]:createText(labels.auto, tableHeadersTextProperties)
   row[13]:createText(labels.rule, tableHeadersTextProperties)
 
   tableTop:addEmptyRow(Helper.standardTextHeight / 2, { fixed = true })
@@ -1022,7 +1022,7 @@ function TradeConfigExchanger.render()
   frame.properties.width = tableContent.properties.width + Helper.borderSize * 2
   if not tableContent.properties.reserveScrollBar then
     tableContent.properties.reserveScrollBar = true
-    frame.properties.width = frame.properties.width + Helper.scrollBarWidth
+    frame.properties.width = frame.properties.width + Helper.scrollbarWidth
   end
   frame.properties.height = currentY + tableBottom:getFullHeight() + Helper.borderSize
 
