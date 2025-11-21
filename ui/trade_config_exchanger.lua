@@ -643,7 +643,7 @@ end
 
 local function setMainTableColumnsWidth(tableHandle)
   local numberWidth = 100
-  local textWidth = 150
+  local textWidth = 180
   local overrideWidth = 40
   local width = Helper.standardTextHeight
   tableHandle:setColWidth(1, width, false)
@@ -654,7 +654,7 @@ local function setMainTableColumnsWidth(tableHandle)
     else
       local valueWidth = numberWidth
       if (i == 5) or (i == 11) then
-        valueWidth = valueWidth + 20
+        valueWidth = valueWidth + 40
       end
       if (i == 7) or (i == 13) then
         valueWidth = textWidth
