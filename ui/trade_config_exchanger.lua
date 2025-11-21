@@ -752,7 +752,7 @@ function TradeConfigExchanger.render()
     width = data.width,
     layer = data.layer,
     standardButtons = { close = true },
-    closeOnUnhandledClick = true,
+    closeOnUnhandledClick = false,
   })
   frame:setBackground("solid", { color = Color["frame_background_semitransparent"] })
 
