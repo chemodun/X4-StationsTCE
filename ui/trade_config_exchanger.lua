@@ -106,7 +106,8 @@ local function copyAndEnrichTable(src, extraInfo)
   return dest
 end
 
-local tableHeadersTextProperties = copyAndEnrichTable(Helper.headerRowCenteredProperties, { fontsize = Helper.standardFontSize, height = Helper.standardTextHeight })
+local tableHeadersTextProperties = copyAndEnrichTable(Helper.headerRowCenteredProperties,
+  { fontsize = Helper.standardFontSize, height = Helper.standardTextHeight })
 local wareNameTextProperties = copyAndEnrichTable(Helper.subHeaderTextProperties, { halign = "center", color = Color["table_row_highlight"] })
 local cargoAmountTextProperties = copyAndEnrichTable(Helper.subHeaderTextProperties, { halign = "right", color = Color["table_row_highlight"] })
 local textDelimiterTextProperties = { halign = "center", color = Color["text_notification_text_lowlight"], fontsize = 8, height = Helper.standardTextHeight / 2 }
@@ -301,7 +302,8 @@ local function collectTradeData(entry, forceRefresh)
       end
       local wareType = Helper.getContainerWareType(container, ware)
       local storageLimit = GetWareProductionLimit(container, ware)
-      local storageLimitPercentage = cargoCapacities[transport] and cargoCapacities[transport] > 0 and 100.00 * storageLimit / cargoCapacities[transport] or 100.00
+      local storageLimitPercentage = cargoCapacities[transport] and cargoCapacities[transport] > 0 and 100.00 * storageLimit / cargoCapacities[transport] or
+          100.00
       local storageLimitOverride = HasContainerStockLimitOverride(container, ware)
       local buyAllowed = C.GetContainerWareIsBuyable(container, ware)
       local buyLimit = C.GetContainerBuyLimit(container, ware)
@@ -559,7 +561,8 @@ local function applyClone(menu, leftToRight)
           else
             local sourceLimit = sourceWareData and sourceWareData.storageLimit or 0
             local targetLimit = targetWareData and targetWareData.storageLimit or 0
-            debugTrace("Setting storage limit override for ware " .. tostring(ware) .. " on target station to " .. tostring(sourceLimit) .. " (was " .. tostring(targetLimit) .. ")")
+            debugTrace("Setting storage limit override for ware " ..
+              tostring(ware) .. " on target station to " .. tostring(sourceLimit) .. " (was " .. tostring(targetLimit) .. ")")
           end
           debugTrace("Cloning storage limit for ware " .. tostring(ware))
         end
@@ -582,7 +585,11 @@ local function applyClone(menu, leftToRight)
                 debugTrace("Clearing " .. key .. " price override for ware " .. tostring(ware) .. " on target station")
                 ClearContainerWarePriceOverride(targetEntry.id64, ware, key == "buy")
               elseif sourceWareData[key].priceOverride then
-                debugTrace("Setting " .. key .. " price override for ware " .. tostring(ware) .. " on target station to " .. tostring(sourceWareData[key].price) .. " (was " .. tostring(targetWareData and targetWareData[key].price or 0) .. ")")
+                debugTrace("Setting " ..
+                  key ..
+                  " price override for ware " ..
+                  tostring(ware) ..
+                  " on target station to " .. tostring(sourceWareData[key].price) .. " (was " .. tostring(targetWareData and targetWareData[key].price or 0) .. ")")
                 SetContainerWarePriceOverride(targetEntry.id64, ware, key == "buy", sourceWareData[key].price)
               end
               if not sourceWareData[key].limitOverride and targetWareData and targetWareData[key].limitOverride then
@@ -597,7 +604,11 @@ local function applyClone(menu, leftToRight)
                 if (targetWareData ~= nil) and math.abs(targetWareData[key].limitPercentage - sourceWareData[key].limitPercentage) > 0.01 then
                   newLimit = math.floor(sourceWareData[key].limitPercentage * targetWareData.storageLimit / 100)
                 end
-                debugTrace("Setting " .. key .. " limit override for ware " .. tostring(ware) .. " on target station to " .. tostring(newLimit) .. " (was " .. tostring(targetWareData and targetWareData[key].limit or 0) .. ")")
+                debugTrace("Setting " ..
+                  key ..
+                  " limit override for ware " ..
+                  tostring(ware) ..
+                  " on target station to " .. tostring(newLimit) .. " (was " .. tostring(targetWareData and targetWareData[key].limit or 0) .. ")")
                 if key == "buy" then
                   C.SetContainerBuyLimitOverride(targetEntry.id64, ware, newLimit)
                 else
@@ -607,9 +618,13 @@ local function applyClone(menu, leftToRight)
               if targetWareData == nil or sourceWareData[key].rule ~= targetWareData[key].rule then
                 local sourceRuleId = sourceWareData[key].rule
                 local targetRuleId = targetWareData[key].rule
-                debugTrace("Setting " .. key .. " trade rule for ware " .. tostring(ware) .. " on target station to " .. tostring(sourceRuleId) .. " (was " .. tostring(targetWareData and targetRuleId or 0) .. ")")
+                debugTrace("Setting " ..
+                  key ..
+                  " trade rule for ware " ..
+                  tostring(ware) .. " on target station to " .. tostring(sourceRuleId) .. " (was " .. tostring(targetWareData and targetRuleId or 0) .. ")")
                 if sourceRuleId == sourceData.rules[key] or data.clone.wholeStation and sourceRuleId == sourceData.rules[key] then
-                  debugTrace("Using station default " .. key .. " trade rule for ware " .. tostring(ware) .. " on " .. tostring(data.clone.wholeStation and "source" or "target") .. " station")
+                  debugTrace("Using station default " ..
+                    key .. " trade rule for ware " .. tostring(ware) .. " on " .. tostring(data.clone.wholeStation and "source" or "target") .. " station")
                   C.SetContainerTradeRule(targetEntry.id64, -1, key, ware, false)
                 else
                   debugTrace("Enforcing own " .. key .. " trade rule for ware " .. tostring(ware) .. " on target station")
@@ -642,7 +657,8 @@ local function renderStorage(row, entry, isStationOne)
   local idx = isStationOne and 5 or 11
   row[idx]:createText(formatNumber(entry.amount, true), cargoAmountTextProperties)
   row[idx + 1]:createText(overrideIcons[entry.storageLimitOverride], overrideIconsTextProperties[entry.storageLimitOverride])
-  row[idx + 2]:createText(formatNumberWithPercentage(entry.storageLimit, entry.storageLimitPercentage, entry.storageLimitOverride), optionsNumber(entry.storageLimitOverride))
+  row[idx + 2]:createText(formatNumberWithPercentage(entry.storageLimit, entry.storageLimitPercentage, entry.storageLimitOverride),
+    optionsNumber(entry.storageLimitOverride))
 end
 
 local function renderOffer(row, offerData, isBuy, isStationOne)
@@ -875,7 +891,8 @@ function TradeConfigExchanger.render()
           end
           row[1]:createCheckBox(data.clone.wares[ware.ware].storage, { active = readyToSelectWares })
           row[1].handlers.onClick = function(_, checked)
-            local propagate = data.clone.wares[ware.ware].storage == data.clone.wares[ware.ware].buy and data.clone.wares[ware.ware].storage == data.clone.wares[ware.ware].sell
+            local propagate = data.clone.wares[ware.ware].storage == data.clone.wares[ware.ware].buy and
+                data.clone.wares[ware.ware].storage == data.clone.wares[ware.ware].sell
             data.clone.wares[ware.ware].storage = checked
             if propagate then
               data.clone.wares[ware.ware].buy = checked
@@ -1021,7 +1038,7 @@ function TradeConfigExchanger.render()
     end
   end
   row[6]:createButton({ active = selectedCount > 0 and data.clone.confirmed }):setText("\27[widget_arrow_left_01]\27X  " .. labels.cloneButton,
-  { halign = "center" })
+    { halign = "center" })
   row[6].handlers.onClick = function()
     if selectedCount > 0 then
       applyClone(menu, false)
