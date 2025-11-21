@@ -254,12 +254,12 @@ end
 --   return true
 -- end
 
-function TradeConfigExchanger.showTargetAlert()
-  local options = {}
-  options.title = ReadText(1972092408, 10310)
-  options.message = ReadText(1972092408, 10311)
-  TradeConfigExchanger.alertMessage(options)
-end
+-- function TradeConfigExchanger.showTargetAlert()
+--   local options = {}
+--   options.title = ReadText(1972092408, 10310)
+--   options.message = ReadText(1972092408, 10311)
+--   TradeConfigExchanger.alertMessage(options)
+-- end
 
 local function collectWaresAndProductionSignature(entry)
   if entry.productionSignature then
@@ -357,21 +357,6 @@ local function ensureTradeRuleNames()
     end
   end
   TradeConfigExchanger.tradeRuleNames = mapping
-end
-
-local function formatTradeRuleLabel(id, hasOwn, root)
-  ensureTradeRuleNames()
-  if id == 0 then
-    id = -1
-  end
-  local label = TradeConfigExchanger.tradeRuleNames and TradeConfigExchanger.tradeRuleNames[id]
-  if not label or label == "" then
-    label = string.format("Rule %s", tostring(id))
-  end
-  if hasOwn == false then
-    label = label .. " (" .. tradeRulesRoots[root or "global"] .. ")"
-  end
-  return label
 end
 
 local function getCargoCapacity(container, transport)
@@ -472,14 +457,29 @@ local function collectTradeData(entry, forceRefresh)
   return entry.tradeData
 end
 
-local function formatLimit(value, override)
+local function formatTradeRuleLabel(id, hasOwn, root)
+  ensureTradeRuleNames()
+  if id == 0 then
+    id = -1
+  end
+  local label = TradeConfigExchanger.tradeRuleNames and TradeConfigExchanger.tradeRuleNames[id]
+  if not label or label == "" then
+    label = string.format("Rule %s", tostring(id))
+  end
+  if hasOwn == false then
+    label = label .. " (" .. tradeRulesRoots[root or "global"] .. ")"
+  end
+  return label
+end
+
+local function formatNumber(value, override)
   if not override then
     return labels.auto
   end
   return ConvertIntegerString(value, true, 12, true)
 end
 
-local function formatLimitWithPercentage(limit, percentage, override)
+local function formatNumberWithPercentage(limit, percentage, override)
   if not override then
     return labels.auto
   end
@@ -717,10 +717,11 @@ local function renderStorage(row, entry, isStationOne)
     return
   end
   local idx = isStationOne and 5 or 11
-  row[idx]:createText(formatLimit(entry.amount, true), cargoAmountTextProperties)
+  row[idx]:createText(formatNumber(entry.amount, true), cargoAmountTextProperties)
   row[idx + 1]:createText(overrideIcons[entry.storageLimitOverride], overrideIconsTextProperties[entry.storageLimitOverride])
-  row[idx + 2]:createText(formatLimitWithPercentage(entry.storageLimit, entry.storageLimitPercentage, entry.storageLimitOverride), optionsNumber(entry.storageLimitOverride))
+  row[idx + 2]:createText(formatNumberWithPercentage(entry.storageLimit, entry.storageLimitPercentage, entry.storageLimitOverride), optionsNumber(entry.storageLimitOverride))
 end
+
 local function renderOffer(row, offerData, isBuy, isStationOne)
   local idx = isStationOne and 2 or 8
   if (offerData == nil) or (not offerData.allowed) or (row == nil) then
@@ -730,7 +731,7 @@ local function renderOffer(row, offerData, isBuy, isStationOne)
   row[idx]:createText(overrideIcons[offerData.priceOverride], overrideIconsTextProperties[offerData.priceOverride])
   row[idx + 1]:createText(formatPrice(offerData.price, offerData.priceOverride), optionsNumber(offerData.priceOverride))
   row[idx + 2]:createText(overrideIcons[offerData.limitOverride], overrideIconsTextProperties[offerData.limitOverride])
-  row[idx + 3]:createText(formatLimitWithPercentage(offerData.limit, offerData.limitPercentage, offerData.limitOverride), optionsNumber(offerData.limitOverride))
+  row[idx + 3]:createText(formatNumberWithPercentage(offerData.limit, offerData.limitPercentage, offerData.limitOverride), optionsNumber(offerData.limitOverride))
   row[idx + 4]:createText(overrideIcons[offerData.ruleOverride], overrideIconsTextProperties[offerData.ruleOverride])
   row[idx + 5]:createText(formatTradeRuleLabel(offerData.rule, offerData.ruleOverride, offerData.ruleRoot), optionsRule(offerData.ruleOverride))
 end
