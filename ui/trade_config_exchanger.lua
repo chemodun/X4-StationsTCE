@@ -809,7 +809,6 @@ local function render()
   row[13]:createText(labels.rule, tableHeadersTextProperties)
 
   tableTop:addEmptyRow(Helper.standardTextHeight / 2, { fixed = true })
-  tableTop:setSelectedCol(2)
 
   currentY = currentY + tableTop:getFullHeight() + Helper.borderSize * 2
   currentTableNum = currentTableNum + 1
@@ -844,6 +843,8 @@ local function render()
         wareListStartIndex = #wareList > data.waresOnScreenCount and (#wareList - data.waresOnScreenCount + 1) or 1
         data.waresStartIndex = wareListStartIndex
       end
+      data.waresCountTotal = #wareList
+      data.waresStartIndex = wareListStartIndex
       local wareListEndIndex = math.floor(math.min(wareListStartIndex + data.waresOnScreenCount - 1, #wareList))
       for i = wareListStartIndex, wareListEndIndex do
         local ware = wareList[i]
