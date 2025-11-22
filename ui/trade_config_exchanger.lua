@@ -38,6 +38,7 @@ ffi.cdef [[
 ]]
 
 local menu = nil
+local playerId = nil
 
 local labels = {
   title = ReadText(1972092405, 1001),
@@ -1135,6 +1136,25 @@ local function render()
   menu.contextFrame = frame
 end
 
+local function getArgs()
+  if playerId == 0 then
+    debugTrace("getArgs unable to resolve player id")
+  else
+    local list = GetNPCBlackboard(playerId, "$TradeConfigExchangerSelectedStation")
+    if type(list) == "table" then
+      debugTrace("getArgs retrieved " .. tostring(#list) .. " entries from blackboard")
+      local args = list[#list]
+      SetNPCBlackboard(playerId, "$TradeConfigExchangerSelectedStation", nil)
+      return args
+    elseif list ~= nil then
+      debugTrace("getArgs received non-table payload of type " .. type(list))
+    else
+      debugTrace("getArgs found no blackboard entries for player " .. tostring(playerId))
+    end
+  end
+  return nil
+end
+
 local function show()
   debugTrace("TradeConfigExchanger: Show called")
   if type(menu) ~= "table" or type(Helper) ~= "table" then
@@ -1166,6 +1186,19 @@ local function show()
   data.selectedStationOne = nil
   data.selectedStationTwo = nil
 
+  local args = getArgs()
+  if args and type(args) == "table" and args.selectedStation then
+    if args.selectedStation then
+      local selectedStationId = ConvertStringTo64Bit(tostring(args.selectedStation))
+      debugTrace("Pre-selecting station " .. tostring(selectedStationId) .. " as station one")
+      if data.stations[selectedStationId] then
+        data.selectedStationOne = selectedStationId
+      else
+        debugTrace("Pre-selected station " .. tostring(selectedStationId) .. " not found in player stations")
+      end
+    end
+  end
+
   updateStationTwoOptions(data)
 
   menu.contextMenuMode = data.mode
@@ -1177,7 +1210,21 @@ local function show()
   return true
 end
 
+local function getPlayerId()
+  local current = C.GetPlayerID()
+  if current == nil or current == 0 then
+    return
+  end
+
+  local converted = ConvertStringTo64Bit(tostring(current))
+  if converted ~= 0 and converted ~= playerId then
+    debugTrace("updating player_id to " .. tostring(converted))
+    playerId = converted
+  end
+end
+
 local function Init()
+  getPlayerId()
   ---@diagnostic disable-next-line: undefined-global
   RegisterEvent("TradeConfigExchangerShow", show)
   menu = Lib.Get_Egosoft_Menu("MapMenu")

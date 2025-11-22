@@ -44,7 +44,16 @@
               text="'TradeConfigExchanger: Show\n Station: %s.\n event.param: %s.'.[@$station.debugname, @event.param]" chance="100" filter="scripts" />
             <do_if
               value="$station.owner == faction.player and $station.isclass.{class.station} and $station.storagemodules.count gt 0 and not @$station.isshipyard and not @$station.iswharf">
+              <do_if value="not player.entity.$TradeConfigExchangerSelectedStation?">
+                <set_value name="player.entity.$TradeConfigExchangerSelectedStation" exact="[]" />
+              </do_if>
+              <set_value name="$args" exact="table[$selectedStation = $station]" />
+              <append_to_list name="player.entity.$TradeConfigExchangerSelectedStation" exact="$args" />
+              <debug_text
+                text="'TradeConfigExchanger: Request invoked with args: %s'.[$args]"
+                chance="100" filter="scripts" />
               <raise_lua_event name="'TradeConfigExchangerShow'" />
+              <remove_value name="$args" />
             </do_if>
           </actions>
 
