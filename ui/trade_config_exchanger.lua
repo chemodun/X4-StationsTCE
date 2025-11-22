@@ -512,7 +512,7 @@ local function applyClone(menu, leftToRight)
   local stationOneEntry = data.selectedStationOne and data.stations[data.selectedStationOne]
   local stationTwoEntry = data.selectedStationTwo and data.stations[data.selectedStationTwo]
   if not stationOneEntry or not stationTwoEntry then
-    data.statusMessage = "Select Station One and Station Two first."
+    data.statusMessage = ReadText(1972092405, 2001)
     data.statusColor = Color["text_warning"]
     return
   end
@@ -523,7 +523,7 @@ local function applyClone(menu, leftToRight)
   local targetData = collectTradeData(targetEntry)
   local toClone = data.clone.wares
   if toClone == nil or data.clone.confirmed ~= true then
-    data.statusMessage = "No wares selected to clone."
+    data.statusMessage = ReadText(1972092405, 2002)
     data.statusColor = Color["text_warning"]
     return
   end
@@ -672,10 +672,10 @@ local function applyClone(menu, leftToRight)
   collectTradeData(targetEntry, true)
   reInitData(true)
   if #skipped > 0 then
-    data.statusMessage = string.format(tostring(ReadText(1972092405, 2002)), processedWaresCount, table.concat(skipped, ", "))
+    data.statusMessage = string.format(tostring(ReadText(1972092405, 2012)), processedWaresCount, table.concat(skipped, ", "))
     data.statusColor = Color["text_warning"]
   else
-    data.statusMessage = string.format(tostring(ReadText(1972092405, 2001)), processedWaresCount)
+    data.statusMessage = string.format(tostring(ReadText(1972092405, 2011)), processedWaresCount)
     data.statusColor = Color["text_success"]
   end
 end

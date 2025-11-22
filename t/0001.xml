@@ -29,8 +29,10 @@
       <t id="1401">Confirm before proceeding with cloning</t>
       <t id="1411">Clone</t>
       <t id="1419">Cancel</t>
-      <t id="2001">Clone operation completed successfully!\nProcessed wares: %d.</t>
-      <t id="2002">Clone operation completed with warnings!\nProcessed wares: %d.\nSkipped wares: %s</t>
+      <t id="2001">Select Station One and Station Two first!</t>
+      <t id="2002">No wares selected to clone!</t>
+      <t id="2011">Clone operation completed successfully!\nProcessed wares: %d.</t>
+      <t id="2012">Clone operation completed with warnings!\nProcessed wares: %d.\nSkipped wares: %s</t>
     </page>
   </add>
 </diff>
