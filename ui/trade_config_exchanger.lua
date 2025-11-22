@@ -496,12 +496,12 @@ local function reInitData(cloneOnly)
   data.clone.types = {}
   data.clone.wholeStation = false
   data.clone.confirmed = false
-  data.clone.waresStartIndex = 1
-  data.clone.waresCountTotal = 0
   if cloneOnly then
     return
   end
   data.content = {}
+  data.waresStartIndex = 1
+  data.waresCountTotal = 0
 end
 
 local function applyClone(menu, leftToRight)
@@ -847,14 +847,19 @@ local function render()
       row = tableContent:addRow(false)
       row[2]:setColSpan(columns - 1):createText(labels.noWaresAvailable,
         { color = Color["text_warning"], halign = "center" })
+      data.waresCountTotal = 0
+      data.waresStartIndex = 1
     else
-      local wareListStartIndex = data.clone.waresStartIndex and data.clone.waresStartIndex or 1
+      local wareListStartIndex = data.waresStartIndex and data.waresStartIndex or 1
+      if not data.waresCountTotal or data.waresCountTotal ~= #wareList then
+        wareListStartIndex = 1
+      end
       if (wareListStartIndex > #wareList) then
         wareListStartIndex = #wareList > data.waresOnScreenMax and (#wareList - data.waresOnScreenMax + 1) or 1
-        data.clone.waresStartIndex = wareListStartIndex
+        data.waresStartIndex = wareListStartIndex
       end
-      data.clone.waresCountTotal = #wareList
-      data.clone.waresStartIndex = wareListStartIndex
+      data.waresCountTotal = #wareList
+      data.waresStartIndex = wareListStartIndex
       local wareListEndIndex = math.floor(math.min(wareListStartIndex + data.waresOnScreenMax - 1, #wareList))
       for i = wareListStartIndex, wareListEndIndex do
         local ware = wareList[i]
@@ -1010,10 +1015,10 @@ local function render()
   currentY = currentY + tableContent.properties.maxVisibleHeight + Helper.borderSize
   currentTableNum = currentTableNum + 1
 
-  if data.clone.waresCountTotal > data.waresOnScreenMax then
+  if data.waresCountTotal > data.waresOnScreenMax then
     currentY = currentY + Helper.borderSize
-    local pageCount = math.ceil(data.clone.waresCountTotal / data.waresOnScreenMax)
-    local currentPage = math.ceil(data.clone.waresStartIndex / data.waresOnScreenMax)
+    local pageCount = math.ceil(data.waresCountTotal / data.waresOnScreenMax)
+    local currentPage = math.ceil(data.waresStartIndex / data.waresOnScreenMax)
     local pageInfoFormat = tostring(labels.pageInfo or "%d / %d")
     local pageInfoText = string.format(pageInfoFormat, currentPage, pageCount)
     local tablePages = frame:addTable(12, { tabOrder = currentTableNum, reserveScrollBar = false, highlightMode = "off", x = Helper.borderSize, y = currentY })
@@ -1034,13 +1039,13 @@ local function render()
     local row = tablePages:addRow(true, { fixed = true })
     row[3]:createButton({ active = currentPage > 1 }):setText("\27[widget_arrow_left_01]\27X\27[widget_arrow_left_01]\27X", { halign = "center" })
     row[3].handlers.onClick = function()
-      data.clone.waresStartIndex = 1
+      data.waresStartIndex = 1
       render()
     end
 
     row[5]:createButton({ active = currentPage > 1 }):setText("\27[widget_arrow_left_01]\27X", { halign = "center" })
     row[5].handlers.onClick = function()
-      data.clone.waresStartIndex = math.max(1, data.clone.waresStartIndex - data.waresOnScreenMax)
+      data.waresStartIndex = math.max(1, data.waresStartIndex - data.waresOnScreenMax)
       render()
     end
 
@@ -1049,14 +1054,14 @@ local function render()
     row[9]:createButton({ active = currentPage < pageCount }):setText("\27[widget_arrow_right_01]\27X", { halign = "center" })
     row[9].handlers.onClick = function()
       if currentPage < pageCount then
-        data.clone.waresStartIndex = data.clone.waresStartIndex + data.waresOnScreenMax
+        data.waresStartIndex = data.waresStartIndex + data.waresOnScreenMax
       end
       render()
     end
 
     row[11]:createButton({ active = currentPage < pageCount }):setText("\27[widget_arrow_right_01]\27X\27[widget_arrow_right_01]\27X", { halign = "center" })
     row[11].handlers.onClick = function()
-      data.clone.waresStartIndex = (pageCount - 1) * data.waresOnScreenMax + 1
+      data.waresStartIndex = (pageCount - 1) * data.waresOnScreenMax + 1
       render()
     end
 
