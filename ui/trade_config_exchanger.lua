@@ -529,6 +529,7 @@ local function applyClone(menu, leftToRight)
   end
 
   local skipped = {}
+  local processedWaresCount = 0
   for ware, parts in pairs(toClone) do
     local sourceWareData = sourceData.waresMap[ware]
     local targetWareData = targetData.waresMap[ware]
@@ -586,7 +587,6 @@ local function applyClone(menu, leftToRight)
               debugTrace("Skipping setting storage limit override for ware " .. tostring(ware) .. " on target station as computed limit is zero")
             end
           end
-          debugTrace("Cloning storage limit for ware " .. tostring(ware))
         end
         for key, value in pairs({ buy = true, sell = true }) do
           if parts[key] then
@@ -603,6 +603,14 @@ local function applyClone(menu, leftToRight)
                 C.SetContainerWareIsSellable(targetEntry.id64, ware, false)
               end
             else
+              if sourceWareData[key].allowed and (targetWareData == nil or not targetWareData[key].allowed) then
+                debugTrace("Adding " .. key .. " offer for ware " .. tostring(ware) .. " on target station")
+                if key == "buy" then
+                  C.SetContainerWareIsBuyable(targetEntry.id64, ware, true)
+                else
+                  C.SetContainerWareIsSellable(targetEntry.id64, ware, true)
+                end
+              end
               if not sourceWareData[key].priceOverride and targetWareData and targetWareData[key].priceOverride then
                 debugTrace("Clearing " .. key .. " price override for ware " .. tostring(ware) .. " on target station")
                 ClearContainerWarePriceOverride(targetEntry.id64, ware, key == "buy")
@@ -657,16 +665,17 @@ local function applyClone(menu, leftToRight)
           end
         end
       end
+      processedWaresCount = processedWaresCount + 1
     end
   end
-
+  debugTrace("Processed " .. tostring(processedWaresCount) .. " wares for cloning")
   collectTradeData(targetEntry, true)
   reInitData(true)
   if #skipped > 0 then
-    data.statusMessage = "Skipped wares: " .. table.concat(skipped, ", ")
+    data.statusMessage = string.format(tostring(ReadText(1972092405, 2002)), processedWaresCount, table.concat(skipped, ", "))
     data.statusColor = Color["text_warning"]
   else
-    data.statusMessage = "Clone operation completed successfully."
+    data.statusMessage = string.format(tostring(ReadText(1972092405, 2001)), processedWaresCount)
     data.statusColor = Color["text_success"]
   end
 end
