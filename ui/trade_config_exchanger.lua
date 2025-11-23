@@ -784,7 +784,7 @@ local function render()
     standardButtons = { close = true },
     closeOnUnhandledClick = false,
   })
-  frame:setBackground("solid", { color = Color["frame_background_semitransparent"] })
+  frame:setBackground("solid", { color = Color["frame_background_black"] })
 
   local currentY = Helper.borderSize
   local currentTableNum = 1
