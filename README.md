@@ -28,7 +28,7 @@ Stations Trade Config Exchanger allows you to exchange the trade configuration f
 
 ## Installation
 
-You can download the latest version via Steam client - [Stations Trade Config Exchanger](https://steamcommunity.com/sharedfiles/filedetails/?id=)
+You can download the latest version via Steam client - [Stations Trade Config Exchanger](https://steamcommunity.com/sharedfiles/filedetails/?id=3611019773)
 Or you can do it via the Nexus Mods - [Stations Trade Config Exchanger](https://www.nexusmods.com/x4foundations/mods/1891)
 
 ## Usage
