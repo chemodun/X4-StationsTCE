@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Polish -->
+<diff>
+  <add sel="/language">
+    <page id="1972092405" voice="no" title="Wymiennik Konfiguracji Handlowej" descr="Tekst dla Wymiennika Konfiguracji Handlowej">
+      <t id="1">Wymiennik Konfiguracji Handlowej</t>
+      <t id="2">Wymiennik Konfiguracji Handlowej pozwala przenieść konfigurację handlową z jednej stacji na inną. Przydaje się, gdy chcesz mieć tę samą
+        konfigurację handlową na kilku stacjach.</t>
+      <t id="1001">Stacyjny Wymiennik Konfiguracji Handlowej</t>
+      <t id="1011">Stacja Pierwsza</t>
+      <t id="1012">Stacja Druga</t>
+      <t id="1019">Brak pasujących stacji</t>
+      <t id="1101">Towar</t>
+      <t id="1102">Przydział magazynu</t>
+      <t id="1103">Reguła handlu</t>
+      <t id="1104">Cena</t>
+      <t id="1105">Ilość</t>
+      <t id="1111">Oferta kupna / Oferta sprzedaży</t>
+      <t id="1121">Surowce</t>
+      <t id="1122">Półprodukty</t>
+      <t id="1123">Produkty</t>
+      <t id="1124">Towary handlowe</t>
+      <t id="1201">Wybierz Stację Pierwszą, aby rozpocząć</t>
+      <t id="1202">Wybierz Stację Drugą, aby kontynuować</t>
+      <t id="1203">Brak towarów do zarządzania</t>
+      <t id="1211">Automatycznie</t>
+      <t id="1212">Brak oferty kupna</t>
+      <t id="1213">Brak oferty sprzedaży</t>
+      <t id="1301">Strona %d z %d</t>
+      <t id="1401">Potwierdź przed rozpoczęciem klonowania</t>
+      <t id="1411">Klonuj</t>
+      <t id="1419">Anuluj</t>
+      <t id="2001">Najpierw wybierz Stację Pierwszą i Stację Drugą!</t>
+      <t id="2002">Nie wybrano żadnych towarów do sklonowania!</t>
+      <t id="2011">Operacja klonowania zakończona pomyślnie!
+        Przetworzone towary: %d.</t>
+      <t id="2012">Operacja klonowania zakończona z ostrzeżeniami!
+        Przetworzone towary: %d.
+        Pominięte towary: %s</t>
+      <t id="2101">Wybrano:
+        Pełne towary: %d.
+        Oddzielne atrybuty:
+        - przydziały magazynowe: %d;
+        - oferty kupna: %d;
+        - oferty sprzedaży: %d.</t>
+    </page>
+  </add>
+</diff>

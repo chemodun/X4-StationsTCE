@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Turkish -->
+<diff>
+  <add sel="/language">
+    <page id="1972092405" voice="no" title="Ticaret Yapılandırma Değiştirici" descr="Ticaret Yapılandırma Değiştiricisi için metin">
+      <t id="1">Ticaret Yapılandırma Değiştirici</t>
+      <t id="2">Ticaret Yapılandırma Değiştirici, bir istasyonun ticaret yapılandırmasını başka bir istasyona aktarmanızı sağlar. Birden fazla istasyonda aynı
+        ticaret yapılandırmasını kullanmak istediğinizde faydalıdır.</t>
+      <t id="1001">İstasyonlar Ticaret Yapılandırma Değiştiricisi</t>
+      <t id="1011">İstasyon Bir</t>
+      <t id="1012">İstasyon İki</t>
+      <t id="1019">Eşleşen istasyon yok</t>
+      <t id="1101">Mal</t>
+      <t id="1102">Depolama tahsisi</t>
+      <t id="1103">Ticaret kuralı</t>
+      <t id="1104">Fiyat</t>
+      <t id="1105">Miktar</t>
+      <t id="1111">Alım teklifi / Satım teklifi</t>
+      <t id="1121">Kaynaklar</t>
+      <t id="1122">Ara ürünler</t>
+      <t id="1123">Ürünler</t>
+      <t id="1124">Ticaret malları</t>
+      <t id="1201">Başlamak için İstasyon Bir'i seçin</t>
+      <t id="1202">Devam etmek için İstasyon İki'yi seçin</t>
+      <t id="1203">Yönetilecek mal yok</t>
+      <t id="1211">Otomatik</t>
+      <t id="1212">Alım teklifi yok</t>
+      <t id="1213">Satım teklifi yok</t>
+      <t id="1301">Sayfa %d / %d</t>
+      <t id="1401">Klonlamaya devam etmeden önce onaylayın</t>
+      <t id="1411">Klonla</t>
+      <t id="1419">İptal</t>
+      <t id="2001">Önce İstasyon Bir ve İstasyon İki'yi seçin!</t>
+      <t id="2002">Klonlamak için hiçbir mal seçilmedi!</t>
+      <t id="2011">Klonlama işlemi başarıyla tamamlandı!
+        İşlenen mallar: %d.</t>
+      <t id="2012">Klonlama işlemi uyarılarla tamamlandı!
+        İşlenen mallar: %d.
+        Atlanan mallar: %s</t>
+      <t id="2101">Seçili:
+        Tam mallar: %d.
+        Ayrı nitelikler:
+        - depolama tahsisleri: %d;
+        - alım teklifleri: %d;
+        - satım teklifleri: %d.</t>
+    </page>
+  </add>
+</diff>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Portuguese -->
+<diff>
+  <add sel="/language">
+    <page id="1972092405" voice="no" title="Trocador de Configuração Comercial" descr="Texto para o Trocador de Configuração Comercial">
+      <t id="1">Trocador de Configuração Comercial</t>
+      <t id="2">O Trocador de Configuração Comercial permite transferir a configuração comercial de uma estação para outra. É útil quando você deseja usar a
+        mesma configuração comercial em várias estações.</t>
+      <t id="1001">Trocador de Configuração Comercial das Estações</t>
+      <t id="1011">Estação Um</t>
+      <t id="1012">Estação Dois</t>
+      <t id="1019">Nenhuma estação correspondente</t>
+      <t id="1101">Mercadoria</t>
+      <t id="1102">Alocação de armazenamento</t>
+      <t id="1103">Regra comercial</t>
+      <t id="1104">Preço</t>
+      <t id="1105">Quantidade</t>
+      <t id="1111">Oferta de compra / Oferta de venda</t>
+      <t id="1121">Recursos</t>
+      <t id="1122">Intermediários</t>
+      <t id="1123">Produtos</t>
+      <t id="1124">Mercadorias de comércio</t>
+      <t id="1201">Selecione Estação Um para começar</t>
+      <t id="1202">Selecione Estação Dois para continuar</t>
+      <t id="1203">Nenhuma mercadoria disponível para gerenciar</t>
+      <t id="1211">Automático</t>
+      <t id="1212">Sem oferta de compra</t>
+      <t id="1213">Sem oferta de venda</t>
+      <t id="1301">Página %d de %d</t>
+      <t id="1401">Confirme antes de prosseguir com a clonagem</t>
+      <t id="1411">Clonar</t>
+      <t id="1419">Cancelar</t>
+      <t id="2001">Selecione primeiro Estação Um e Estação Dois!</t>
+      <t id="2002">Nenhuma mercadoria selecionada para clonar!</t>
+      <t id="2011">Operação de clonagem concluída com sucesso!
+        Mercadorias processadas: %d.</t>
+      <t id="2012">Operação de clonagem concluída com avisos!
+        Mercadorias processadas: %d.
+        Mercadorias ignoradas: %s</t>
+      <t id="2101">Selecionado:
+        Mercadorias completas: %d.
+        Atributos separados:
+        - alocações de armazenamento: %d;
+        - ofertas de compra: %d;
+        - ofertas de venda: %d.</t>
+    </page>
+  </add>
+</diff>

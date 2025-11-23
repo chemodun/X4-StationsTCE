@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Italian -->
+<diff>
+  <add sel="/language">
+    <page id="1972092405" voice="no" title="Scambiatore di Configurazione Commerciale" descr="Testo per lo Scambiatore di Configurazione Commerciale">
+      <t id="1">Scambiatore di Configurazione Commerciale</t>
+      <t id="2">Lo Scambiatore di Configurazione Commerciale consente di trasferire la configurazione commerciale da una stazione all'altra. È utile quando
+        desideri avere la stessa configurazione commerciale per più stazioni.</t>
+      <t id="1001">Scambiatore di Configurazione Commerciale delle Stazioni</t>
+      <t id="1011">Stazione Uno</t>
+      <t id="1012">Stazione Due</t>
+      <t id="1019">Nessuna stazione corrispondente</t>
+      <t id="1101">Merce</t>
+      <t id="1102">Allocazione dello stoccaggio</t>
+      <t id="1103">Regola commerciale</t>
+      <t id="1104">Prezzo</t>
+      <t id="1105">Quantità</t>
+      <t id="1111">Offerta di acquisto / Offerta di vendita</t>
+      <t id="1121">Risorse</t>
+      <t id="1122">Intermedi</t>
+      <t id="1123">Prodotti</t>
+      <t id="1124">Merci commerciali</t>
+      <t id="1201">Seleziona Stazione Uno per iniziare</t>
+      <t id="1202">Seleziona Stazione Due per continuare</t>
+      <t id="1203">Nessuna merce disponibile da gestire</t>
+      <t id="1211">Automatico</t>
+      <t id="1212">Nessuna offerta di acquisto</t>
+      <t id="1213">Nessuna offerta di vendita</t>
+      <t id="1301">Pagina %d di %d</t>
+      <t id="1401">Conferma prima di procedere con la clonazione</t>
+      <t id="1411">Clona</t>
+      <t id="1419">Annulla</t>
+      <t id="2001">Seleziona prima Stazione Uno e Stazione Due!</t>
+      <t id="2002">Nessuna merce selezionata da clonare!</t>
+      <t id="2011">Operazione di clonazione completata con successo!
+        Merci elaborate: %d.</t>
+      <t id="2012">Operazione di clonazione completata con avvisi!
+        Merci elaborate: %d.
+        Merci saltate: %s</t>
+      <t id="2101">Selezionato:
+        Merci complete: %d.
+        Attributi separati:
+        - allocazioni di stoccaggio: %d;
+        - offerte di acquisto: %d;
+        - offerte di vendita: %d.</t>
+    </page>
+  </add>
+</diff>

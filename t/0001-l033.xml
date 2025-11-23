@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- French -->
+<diff>
+  <add sel="/language">
+    <page id="1972092405" voice="no" title="Échangeur de Configuration Commerciale" descr="Texte pour l'Échangeur de Configuration Commerciale">
+      <t id="1">Échangeur de Configuration Commerciale</t>
+      <t id="2">L'Échangeur de Configuration Commerciale vous permet de transférer la configuration commerciale d'une station à une autre. Il est utile lorsque
+        vous souhaitez appliquer la même configuration commerciale à plusieurs stations.</t>
+      <t id="1001">Échangeur de Configuration Commerciale des Stations</t>
+      <t id="1011">Station Un</t>
+      <t id="1012">Station Deux</t>
+      <t id="1019">Aucune station correspondante</t>
+      <t id="1101">Marchandise</t>
+      <t id="1102">Allocation d'espace de stockage</t>
+      <t id="1103">Règle commerciale</t>
+      <t id="1104">Prix</t>
+      <t id="1105">Quantité</t>
+      <t id="1111">Offre d'achat / Offre de vente</t>
+      <t id="1121">Ressources</t>
+      <t id="1122">Intermédiaires</t>
+      <t id="1123">Produits</t>
+      <t id="1124">Marchandises commerciales</t>
+      <t id="1201">Sélectionnez Station Un pour commencer</t>
+      <t id="1202">Sélectionnez Station Deux pour continuer</t>
+      <t id="1203">Aucune marchandise à gérer</t>
+      <t id="1211">Auto</t>
+      <t id="1212">Aucune offre d'achat</t>
+      <t id="1213">Aucune offre de vente</t>
+      <t id="1301">Page %d sur %d</t>
+      <t id="1401">Confirmez avant de lancer la copie</t>
+      <t id="1411">Cloner</t>
+      <t id="1419">Annuler</t>
+      <t id="2001">Sélectionnez d'abord Station Un et Station Deux !</t>
+      <t id="2002">Aucune marchandise sélectionnée pour la copie !</t>
+      <t id="2011">Opération de copie terminée avec succès !
+        Marchandises traitées : %d.</t>
+      <t id="2012">Opération de copie terminée avec avertissements !
+        Marchandises traitées : %d.
+        Marchandises ignorées : %s</t>
+      <t id="2101">Sélection :
+        Marchandises complètes : %d.
+        Attributs séparés :
+        - allocations de stockage : %d ;
+        - offres d'achat : %d ;
+        - offres de vente : %d.</t>
+    </page>
+  </add>
+</diff>
