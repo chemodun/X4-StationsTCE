@@ -1,0 +1,147 @@
+[size=4][u]Stations Trade Config Exchanger[/u][/size]
+
+Stations Trade Config Exchanger allows you to exchange the trade configuration from one station to another. It is useful when you want to have the same trade configuration for several stations.
+
+[size=3][u][b]Features[/b][/u][/size]
+[list]
+[*] Transfer trade configuration between stations.
+[*] Can work with production and trading stations.
+[*] Allows selecting wares by groups: Resources, Intermediates, Products, Trade Wares.
+[*] Allows apply the entire ware configuration or only selectable trade ware aspects: Storage allocation, Buy order, Sell order.
+[*] Filters Station Two list to show only stations compatible with the Station One trade configuration.
+[/list]
+[size=3][u][b]Limitations[/b][/u][/size]
+[list]
+[*] Can't work with stations contained the ships factory modules, i.e. with Shipyards and Wharfs.
+[*] Identifies trading stations as stations with cargo bays and without production modules. I.e. if your defence platform has cargo modules - it's will be identified as trading station.
+[/list]
+[size=3][u][b]Requirements[/b][/u][/size]
+[list]
+[*] [b]X4: Foundations[/b] 7.60 or newer (tested on 7.60 and 8.00).
+[*] [b]Mod Support APIs[/b] by [url=https://next.nexusmods.com/profile/sirnukes?gameId=2659]SirNukes[/url] to be installed and enabled. Version [b]1.93[/b] and upper is required.
+[list]
+[*] It is available via Steam - [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2042901274]SirNukes Mod Support APIs[/url]
+[*] Or via the Nexus Mods - [url=https://www.nexusmods.com/x4foundations/mods/503]Mod Support APIs[/url]
+[/list]
+[/list]
+[size=3][u][b]Caution[/b][/u][/size]
+
+[b]Please, be aware that is first public release version of the Stations Trade Config Exchanger mod. Although it was tested in several scenarios, there may be some unforeseen issues or bugs.[/b]
+
+[size=3][u][b]Installation[/b][/u][/size]
+
+You can download the latest version via Steam client - [url=https://steamcommunity.com/sharedfiles/filedetails/?id=]Stations Trade Config Exchanger[/url]
+Or you can do it via the Nexus Mods - [url=https://www.nexusmods.com/x4foundations/mods/1891]Stations Trade Config Exchanger[/url]
+
+[size=3][u][b]Usage[/b][/u][/size]
+
+[size=3][u][i]How to call the Trade Config Exchanger UI[/i][/u][/size]
+
+You can open the Trade Config Exchanger UI from the Stations Context Menu.
+
+To do this, simply select a station on a [b]Map[/b] or from [b]Property Owned[/b] list, then right-click on it, and select [b]Trade Config Exchanger[/b] from the context menu.
+
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/select_from_context_menu.png[/img]
+
+[size=3][u][i]Trade Config Exchanger UI[/i][/u][/size]
+
+The Trade Config Exchanger UI allows you to select the Station One and Station Two, and configure how the trade configuration will be exchanged between them.
+
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/initial_screen_for_production_station.png[/img]
+
+At the beginning only the Station One is selected, based on your previous selection. After selecting it, the Station Two selection will be enabled.
+
+[size=3][u][i]Station Two selection[/i][/u][/size]
+
+Only compatible stations will be shown in the Station Two list. It is determined based on the production configurations of the stations. It is made based on Intermediates and Products wares.
+
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/station_two_selection_for_production_station.png[/img]
+
+[size=3][u][i]Station Two selection for trading stations[/i][/u][/size]
+
+When you open the Trade Config Exchanger UI from a trading station, the Station One will be preselected as the trading station, and the Station Two list will be filtered to show only compatible stations.
+
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/station_two_selection_for_trade_station.png[/img]
+
+[size=3][u][i]Selecting what to exchange (clone)[/i][/u][/size]
+
+After selecting both stations, you can choose what to exchange (clone) between them.
+
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/screen_after_both_stations_selected.png[/img]
+
+You can choose to exchange (clone) the items with the different level of detail:
+[list]
+[*] Per Ware Group: Resources, Intermediates, Products, Trade Wares.
+[/list]
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/selected_resources_group_of_wares.png[/img]
+[list]
+[*] Per single ware.
+[/list]
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/selected_single_whole_ware.png[/img]
+[list]
+[*] Per ware trade configuration aspect: Storage Allocation, Buy Order, Sell Order.
+[/list]
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/selected_different_aspects_in_different_wares.png[/img]
+
+[size=3][u][i]Executing the exchange (clone)[/i][/u][/size]
+
+After selecting what to exchange (clone), you should select a confirmation checkbox, [b]Confirm before proceeding with cloning[/b], and then click appropriate button:
+[list]
+[*] [b]Clone >[/b] to clone the trade configuration from the Station One to the Station Two.
+[*] [b]< Clone[/b] to clone the trade configuration from the Station Two to the Station One.
+[/list]
+[size=3][u]Cloning example from Station One to Two Station[/u][/size]
+
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/from_one_to_two_before_cloning.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/from_one_to_two_after_cloning.png[/img]
+
+[size=3][u]Cloning example from Station Two to One Station[/u][/size]
+
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/from_two_to_one_before_cloning.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/from_two_to_one_after_cloning.png[/img]
+
+[size=3][u]Trade Stations "Full" Cloning Examples[/u][/size]
+
+[size=2][u][i]Cloning from configured to "empty" trade station[/i][/u][/size]
+
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/empty_station_before.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/full_to_empty_before_page_one.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/full_to_empty_before_page_two.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/full_to_empty_before_page_two_ready.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/full_to_empty_after_page_two.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/empty_station_after.png[/img]
+
+[size=2][u][i]Cloning from "empty" to configured trade station[/i][/u][/size]
+
+In this example will be cloned all "empty" wares except first and last wares that will be left unchanged.
+
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/empty_to_full_before_page_one.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/empty_to_full_before_page_two.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/empty_to_full_after.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/full_station_after.png[/img]
+
+[size=3][u][b]Video[/b][/u][/size]
+
+Video demonstration of the Stations Trade Config Exchanger. Version 1.00
+[youtube]cWfU4Az8yAo[/youtube]
+
+[size=3][u][b]Credits[/b][/u][/size]
+[list]
+[*] Author: Chem O`Dun, on [url=https://next.nexusmods.com/profile/ChemODun/mods?gameId=2659]Nexus Mods[/url] and [url=https://steamcommunity.com/id/chemodun/myworkshopfiles/?appid=392160]Steam Workshop[/url]
+[*] [i]"X4: Foundations"[/i] is a trademark of [url=https://www.egosoft.com]Egosoft[/url].
+[/list]
+[size=3][u][b]Acknowledgements[/b][/u][/size]
+[list]
+[*] [url=https://www.egosoft.com]EGOSOFT[/url] — for the X series.
+[*] [url=https://next.nexusmods.com/profile/sirnukes?gameId=2659]SirNukes[/url] — for the Mod Support APIs that power the UI hooks.
+[*] [url=https://next.nexusmods.com/profile/Forleyor?gameId=2659]Forleyor[/url] — for his constant help with understanding the UI modding!
+[/list]
+[size=3][u][b]Changelog[/b][/u][/size]
+
+[size=3][u][i][1.00] - 2025-11-23[/i][/u][/size]
+[list]
+[*] Added
+[list]
+[*] Initial public version
+[/list]
+[/list]
