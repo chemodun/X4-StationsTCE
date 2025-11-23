@@ -40,7 +40,7 @@ ffi.cdef [[
 local menu = nil
 local playerId = nil
 
-local labels = {
+local texts = {
   title = ReadText(1972092405, 1001),
   stationOne = ReadText(1972092405, 1011),
   stationTwo = ReadText(1972092405, 1012),
@@ -68,6 +68,11 @@ local labels = {
   confirmClone = ReadText(1972092405, 1401),
   cloneButton = ReadText(1972092405, 1411),
   cancelButton = ReadText(1972092405, 1419),
+  statusNoStationSelected = ReadText(1972092405, 2001),
+  statusNoWaresAvailable = ReadText(1972092405, 2002),
+  statusClonedWithWarnings = ReadText(1972092405, 2012),
+  statusSuccess = ReadText(1972092405, 2011),
+  statusSelectionInfo = ReadText(1972092405, 2101),
 }
 
 
@@ -378,21 +383,21 @@ end
 
 local function formatNumber(value, override)
   if not override then
-    return labels.auto
+    return texts.auto
   end
   return ConvertIntegerString(value, true, 12, true)
 end
 
 local function formatNumberWithPercentage(limit, percentage, override)
   if not override then
-    return labels.auto
+    return texts.auto
   end
   return ConvertIntegerString(limit, true, 12, true) .. " (" .. string.format("%05.2f%%", percentage) .. ")"
 end
 
 local function formatPrice(value, override)
   if not override then
-    return labels.auto
+    return texts.auto
   end
   local amount = ConvertMoneyString(value, true, true, 2, true)
   return amount
@@ -512,7 +517,7 @@ local function applyClone(menu, leftToRight)
   local stationOneEntry = data.selectedStationOne and data.stations[data.selectedStationOne]
   local stationTwoEntry = data.selectedStationTwo and data.stations[data.selectedStationTwo]
   if not stationOneEntry or not stationTwoEntry then
-    data.statusMessage = ReadText(1972092405, 2001)
+    data.statusMessage = texts.statusNoStationSelected
     data.statusColor = Color["text_warning"]
     return
   end
@@ -523,7 +528,7 @@ local function applyClone(menu, leftToRight)
   local targetData = collectTradeData(targetEntry)
   local toClone = data.clone.wares
   if toClone == nil or data.clone.confirmed ~= true then
-    data.statusMessage = ReadText(1972092405, 2002)
+    data.statusMessage = texts.statusNoWaresAvailable
     data.statusColor = Color["text_warning"]
     return
   end
@@ -672,10 +677,10 @@ local function applyClone(menu, leftToRight)
   collectTradeData(targetEntry, true)
   reInitData(true)
   if #skipped > 0 then
-    data.statusMessage = string.format(tostring(ReadText(1972092405, 2012)), processedWaresCount, table.concat(skipped, ", "))
+    data.statusMessage = string.format(tostring(texts.statusClonedWithWarnings), processedWaresCount, table.concat(skipped, ", "))
     data.statusColor = Color["text_warning"]
   else
-    data.statusMessage = string.format(tostring(ReadText(1972092405, 2011)), processedWaresCount)
+    data.statusMessage = string.format(tostring(texts.statusSuccess), processedWaresCount)
     data.statusColor = Color["text_success"]
   end
 end
@@ -694,7 +699,7 @@ end
 local function renderOffer(row, offerData, isBuy, isStationOne)
   local idx = isStationOne and 2 or 8
   if (offerData == nil) or (not offerData.allowed) or (row == nil) then
-    row[idx]:setColSpan(6):createText(isBuy and labels.noBuyOffer or labels.noSellOffer, { halign = "center" })
+    row[idx]:setColSpan(6):createText(isBuy and texts.noBuyOffer or texts.noSellOffer, { halign = "center" })
     return
   end
   row[idx]:createText(overrideIcons[offerData.priceOverride], overrideIconsTextProperties[offerData.priceOverride])
@@ -703,6 +708,34 @@ local function renderOffer(row, offerData, isBuy, isStationOne)
   row[idx + 3]:createText(formatNumberWithPercentage(offerData.limit, offerData.limitPercentage, offerData.limitOverride), optionsNumber(offerData.limitOverride))
   row[idx + 4]:createText(overrideIcons[offerData.ruleOverride], overrideIconsTextProperties[offerData.ruleOverride])
   row[idx + 5]:createText(formatTradeRuleLabel(offerData.rule, offerData.ruleOverride, offerData.ruleRoot), optionsRule(offerData.ruleOverride))
+end
+
+local function countCloneSelections(data)
+  local count = {
+    full = 0,
+    storage = 0,
+    buy = 0,
+    sell = 0,
+  }
+  if type(data) ~= "table" or type(data.clone) ~= "table" or type(data.clone.wares) ~= "table" then
+    return count
+  end
+  for ware, parts in pairs(data.clone.wares) do
+    if (parts.storage and parts.buy and parts.sell) then
+      count.full = count.full + 1
+    else
+      if parts.storage then
+        count.storage = count.storage + 1
+      end
+      if parts.buy then
+        count.buy = count.buy + 1
+      end
+      if parts.sell then
+        count.sell = count.sell + 1
+      end
+    end
+  end
+  return count
 end
 
 local function setMainTableColumnsWidth(tableHandle)
@@ -761,12 +794,12 @@ local function render()
   setMainTableColumnsWidth(tableTop)
 
   local row = tableTop:addRow(false, { fixed = true })
-  row[1]:setColSpan(columns):createText(labels.title, Helper.headerRowCenteredProperties)
+  row[1]:setColSpan(columns):createText(texts.title, Helper.headerRowCenteredProperties)
 
 
   row = tableTop:addRow(false, { fixed = true })
-  row[2]:setColSpan(6):createText(labels.stationOne, Helper.headerRowCenteredProperties)
-  row[8]:setColSpan(6):createText(labels.stationTwo, Helper.headerRowCenteredProperties)
+  row[2]:setColSpan(6):createText(texts.stationOne, Helper.headerRowCenteredProperties)
+  row[8]:setColSpan(6):createText(texts.stationTwo, Helper.headerRowCenteredProperties)
   row = tableTop:addRow(true, { fixed = true })
   row[1]:createText("")
   debugTrace("Rendering station One DropDown with " .. tostring(#data.stationOneOptions) .. " options, selected: " .. tostring(data.selectedStationOne))
@@ -791,7 +824,7 @@ local function render()
   row[8]:setColSpan(6):createDropDown(data.stationTwoOptions, {
     startOption = data.selectedStationTwo or -1,
     active = #data.stationTwoOptions > 0,
-    textOverride = (#data.stationTwoOptions == 0) and labels.noMatchingStations or nil,
+    textOverride = (#data.stationTwoOptions == 0) and texts.noMatchingStations or nil,
   })
   row[8]:setTextProperties({ halign = "left", color = Color["text_positive"] })
   row[8]:setText2Properties({ halign = "right" })
@@ -804,28 +837,28 @@ local function render()
 
 
   row = tableTop:addRow(false, { fixed = true })
-  row[2]:setColSpan(3):createText(labels.ware, tableHeadersTextProperties)
-  row[5]:createText(labels.amount, tableHeadersTextProperties)
-  row[6]:createText(labels.auto, tableHeadersTextProperties)
-  row[7]:createText(labels.storage, tableHeadersTextProperties)
-  row[11]:createText(labels.amount, tableHeadersTextProperties)
-  row[12]:createText(labels.auto, tableHeadersTextProperties)
-  row[13]:createText(labels.storage, tableHeadersTextProperties)
+  row[2]:setColSpan(3):createText(texts.ware, tableHeadersTextProperties)
+  row[5]:createText(texts.amount, tableHeadersTextProperties)
+  row[6]:createText(texts.auto, tableHeadersTextProperties)
+  row[7]:createText(texts.storage, tableHeadersTextProperties)
+  row[11]:createText(texts.amount, tableHeadersTextProperties)
+  row[12]:createText(texts.auto, tableHeadersTextProperties)
+  row[13]:createText(texts.storage, tableHeadersTextProperties)
   row = tableTop:addRow(false, { fixed = true })
-  row[2]:setColSpan(12):createText(labels.buyOfferSellOffer, tableHeadersTextProperties)
+  row[2]:setColSpan(12):createText(texts.buyOfferSellOffer, tableHeadersTextProperties)
   row = tableTop:addRow(false, { fixed = true })
-  row[2]:createText(labels.auto, tableHeadersTextProperties)
-  row[3]:createText(labels.price, tableHeadersTextProperties)
-  row[4]:createText(labels.auto, tableHeadersTextProperties)
-  row[5]:createText(labels.amount, tableHeadersTextProperties)
-  row[6]:createText(labels.auto, tableHeadersTextProperties)
-  row[7]:createText(labels.rule, tableHeadersTextProperties)
-  row[8]:createText(labels.auto, tableHeadersTextProperties)
-  row[9]:createText(labels.price, tableHeadersTextProperties)
-  row[10]:createText(labels.auto, tableHeadersTextProperties)
-  row[11]:createText(labels.amount, tableHeadersTextProperties)
-  row[12]:createText(labels.auto, tableHeadersTextProperties)
-  row[13]:createText(labels.rule, tableHeadersTextProperties)
+  row[2]:createText(texts.auto, tableHeadersTextProperties)
+  row[3]:createText(texts.price, tableHeadersTextProperties)
+  row[4]:createText(texts.auto, tableHeadersTextProperties)
+  row[5]:createText(texts.amount, tableHeadersTextProperties)
+  row[6]:createText(texts.auto, tableHeadersTextProperties)
+  row[7]:createText(texts.rule, tableHeadersTextProperties)
+  row[8]:createText(texts.auto, tableHeadersTextProperties)
+  row[9]:createText(texts.price, tableHeadersTextProperties)
+  row[10]:createText(texts.auto, tableHeadersTextProperties)
+  row[11]:createText(texts.amount, tableHeadersTextProperties)
+  row[12]:createText(texts.auto, tableHeadersTextProperties)
+  row[13]:createText(texts.rule, tableHeadersTextProperties)
 
   tableTop:addEmptyRow(Helper.standardTextHeight / 2, { fixed = true })
 
@@ -842,7 +875,7 @@ local function render()
   if stationOneEntry == nil then
     debugTrace("No stations are selected")
     row = tableContent:addRow(false)
-    row[2]:setColSpan(columns - 1):createText(labels.selectStationOnePrompt,
+    row[2]:setColSpan(columns - 1):createText(texts.selectStationOnePrompt,
       { color = Color["text_warning"], halign = "center" })
   else
     debugTrace("Station One: " .. tostring(stationOneEntry.displayName) .. " (" .. tostring(stationOneEntry.id64) .. ")")
@@ -854,7 +887,7 @@ local function render()
     local wareType = nil
     if #wareList == 0 then
       row = tableContent:addRow(false)
-      row[2]:setColSpan(columns - 1):createText(labels.noWaresAvailable,
+      row[2]:setColSpan(columns - 1):createText(texts.noWaresAvailable,
         { color = Color["text_warning"], halign = "center" })
       data.waresCountTotal = 0
       data.waresStartIndex = 1
@@ -915,14 +948,14 @@ local function render()
               data.statusMessage = nil
               render()
             end
-            typeRow[2]:setColSpan(columns - 1):createText(labels[wareType], { font = Helper.standardFontBold, halign = "center", color = Color["equipmentmod_quality_exceptional"] })
+            typeRow[2]:setColSpan(columns - 1):createText(texts[wareType], { font = Helper.standardFontBold, halign = "center", color = Color["equipmentmod_quality_exceptional"] })
             tableContent:addEmptyRow(Helper.standardTextHeight / 2)
           end
           if data.clone.wares[ware.ware] == nil then
             data.clone.wares[ware.ware] = { storage = false, buy = false, sell = false }
           end
           local textDelimiter = tableContent:addRow(false, { interactive = false })
-          textDelimiter[2]:setColSpan(columns - 1):createText(labels.ware, textDelimiterTextProperties)
+          textDelimiter[2]:setColSpan(columns - 1):createText(texts.ware, textDelimiterTextProperties)
           local row = tableContent:addRow(true)
           if data.clone.wares[ware.ware].storage then
             selectedCount = selectedCount + 1
@@ -954,11 +987,11 @@ local function render()
             renderStorage(row, stationTwoInfo, false)
           elseif stationTwoData == nil then
             if i == 1 then
-              row[8]:setColSpan(6):createText(labels.selectStationTwoPrompt, { color = Color["text_warning"], halign = "center" })
+              row[8]:setColSpan(6):createText(texts.selectStationTwoPrompt, { color = Color["text_warning"], halign = "center" })
             end
           end
           textDelimiter = tableContent:addRow(false, { interactive = false })
-          textDelimiter[2]:setColSpan(columns - 1):createText(labels.buyOffer, textDelimiterTextProperties)
+          textDelimiter[2]:setColSpan(columns - 1):createText(texts.buyOffer, textDelimiterTextProperties)
           local row = tableContent:addRow(true)
           if data.clone.wares[ware.ware].buy then
             selectedCount = selectedCount + 1
@@ -983,7 +1016,7 @@ local function render()
             renderOffer(row, stationTwoInfo.buy, true, false)
           end
           textDelimiter = tableContent:addRow(false, { interactive = false })
-          textDelimiter[2]:setColSpan(columns - 1):createText(labels.sellOffer, textDelimiterTextProperties)
+          textDelimiter[2]:setColSpan(columns - 1):createText(texts.sellOffer, textDelimiterTextProperties)
           local row = tableContent:addRow(true, { borderBelow = true })
           if data.clone.wares[ware.ware].sell then
             selectedCount = selectedCount + 1
@@ -1038,7 +1071,7 @@ local function render()
     currentY = currentY + Helper.borderSize
     local pageCount = math.ceil(data.waresCountTotal / data.waresOnScreenMax)
     local currentPage = math.ceil(data.waresStartIndex / data.waresOnScreenMax)
-    local pageInfoFormat = tostring(labels.pageInfo or "%d / %d")
+    local pageInfoFormat = tostring(texts.pageInfo or "%d / %d")
     local pageInfoText = string.format(pageInfoFormat, currentPage, pageCount)
     local tablePages = frame:addTable(12, { tabOrder = currentTableNum, reserveScrollBar = false, highlightMode = "off", x = Helper.borderSize, y = currentY })
     tablePages:setColWidth(1, Helper.standardTextHeight, false)
@@ -1109,7 +1142,7 @@ local function render()
     data.statusMessage = nil
     render()
   end
-  row[5]:setColSpan(2):createText(labels.confirmClone, { halign = "left" })
+  row[5]:setColSpan(2):createText(texts.confirmClone, { halign = "left" })
 
   currentY = currentY + tableConfirm:getFullHeight() + Helper.borderSize * 2
   currentTableNum = currentTableNum + 1
@@ -1126,7 +1159,7 @@ local function render()
 
   row = tableBottom:addRow(true, { fixed = true })
 
-  row[4]:createButton({ active = selectedCount > 0 and data.clone.confirmed }):setText(labels.cloneButton .. "  \27[widget_arrow_right_01]\27X",
+  row[4]:createButton({ active = selectedCount > 0 and data.clone.confirmed }):setText(texts.cloneButton .. "  \27[widget_arrow_right_01]\27X",
     { halign = "center" })
   row[4].handlers.onClick = function()
     if selectedCount > 0 then
@@ -1134,7 +1167,7 @@ local function render()
       render()
     end
   end
-  row[6]:createButton({ active = selectedCount > 0 and data.clone.confirmed }):setText("\27[widget_arrow_left_01]\27X  " .. labels.cloneButton,
+  row[6]:createButton({ active = selectedCount > 0 and data.clone.confirmed }):setText("\27[widget_arrow_left_01]\27X  " .. texts.cloneButton,
     { halign = "center" })
   row[6].handlers.onClick = function()
     if selectedCount > 0 then
@@ -1142,9 +1175,19 @@ local function render()
       render()
     end
   end
-  row[8]:createButton({}):setText(labels.cancelButton, { halign = "center" })
+  row[8]:createButton({}):setText(texts.cancelButton, { halign = "center" })
   row[8].handlers.onClick = function()
     menu.closeContextMenu()
+  end
+
+  local cloneCounts = countCloneSelections(data)
+  if cloneCounts and (cloneCounts.full + cloneCounts.storage + cloneCounts.buy + cloneCounts.sell > 0) then
+    data.statusMessage = string.format(tostring(texts.statusSelectionInfo or ""),
+      tostring(cloneCounts.full),
+      tostring(cloneCounts.storage),
+      tostring(cloneCounts.buy),
+      tostring(cloneCounts.sell))
+    data.statusColor = Color["text_inactive"]
   end
 
   if data.statusMessage then
