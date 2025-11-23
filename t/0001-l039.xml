@@ -4,8 +4,7 @@
   <add sel="/language">
     <page id="1972092405" voice="no" title="Scambiatore di Configurazione Commerciale" descr="Testo per lo Scambiatore di Configurazione Commerciale">
       <t id="1">Scambiatore di Configurazione Commerciale</t>
-      <t id="2">Lo Scambiatore di Configurazione Commerciale consente di trasferire la configurazione commerciale da una stazione all'altra. È utile quando
-        desideri avere la stessa configurazione commerciale per più stazioni.</t>
+      <t id="2">Lo Scambiatore di Configurazione Commerciale consente di trasferire la configurazione commerciale da una stazione all'altra. È utile quando desideri avere la stessa configurazione commerciale per più stazioni.</t>
       <t id="1001">Scambiatore di Configurazione Commerciale delle Stazioni</t>
       <t id="1011">Stazione Uno</t>
       <t id="1012">Stazione Due</t>

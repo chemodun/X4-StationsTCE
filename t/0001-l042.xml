@@ -4,8 +4,7 @@
   <add sel="/language">
     <page id="1972092405" voice="no" title="Výměník Obchodního Nastavení" descr="Text pro Výměník Obchodního Nastavení">
       <t id="1">Výměník Obchodního Nastavení</t>
-      <t id="2">Výměník Obchodního Nastavení vám umožní převést obchodní nastavení z jedné stanice na druhou. Hodí se, když chcete mít stejné obchodní nastavení
-        pro více stanic.</t>
+      <t id="2">Výměník Obchodního Nastavení vám umožní převést obchodní nastavení z jedné stanice na druhou. Hodí se, když chcete mít stejné obchodní nastavení pro více stanic.</t>
       <t id="1001">Staniční Výměník Obchodního Nastavení</t>
       <t id="1011">Stanice Jedna</t>
       <t id="1012">Stanice Dva</t>
