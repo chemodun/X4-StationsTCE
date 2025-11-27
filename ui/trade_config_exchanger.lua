@@ -742,7 +742,7 @@ local function setMainTableColumnsWidth(tableHandle)
   local numberWidth = 100
   local textWidth = 180
   local overrideWidth = 40
-  local width = Helper.standardTextHeight
+  local width = Helper.scaleX(Helper.standardTextHeight)
   tableHandle:setColWidth(1, width, false)
   for i = 2, 13 do
     if i % 2 == 0 then
@@ -757,7 +757,7 @@ local function setMainTableColumnsWidth(tableHandle)
         valueWidth = textWidth
       end
       width = width + valueWidth
-      tableHandle:setColWidth(i, valueWidth, true)
+      tableHandle:setColWidth(i, valueWidth, false)
     end
   end
   return width
@@ -776,18 +776,15 @@ local function render()
 
   Helper.removeAllWidgetScripts(menu, data.layer)
 
+  local checkBoxWidth = Helper.scaleX(Helper.standardTextHeight)
   local frame = data.frameHandle
   if frame then
-    frame.properties.x = data.xoffset
-    frame.properties.y = data.yoffset
-    frame.properties.width = data.width
-    frame.properties.height = Helper.viewHeight
     frame.content = {}
   else
     frame = Helper.createFrameHandle(menu, {
-      x = data.xoffset,
-      y = data.yoffset,
-      width = data.width,
+      x = 0,
+      y = 0,
+      width = 0,
       layer = data.layer,
       standardButtons = { close = true },
       closeOnUnhandledClick = false,
@@ -1083,7 +1080,7 @@ local function render()
     local pageInfoFormat = tostring(texts.pageInfo or "%d / %d")
     local pageInfoText = string.format(pageInfoFormat, currentPage, pageCount)
     local tablePages = frame:addTable(12, { tabOrder = currentTableNum, reserveScrollBar = false, highlightMode = "off", x = Helper.borderSize, y = currentY })
-    tablePages:setColWidth(1, Helper.standardTextHeight, false)
+    tablePages:setColWidth(1, checkBoxWidth, false)
     local pageButtonWidth = 80
     local pageIntervalWidth = 30
     tablePages:setColWidthMin(2, pageButtonWidth, 2, true)
@@ -1132,13 +1129,13 @@ local function render()
 
   local tableConfirm = frame:addTable(9,
     { tabOrder = currentTableNum, reserveScrollBar = false, highlightMode = "off", x = Helper.borderSize, y = currentY })
-  local cellWidth = math.floor((tableTop.properties.width - Helper.standardTextHeight) / 8) - 3
+  local cellWidth = math.floor((tableTop.properties.width - checkBoxWidth) / 8) - 3
   for i = 1, 3 do
-    tableConfirm:setColWidth(i, cellWidth, true)
+    tableConfirm:setColWidth(i, cellWidth, false)
   end
-  tableConfirm:setColWidth(4, Helper.standardTextHeight, false)
+  tableConfirm:setColWidth(4, checkBoxWidth, false)
   for i = 5, 9 do
-    tableConfirm:setColWidth(i, cellWidth, true)
+    tableConfirm:setColWidth(i, cellWidth, false)
   end
 
   tableConfirm:addEmptyRow(Helper.standardTextHeight / 2)
@@ -1160,10 +1157,10 @@ local function render()
   local tableBottom = frame:addTable(8,
     { tabOrder = currentTableNum, reserveScrollBar = false, highlightMode = "off", x = Helper.borderSize, y = currentY })
 
-  tableBottom:setColWidth(1, Helper.standardTextHeight, false)
-  local buttonWidth = math.floor((tableTop.properties.width - Helper.standardTextHeight) / 7) - 3
+  tableBottom:setColWidth(1, checkBoxWidth, false)
+  local buttonWidth = math.floor((tableTop.properties.width - checkBoxWidth) / 7) - 3
   for i = 2, 8 do
-    tableBottom:setColWidth(i, buttonWidth, true)
+    tableBottom:setColWidth(i, buttonWidth, false)
   end
 
   row = tableBottom:addRow(true, { fixed = true })
@@ -1259,7 +1256,6 @@ local function show()
   local data = {
     mode = "trade_config_exchanger",
     layer = menu.contextFrameLayer or 2,
-    width = Helper.viewWidth - Helper.standardTextHeight * 2,
     contentHeight = math.floor(Helper.viewHeight * 0.6),
     waresOnScreenMax = 30,
   }
