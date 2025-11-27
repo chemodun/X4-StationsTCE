@@ -41,13 +41,13 @@ You can open the Trade Config Exchanger UI from the Stations Context Menu.
 
 To do this, simply select a station on a [b]Map[/b] or from [b]Property Owned[/b] list, then right-click on it, and select [b]Trade Config Exchanger[/b] from the context menu.
 
-[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/select_from_context_menu.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTCE/refs/heads/main/docs/images/select_from_context_menu.png[/img]
 
 [h2]Trade Config Exchanger UI[/h2]
 
 The Trade Config Exchanger UI allows you to select the Station One and Station Two, and configure how the trade configuration will be exchanged between them.
 
-[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/initial_screen_for_production_station.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTCE/refs/heads/main/docs/images/initial_screen_for_production_station.png[/img]
 
 At the beginning only the Station One is selected, based on your previous selection. After selecting it, the Station Two selection will be enabled.
 
@@ -55,33 +55,33 @@ At the beginning only the Station One is selected, based on your previous select
 
 Only compatible stations will be shown in the Station Two list. It is determined based on the production configurations of the stations. It is made based on Intermediates and Products wares.
 
-[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/station_two_selection_for_production_station.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTCE/refs/heads/main/docs/images/station_two_selection_for_production_station.png[/img]
 
 [h2]Station Two selection for trading stations[/h2]
 
 When you open the Trade Config Exchanger UI from a trading station, the Station One will be preselected as the trading station, and the Station Two list will be filtered to show only compatible stations.
 
-[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/station_two_selection_for_trade_station.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTCE/refs/heads/main/docs/images/station_two_selection_for_trade_station.png[/img]
 
 [h2]Selecting what to exchange (clone)[/h2]
 
 After selecting both stations, you can choose what to exchange (clone) between them.
 
-[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/screen_after_both_stations_selected.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTCE/refs/heads/main/docs/images/screen_after_both_stations_selected.png[/img]
 
 You can choose to exchange (clone) the items with the different level of detail:
 [list]
 [*] Per Ware Group: Resources, Intermediates, Products, Trade Wares.
 [/list]
-[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/selected_resources_group_of_wares.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTCE/refs/heads/main/docs/images/selected_resources_group_of_wares.png[/img]
 [list]
 [*] Per single ware.
 [/list]
-[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/selected_single_whole_ware.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTCE/refs/heads/main/docs/images/selected_single_whole_ware.png[/img]
 [list]
 [*] Per ware trade configuration aspect: Storage Allocation, Buy Order, Sell Order.
 [/list]
-[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/selected_different_aspects_in_different_wares.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTCE/refs/heads/main/docs/images/selected_different_aspects_in_different_wares.png[/img]
 
 [h2]Executing the exchange (clone)[/h2]
 
@@ -92,33 +92,33 @@ After selecting what to exchange (clone), you should select a confirmation check
 [/list]
 [h3][b]Cloning example from Station One to Two Station[/b][/h3]
 
-[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/from_one_to_two_before_cloning.png[/img]
-[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/from_one_to_two_after_cloning.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTCE/refs/heads/main/docs/images/from_one_to_two_before_cloning.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTCE/refs/heads/main/docs/images/from_one_to_two_after_cloning.png[/img]
 
 [h3][b]Cloning example from Station Two to One Station[/b][/h3]
 
-[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/from_two_to_one_before_cloning.png[/img]
-[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/from_two_to_one_after_cloning.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTCE/refs/heads/main/docs/images/from_two_to_one_before_cloning.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTCE/refs/heads/main/docs/images/from_two_to_one_after_cloning.png[/img]
 
 [h3][b]Trade Stations "Full" Cloning Examples[/b][/h3]
 
 [h3][u]Cloning from configured to "empty" trade station[/u][/h3]
 
-[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/empty_station_before.png[/img]
-[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/full_to_empty_before_page_one.png[/img]
-[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/full_to_empty_before_page_two.png[/img]
-[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/full_to_empty_before_page_two_ready.png[/img]
-[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/full_to_empty_after_page_two.png[/img]
-[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/empty_station_after.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTCE/refs/heads/main/docs/images/empty_station_before.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTCE/refs/heads/main/docs/images/full_to_empty_before_page_one.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTCE/refs/heads/main/docs/images/full_to_empty_before_page_two.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTCE/refs/heads/main/docs/images/full_to_empty_before_page_two_ready.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTCE/refs/heads/main/docs/images/full_to_empty_after_page_two.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTCE/refs/heads/main/docs/images/empty_station_after.png[/img]
 
 [h3][u]Cloning from "empty" to configured trade station[/u][/h3]
 
 In this example will be cloned all "empty" wares except first and last wares that will be left unchanged.
 
-[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/empty_to_full_before_page_one.png[/img]
-[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/empty_to_full_before_page_two.png[/img]
-[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/empty_to_full_after.png[/img]
-[img]https://raw.githubusercontent.com/chemodun/X4-StationsTradeConfigExchanger/refs/heads/main/docs/images/full_station_after.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTCE/refs/heads/main/docs/images/empty_to_full_before_page_one.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTCE/refs/heads/main/docs/images/empty_to_full_before_page_two.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTCE/refs/heads/main/docs/images/empty_to_full_after.png[/img]
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTCE/refs/heads/main/docs/images/full_station_after.png[/img]
 
 [h2][b]Video[/b][/h2]
 
@@ -134,10 +134,17 @@ Video demonstration of the Stations Trade Config Exchanger. Version 1.00
 [list]
 [*] [url=https://www.egosoft.com]EGOSOFT[/url] — for the X series.
 [*] [url=https://next.nexusmods.com/profile/sirnukes?gameId=2659]SirNukes[/url] — for the Mod Support APIs that power the UI hooks.
-[*] [url=https://next.nexusmods.com/profile/Forleyor?gameId=2659]Forleyor[/url] — for his constant help with understanding the UI modding!
+[*] [url=https://next.nexusmods.com/profile/Forleyor?gameId=2659]Forleyor[/url] — for his constant help with understanding the UI modding! And especially for the help with resolving the scaling issue!
 [/list]
 [h2][b]Changelog[/b][/h2]
 
+[h2][1.01] - 2025-11-27[/h2]
+[list]
+[*] Fixed
+[list]
+[*] Avoided UI scaling column widths issue in high-resolution modes by disabling scaling at all.
+[/list]
+[/list]
 [h2][1.00] - 2025-11-23[/h2]
 [list]
 [*] Added
