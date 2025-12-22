@@ -4,7 +4,9 @@
   <add sel="/language">
     <page id="1972092405" voice="no" title="Handelskonfigurations-Austauscher" descr="Text für den Handelskonfigurations-Austauscher">
       <t id="1">Handelskonfigurations-Austauscher</t>
-      <t id="2">Der Handelskonfigurations-Austauscher ermöglicht es dir, die Handelskonfiguration von einer Station auf eine andere zu übertragen. Das ist hilfreich, wenn mehrere Stationen die gleiche Handelskonfiguration verwenden sollen.</t>
+      <t id="2">Der Handelskonfigurations-Austauscher ermöglicht es dir, die Handelskonfiguration von einer Station auf eine andere zu übertragen. Das ist
+        hilfreich, wenn mehrere Stationen die gleiche Handelskonfiguration verwenden sollen.</t>
+      <t id="11">Konfigurations-Austauscher</t>
       <t id="1001">Stations-Handelskonfigurations-Austauscher</t>
       <t id="1011">Station Eins</t>
       <t id="1012">Station Zwei</t>
@@ -42,6 +44,7 @@
         - Speicherzuweisungen: %d;
         - Kaufangebote: %d;
         - Verkaufsangebote: %d.</t>
+      <t id="10001">Handelsverwaltung</t>
     </page>
   </add>
 </diff>

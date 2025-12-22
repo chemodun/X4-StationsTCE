@@ -4,7 +4,9 @@
   <add sel="/language">
     <page id="1972092405" voice="no" title="Ticaret Yapılandırma Değiştirici" descr="Ticaret Yapılandırma Değiştiricisi için metin">
       <t id="1">Ticaret Yapılandırma Değiştirici</t>
-      <t id="2">Ticaret Yapılandırma Değiştirici, bir istasyonun ticaret yapılandırmasını başka bir istasyona aktarmanızı sağlar. Birden fazla istasyonda aynı ticaret yapılandırmasını kullanmak istediğinizde faydalıdır.</t>
+      <t id="2">Ticaret Yapılandırma Değiştirici, bir istasyonun ticaret yapılandırmasını başka bir istasyona aktarmanızı sağlar. Birden fazla istasyonda aynı
+        ticaret yapılandırmasını kullanmak istediğinizde faydalıdır.</t>
+      <t id="11">Yapılandırma Değiştirici</t>
       <t id="1001">İstasyonlar Ticaret Yapılandırma Değiştiricisi</t>
       <t id="1011">İstasyon Bir</t>
       <t id="1012">İstasyon İki</t>
@@ -42,6 +44,7 @@
         - depolama tahsisleri: %d;
         - alım teklifleri: %d;
         - satım teklifleri: %d.</t>
+      <t id="10001">Ticaret yönetimi</t>
     </page>
   </add>
 </diff>

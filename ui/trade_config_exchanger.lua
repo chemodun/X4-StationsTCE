@@ -42,6 +42,8 @@ local playerId = nil
 
 local texts = {
   title = ReadText(1972092405, 1001),
+  tooltip = ReadText(1972092405, 2),
+  button = ReadText(1972092405, 11),
   stationOne = ReadText(1972092405, 1011),
   stationTwo = ReadText(1972092405, 1012),
   noMatchingStations = ReadText(1972092405, 1019),
@@ -50,7 +52,6 @@ local texts = {
   rule = ReadText(1972092405, 1103),
   price = ReadText(1972092405, 1104),
   amount = ReadText(1972092405, 1105),
-  overrideTag = ReadText(1972092405, 1109),
   buyOfferSellOffer = ReadText(1972092405, 1111),
   selectStationOnePrompt = ReadText(1972092405, 1201),
   selectStationTwoPrompt = ReadText(1972092405, 1202),
@@ -92,6 +93,8 @@ local wareTypeSortOrder = {
   product = 3,
   trade = 4
 }
+
+local tradeRuleNames = nil
 
 
 local function copyAndEnrichTable(src, extraInfo)
@@ -955,6 +958,9 @@ local function render()
               render()
             end
             typeRow[2]:setColSpan(columns - 1):createText(texts[wareType], { font = Helper.standardFontBold, halign = "center", color = Color["equipmentmod_quality_exceptional"] })
+            typeRow[2].handlers.onClick = function()
+              debugTrace("Clicked on ware type header: " .. tostring(wareType))
+            end
             tableContent:addEmptyRow(Helper.standardTextHeight / 2)
           end
           if data.clone.wares[ware.ware] == nil then
@@ -1165,6 +1171,17 @@ local function render()
 
   row = tableBottom:addRow(true, { fixed = true })
 
+  local stationTE = require("extensions.station_trades_editor.ui.station_trades_editor")
+  if stationTE and stationTE.isPresented and stationTE.button and stationTE.menuId and stationTE.eventId and type(stationTE.setArgs) == "function" then
+    row[2]:createButton({ active = true }):setText(stationTE.button, { halign = "center", color = Color["text_positive"] })
+    row[2].handlers.onClick = function()
+      local args = { selectedStation = stationOneEntry.id64 }
+      stationTE.setArgs(args)
+      menu.closeContextMenu()
+      AddUITriggeredEvent(stationTE.menuId, stationTE.eventId)
+    end
+  end
+
   row[4]:createButton({ active = selectedCount > 0 and data.clone.confirmed }):setText(texts.cloneButton .. "  \27[widget_arrow_right_01]\27X",
     { halign = "center" })
   row[4].handlers.onClick = function()
@@ -1234,6 +1251,20 @@ local function getArgs()
     end
   end
   return nil
+end
+
+local function setArgs(playerId, args)
+  if playerId == 0 then
+    debugTrace("setArgs unable to resolve player id")
+  else
+    local list = GetNPCBlackboard(playerId, "$TradeConfigExchangerSelectedStation")
+    if type(list) ~= "table" then
+      list = {}
+    end
+    table.insert(list, args)
+    SetNPCBlackboard(playerId, "$TradeConfigExchangerSelectedStation", list)
+    debugTrace("setArgs stored args in blackboard for player " .. tostring(playerId))
+  end
 end
 
 local function show()
@@ -1311,6 +1342,17 @@ local function Init()
   debugTrace("MapMenu is " .. tostring(menu))
 end
 
-Register_Require_With_Init("extensions.stations_tce.ui.trade_config_exchanger", nil, Init)
+local STCE = {
+  isPresented = true,
+  button = texts.button,
+  tooltip = texts.tooltip,
+  menuId = "TradeConfigExchanger",
+  eventId = "show",
+  setArgs = function(args)
+    setArgs(playerId, args)
+  end,
+}
+
+Register_Require_With_Init("extensions.stations_tce.ui.trade_config_exchanger", STCE, Init)
 
 

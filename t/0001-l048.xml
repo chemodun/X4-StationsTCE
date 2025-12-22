@@ -4,7 +4,9 @@
   <add sel="/language">
     <page id="1972092405" voice="no" title="Wymiennik Konfiguracji Handlowej" descr="Tekst dla Wymiennika Konfiguracji Handlowej">
       <t id="1">Wymiennik Konfiguracji Handlowej</t>
-      <t id="2">Wymiennik Konfiguracji Handlowej pozwala przenieść konfigurację handlową z jednej stacji na inną. Przydaje się, gdy chcesz mieć tę samą konfigurację handlową na kilku stacjach.</t>
+      <t id="2">Wymiennik Konfiguracji Handlowej pozwala przenieść konfigurację handlową z jednej stacji na inną. Przydaje się, gdy chcesz mieć tę samą
+        konfigurację handlową na kilku stacjach.</t>
+      <t id="11">Wymiennik konfiguracji</t>
       <t id="1001">Stacyjny Wymiennik Konfiguracji Handlowej</t>
       <t id="1011">Stacja Pierwsza</t>
       <t id="1012">Stacja Druga</t>
@@ -42,6 +44,7 @@
         - przydziały magazynowe: %d;
         - oferty kupna: %d;
         - oferty sprzedaży: %d.</t>
+      <t id="10001">Zarządzanie handlem</t>
     </page>
   </add>
 </diff>
