@@ -138,6 +138,22 @@ Video demonstration of the Stations Trade Config Exchanger. Version 1.00
 [/list]
 [size=3][u][b]Changelog[/b][/u][/size]
 
+[size=3][u][i][1.02] - 2025-12-24[/i][/u][/size]
+[list]
+[*] Fixed
+[list]
+[*] Some small issues.
+[/list]
+[*] Added
+[list]
+[*] Possibility to switch to [b]Station Trades Editor[/b]
+[*] Separate menu section in case of [b]UI Extensions and HUD[/b] mod by [b]kuertee[/b] is detected.
+[/list]
+[*] Changed
+[list]
+[*] Icon of the menu item in the context menu.
+[/list]
+[/list]
 [size=3][u][i][1.01] - 2025-11-27[/i][/u][/size]
 [list]
 [*] Fixed

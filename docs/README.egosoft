@@ -137,6 +137,22 @@ In this example will be cloned all "empty" wares except first and last wares tha
 [/list]
 [size=130][u]Changelog[/u][/size]
 
+[size=125][u][1.02] - 2025-12-24[/u][/size]
+[list]
+[*] Fixed
+[list]
+[*] Some small issues.
+[/list]
+[*] Added
+[list]
+[*] Possibility to switch to [b]Station Trades Editor[/b]
+[*] Separate menu section in case of [b]UI Extensions and HUD[/b] mod by [b]kuertee[/b] is detected.
+[/list]
+[*] Changed
+[list]
+[*] Icon of the menu item in the context menu.
+[/list]
+[/list]
 [size=125][u][1.01] - 2025-11-27[/u][/size]
 [list]
 [*] Fixed
