@@ -139,8 +139,9 @@ In this example will be cloned all "empty" wares except first and last wares tha
 
 - Fixed
   - Some small issues.
+  - Missed new-lines in translation files.
 - Added
-  - Possibility to switch to `Station Trades Editor`
+  - Possibility direct switch to `Station Trades Editor`
   - Separate menu section in case of `UI Extensions and HUD` mod by `kuertee` is detected.
 - Changed
   - Icon of the menu item in the context menu.
