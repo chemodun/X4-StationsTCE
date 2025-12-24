@@ -61,7 +61,7 @@
                   $text       = {1972092405, 1},
                   $mouseover  = {1972092405, 2},
                   $text2      = if @$uixInteractMenuPresent == true then '' else $station.knownname,
-                  $icon       = 'menu_shoppingcart',
+                  $icon       = 'menu_config_exchanger',
                   $active     = true,
                   $callback   = Show_Interface,
                 ]" />
@@ -90,18 +90,6 @@
               <raise_lua_event name="'TradeConfigExchangerShow'" />
               <remove_value name="$args" />
             </do_if>
-          </actions>
-        </cue>
-
-        <cue name="External_Call" instantiate="true">
-          <conditions>
-            <event_ui_triggered screen="'TradeConfigExchanger'" control="'show'" />
-          </conditions>
-          <actions>
-            <debug_text
-              text="'TradeConfigExchanger: External_Call triggered with data: %s'.[@player.entity.$TradeConfigExchangerSelectedStation.last]" chance="100"
-              filter="scripts" />
-            <raise_lua_event name="'TradeConfigExchangerShow'" />
           </actions>
         </cue>
 
