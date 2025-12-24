@@ -135,6 +135,16 @@ In this example will be cloned all "empty" wares except first and last wares tha
 
 ## Changelog
 
+### [1.02] - 2025-12-24
+
+- Fixed
+  - Some small issues.
+- Added
+  - Possibility to switch to `Station Trades Editor`
+  - Separate menu section in case of `UI Extensions and HUD` mod by `kuertee` is detected.
+- Changed
+  - Icon of the menu item in the context menu.
+
 ### [1.01] - 2025-11-27
 
 - Fixed
