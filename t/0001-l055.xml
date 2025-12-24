@@ -4,8 +4,7 @@
   <add sel="/language">
     <page id="1972092405" voice="no" title="Trocador de Configuração Comercial" descr="Texto para o Trocador de Configuração Comercial">
       <t id="1">Trocador de Configuração Comercial</t>
-      <t id="2">O Trocador de Configuração Comercial permite transferir a configuração comercial de uma estação para outra. É útil quando você deseja usar a
-        mesma configuração comercial em várias estações.</t>
+      <t id="2">O Trocador de Configuração Comercial permite transferir a configuração comercial de uma estação para outra. É útil quando você deseja usar a mesma configuração comercial em várias estações.</t>
       <t id="11">Trocador de Configuração</t>
       <t id="1001">Trocador de Configuração Comercial das Estações</t>
       <t id="1011">Estação Um</t>
@@ -33,17 +32,9 @@
       <t id="1419">Cancelar</t>
       <t id="2001">Selecione primeiro Estação Um e Estação Dois!</t>
       <t id="2002">Nenhuma mercadoria selecionada para clonar!</t>
-      <t id="2011">Operação de clonagem concluída com sucesso!
-        Mercadorias processadas: %d.</t>
-      <t id="2012">Operação de clonagem concluída com avisos!
-        Mercadorias processadas: %d.
-        Mercadorias ignoradas: %s</t>
-      <t id="2101">Selecionado:
-        Mercadorias completas: %d.
-        Atributos separados:
-        - alocações de armazenamento: %d;
-        - ofertas de compra: %d;
-        - ofertas de venda: %d.</t>
+      <t id="2011">Operação de clonagem concluída com sucesso!\nMercadorias processadas: %d.</t>
+      <t id="2012">Operação de clonagem concluída com avisos!\nMercadorias processadas: %d.\nMercadorias ignoradas: %s</t>
+      <t id="2101">Selecionado:\n Mercadorias completas: %d.\n Atributos separados:\n - alocações de armazenamento: %d;\n - ofertas de compra: %d;\n - ofertas de venda: %d.</t>
       <t id="10001">Gestão comercial</t>
     </page>
   </add>

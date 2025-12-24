@@ -4,8 +4,7 @@
   <add sel="/language">
     <page id="1972092405" voice="no" title="Ticaret Yapılandırma Değiştirici" descr="Ticaret Yapılandırma Değiştiricisi için metin">
       <t id="1">Ticaret Yapılandırma Değiştirici</t>
-      <t id="2">Ticaret Yapılandırma Değiştirici, bir istasyonun ticaret yapılandırmasını başka bir istasyona aktarmanızı sağlar. Birden fazla istasyonda aynı
-        ticaret yapılandırmasını kullanmak istediğinizde faydalıdır.</t>
+      <t id="2">Ticaret Yapılandırma Değiştirici, bir istasyonun ticaret yapılandırmasını başka bir istasyona aktarmanızı sağlar. Birden fazla istasyonda aynı ticaret yapılandırmasını kullanmak istediğinizde faydalıdır.</t>
       <t id="11">Yapılandırma Değiştirici</t>
       <t id="1001">İstasyonlar Ticaret Yapılandırma Değiştiricisi</t>
       <t id="1011">İstasyon Bir</t>
@@ -33,17 +32,9 @@
       <t id="1419">İptal</t>
       <t id="2001">Önce İstasyon Bir ve İstasyon İki'yi seçin!</t>
       <t id="2002">Klonlamak için hiçbir mal seçilmedi!</t>
-      <t id="2011">Klonlama işlemi başarıyla tamamlandı!
-        İşlenen mallar: %d.</t>
-      <t id="2012">Klonlama işlemi uyarılarla tamamlandı!
-        İşlenen mallar: %d.
-        Atlanan mallar: %s</t>
-      <t id="2101">Seçili:
-        Tam mallar: %d.
-        Ayrı nitelikler:
-        - depolama tahsisleri: %d;
-        - alım teklifleri: %d;
-        - satım teklifleri: %d.</t>
+      <t id="2011">Klonlama işlemi başarıyla tamamlandı!\nİşlenen mallar: %d.</t>
+      <t id="2012">Klonlama işlemi uyarılarla tamamlandı!\nİşlenen mallar: %d.\nAtlanan mallar: %s</t>
+      <t id="2101">Seçili:\n Tam mallar: %d.\n Ayrı nitelikler:\n - depolama tahsisleri: %d;\n - alım teklifleri: %d;\n - satım teklifleri: %d.</t>
       <t id="10001">Ticaret yönetimi</t>
     </page>
   </add>

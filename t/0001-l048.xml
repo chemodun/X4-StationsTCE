@@ -4,8 +4,7 @@
   <add sel="/language">
     <page id="1972092405" voice="no" title="Wymiennik Konfiguracji Handlowej" descr="Tekst dla Wymiennika Konfiguracji Handlowej">
       <t id="1">Wymiennik Konfiguracji Handlowej</t>
-      <t id="2">Wymiennik Konfiguracji Handlowej pozwala przenieść konfigurację handlową z jednej stacji na inną. Przydaje się, gdy chcesz mieć tę samą
-        konfigurację handlową na kilku stacjach.</t>
+      <t id="2">Wymiennik Konfiguracji Handlowej pozwala przenieść konfigurację handlową z jednej stacji na inną. Przydaje się, gdy chcesz mieć tę samą konfigurację handlową na kilku stacjach.</t>
       <t id="11">Wymiennik konfiguracji</t>
       <t id="1001">Stacyjny Wymiennik Konfiguracji Handlowej</t>
       <t id="1011">Stacja Pierwsza</t>
@@ -33,17 +32,9 @@
       <t id="1419">Anuluj</t>
       <t id="2001">Najpierw wybierz Stację Pierwszą i Stację Drugą!</t>
       <t id="2002">Nie wybrano żadnych towarów do sklonowania!</t>
-      <t id="2011">Operacja klonowania zakończona pomyślnie!
-        Przetworzone towary: %d.</t>
-      <t id="2012">Operacja klonowania zakończona z ostrzeżeniami!
-        Przetworzone towary: %d.
-        Pominięte towary: %s</t>
-      <t id="2101">Wybrano:
-        Pełne towary: %d.
-        Oddzielne atrybuty:
-        - przydziały magazynowe: %d;
-        - oferty kupna: %d;
-        - oferty sprzedaży: %d.</t>
+      <t id="2011">Operacja klonowania zakończona pomyślnie!\nPrzetworzone towary: %d.</t>
+      <t id="2012">Operacja klonowania zakończona z ostrzeżeniami!\nPrzetworzone towary: %d.\nPominięte towary: %s</t>
+      <t id="2101">Wybrano:\n Pełne towary: %d.\n Oddzielne atrybuty:\n - przydziały magazynowe: %d;\n - oferty kupna: %d;\n - oferty sprzedaży: %d.</t>
       <t id="10001">Zarządzanie handlem</t>
     </page>
   </add>

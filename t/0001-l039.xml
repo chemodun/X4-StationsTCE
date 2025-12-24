@@ -4,8 +4,7 @@
   <add sel="/language">
     <page id="1972092405" voice="no" title="Scambiatore di Configurazione Commerciale" descr="Testo per lo Scambiatore di Configurazione Commerciale">
       <t id="1">Scambiatore di Configurazione Commerciale</t>
-      <t id="2">Lo Scambiatore di Configurazione Commerciale consente di trasferire la configurazione commerciale da una stazione all'altra. È utile quando
-        desideri avere la stessa configurazione commerciale per più stazioni.</t>
+      <t id="2">Lo Scambiatore di Configurazione Commerciale consente di trasferire la configurazione commerciale da una stazione all'altra. È utile quando desideri avere la stessa configurazione commerciale per più stazioni.</t>
       <t id="11">Scambiatore di configurazione</t>
       <t id="1001">Scambiatore di Configurazione Commerciale delle Stazioni</t>
       <t id="1011">Stazione Uno</t>
@@ -33,17 +32,9 @@
       <t id="1419">Annulla</t>
       <t id="2001">Seleziona prima Stazione Uno e Stazione Due!</t>
       <t id="2002">Nessuna merce selezionata da clonare!</t>
-      <t id="2011">Operazione di clonazione completata con successo!
-        Merci elaborate: %d.</t>
-      <t id="2012">Operazione di clonazione completata con avvisi!
-        Merci elaborate: %d.
-        Merci saltate: %s</t>
-      <t id="2101">Selezionato:
-        Merci complete: %d.
-        Attributi separati:
-        - allocazioni di stoccaggio: %d;
-        - offerte di acquisto: %d;
-        - offerte di vendita: %d.</t>
+      <t id="2011">Operazione di clonazione completata con successo!\nMerci elaborate: %d.</t>
+      <t id="2012">Operazione di clonazione completata con avvisi!\nMerci elaborate: %d.\nMerci saltate: %s</t>
+      <t id="2101">Selezionato:\n Merci complete: %d.\n Attributi separati:\n - allocazioni di stoccaggio: %d;\n - offerte di acquisto: %d;\n - offerte di vendita: %d.</t>
       <t id="10001">Gestione commerciale</t>
     </page>
   </add>

@@ -4,8 +4,7 @@
   <add sel="/language">
     <page id="1972092405" voice="no" title="Výměník Obchodního Nastavení" descr="Text pro Výměník Obchodního Nastavení">
       <t id="1">Výměník Obchodního Nastavení</t>
-      <t id="2">Výměník Obchodního Nastavení vám umožní převést obchodní nastavení z jedné stanice na druhou. Hodí se, když chcete mít stejné obchodní nastavení
-        pro více stanic.</t>
+      <t id="2">Výměník Obchodního Nastavení vám umožní převést obchodní nastavení z jedné stanice na druhou. Hodí se, když chcete mít stejné obchodní nastavení pro více stanic.</t>
       <t id="11">Výměník konfigurace</t>
       <t id="1001">Staniční Výměník Obchodního Nastavení</t>
       <t id="1011">Stanice Jedna</t>
@@ -33,17 +32,9 @@
       <t id="1419">Zrušit</t>
       <t id="2001">Nejprve vyberte Stanici Jedna a Stanici Dva!</t>
       <t id="2002">Žádné zboží nebylo vybráno ke klonování!</t>
-      <t id="2011">Operace klonování úspěšně dokončena!
-        Zpracovaná zboží: %d.</t>
-      <t id="2012">Operace klonování byla dokončena s varováními!
-        Zpracovaná zboží: %d.
-        Přeskočená zboží: %s</t>
-      <t id="2101">Vybráno:
-        Kompletní zboží: %d.
-        Samostatné atributy:
-        - přidělení skladů: %d;
-        - nákupní nabídky: %d;
-        - prodejní nabídky: %d.</t>
+      <t id="2011">Operace klonování úspěšně dokončena!\nZpracovaná zboží: %d.</t>
+      <t id="2012">Operace klonování byla dokončena s varováními!\nZpracovaná zboží: %d.\nPřeskočená zboží: %s</t>
+      <t id="2101">Vybráno:\n Kompletní zboží: %d.\n Samostatné atributy:\n - přidělení skladů: %d;\n - nákupní nabídky: %d;\n - prodejní nabídky: %d.</t>
       <t id="10001">Správa obchodů</t>
     </page>
   </add>

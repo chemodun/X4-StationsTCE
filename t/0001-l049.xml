@@ -4,8 +4,7 @@
   <add sel="/language">
     <page id="1972092405" voice="no" title="Handelskonfigurations-Austauscher" descr="Text für den Handelskonfigurations-Austauscher">
       <t id="1">Handelskonfigurations-Austauscher</t>
-      <t id="2">Der Handelskonfigurations-Austauscher ermöglicht es dir, die Handelskonfiguration von einer Station auf eine andere zu übertragen. Das ist
-        hilfreich, wenn mehrere Stationen die gleiche Handelskonfiguration verwenden sollen.</t>
+      <t id="2">Der Handelskonfigurations-Austauscher ermöglicht es dir, die Handelskonfiguration von einer Station auf eine andere zu übertragen. Das ist hilfreich, wenn mehrere Stationen die gleiche Handelskonfiguration verwenden sollen.</t>
       <t id="11">Konfigurations-Austauscher</t>
       <t id="1001">Stations-Handelskonfigurations-Austauscher</t>
       <t id="1011">Station Eins</t>
@@ -33,17 +32,9 @@
       <t id="1419">Abbrechen</t>
       <t id="2001">Wähle zuerst Station Eins und Station Zwei!</t>
       <t id="2002">Keine Waren zum Klonen ausgewählt!</t>
-      <t id="2011">Klonvorgang erfolgreich abgeschlossen!
-        Verarbeitete Waren: %d.</t>
-      <t id="2012">Klonvorgang mit Warnungen abgeschlossen!
-        Verarbeitete Waren: %d.
-        Übersprungene Waren: %s</t>
-      <t id="2101">Ausgewählt:
-        Vollständige Waren: %d.
-        Getrennte Attribute:
-        - Speicherzuweisungen: %d;
-        - Kaufangebote: %d;
-        - Verkaufsangebote: %d.</t>
+      <t id="2011">Klonvorgang erfolgreich abgeschlossen!\nVerarbeitete Waren: %d.</t>
+      <t id="2012">Klonvorgang mit Warnungen abgeschlossen!\nVerarbeitete Waren: %d.\nÜbersprungene Waren: %s</t>
+      <t id="2101">Ausgewählt:\n Vollständige Waren: %d.\n Getrennte Attribute:\n - Speicherzuweisungen: %d;\n - Kaufangebote: %d;\n - Verkaufsangebote: %d.</t>
       <t id="10001">Handelsverwaltung</t>
     </page>
   </add>

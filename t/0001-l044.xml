@@ -3,8 +3,7 @@
   <add sel="/language">
     <page id="1972092405" voice="no" title="Trade Configuration Exchanger" descr="Text for Trade Configuration Exchanger">
       <t id="1">Trade Configuration Exchanger</t>
-      <t id="2">Trade Configuration Exchanger allows you to exchange the trade configuration from one station to another. It is useful when you want to have the
-        same trade configuration for several stations.</t>
+      <t id="2">Trade Configuration Exchanger allows you to exchange the trade configuration from one station to another. It is useful when you want to have the same trade configuration for several stations.</t>
       <t id="11">Configuration Exchanger</t>
       <t id="1001">Stations Trade Configuration Exchanger</t>
       <t id="1011">Station One</t>

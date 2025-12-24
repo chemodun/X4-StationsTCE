@@ -4,8 +4,7 @@
   <add sel="/language">
     <page id="1972092405" voice="no" title="Échangeur de Configuration Commerciale" descr="Texte pour l'Échangeur de Configuration Commerciale">
       <t id="1">Échangeur de Configuration Commerciale</t>
-      <t id="2">L'Échangeur de Configuration Commerciale vous permet de transférer la configuration commerciale d'une station à une autre. Il est utile lorsque
-        vous souhaitez appliquer la même configuration commerciale à plusieurs stations.</t>
+      <t id="2">L'Échangeur de Configuration Commerciale vous permet de transférer la configuration commerciale d'une station à une autre. Il est utile lorsque vous souhaitez appliquer la même configuration commerciale à plusieurs stations.</t>
       <t id="11">Échangeur de configuration</t>
       <t id="1001">Échangeur de Configuration Commerciale des Stations</t>
       <t id="1011">Station Un</t>
@@ -33,17 +32,9 @@
       <t id="1419">Annuler</t>
       <t id="2001">Sélectionnez d'abord Station Un et Station Deux !</t>
       <t id="2002">Aucune marchandise sélectionnée pour la copie !</t>
-      <t id="2011">Opération de copie terminée avec succès !
-        Marchandises traitées : %d.</t>
-      <t id="2012">Opération de copie terminée avec avertissements !
-        Marchandises traitées : %d.
-        Marchandises ignorées : %s</t>
-      <t id="2101">Sélection :
-        Marchandises complètes : %d.
-        Attributs séparés :
-        - allocations de stockage : %d ;
-        - offres d'achat : %d ;
-        - offres de vente : %d.</t>
+      <t id="2011">Opération de copie terminée avec succès !\nMarchandises traitées : %d.</t>
+      <t id="2012">Opération de copie terminée avec avertissements !\nMarchandises traitées : %d.\nMarchandises ignorées : %s</t>
+      <t id="2101">Sélection :\n Marchandises complètes : %d.\n Attributs séparés :\n - allocations de stockage : %d ;\n - offres d'achat : %d ;\n - offres de vente : %d.</t>
       <t id="10001">Gestion commerciale</t>
     </page>
   </add>

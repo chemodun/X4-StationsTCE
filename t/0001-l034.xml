@@ -4,8 +4,7 @@
   <add sel="/language">
     <page id="1972092405" voice="no" title="Intercambiador de Configuración Comercial" descr="Texto para el Intercambiador de Configuración Comercial">
       <t id="1">Intercambiador de Configuración Comercial</t>
-      <t id="2">El Intercambiador de Configuración Comercial te permite transferir la configuración comercial de una estación a otra. Es útil cuando quieres
-        replicar la misma configuración comercial en varias estaciones.</t>
+      <t id="2">El Intercambiador de Configuración Comercial te permite transferir la configuración comercial de una estación a otra. Es útil cuando quieres replicar la misma configuración comercial en varias estaciones.</t>
       <t id="11">Intercambiador de Configuración</t>
       <t id="1001">Intercambiador de Configuración Comercial de Estaciones</t>
       <t id="1011">Estación Uno</t>
@@ -33,17 +32,9 @@
       <t id="1419">Cancelar</t>
       <t id="2001">¡Selecciona primero Estación Uno y Estación Dos!</t>
       <t id="2002">¡No se seleccionaron mercancías para clonar!</t>
-      <t id="2011">¡Operación de clonación completada con éxito!
-        Mercancías procesadas: %d.</t>
-      <t id="2012">¡Operación de clonación completada con advertencias!
-        Mercancías procesadas: %d.
-        Mercancías omitidas: %s</t>
-      <t id="2101">Seleccionado:
-        Mercancías completas: %d.
-        Atributos separados:
-        - asignaciones de almacenamiento: %d;
-        - ofertas de compra: %d;
-        - ofertas de venta: %d.</t>
+      <t id="2011">¡Operación de clonación completada con éxito!\nMercancías procesadas: %d.</t>
+      <t id="2012">¡Operación de clonación completada con advertencias!\nMercancías procesadas: %d.\nMercancías omitidas: %s</t>
+      <t id="2101">Seleccionado:\n Mercancías completas: %d.\n Atributos separados:\n - asignaciones de almacenamiento: %d;\n - ofertas de compra: %d;\n - ofertas de venta: %d.</t>
       <t id="10001">Gestión comercial</t>
     </page>
   </add>
