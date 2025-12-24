@@ -1171,8 +1171,8 @@ local function render()
 
   row = tableBottom:addRow(true, { fixed = true })
 
-  local stationTE = require("extensions.station_trades_editor.ui.station_trades_editor")
-  if stationTE and stationTE.isPresented and stationTE.button and stationTE.menuId and stationTE.eventId and type(stationTE.setArgs) == "function" then
+  local stationTEExists, stationTE = pcall(require, "extensions.station_trades_editor.ui.station_trades_editor")
+  if stationTEExists and stationTE and stationTE.isPresented and stationTE.button and stationTE.menuId and stationTE.eventId and type(stationTE.setArgs) == "function" then
     row[2]:createButton({ active = true }):setText(stationTE.button, { halign = "center", color = Color["text_positive"] })
     row[2].handlers.onClick = function()
       local args = { selectedStation = stationOneEntry.id64 }
