@@ -135,6 +135,13 @@ In this example will be cloned all "empty" wares except first and last wares tha
 
 ## Changelog
 
+### [1.03] - 2025-12-26
+
+- Fixed
+  - Possible interference with the `Custom Tabs` mod by `mycu`
+- Changed
+  - Menu item icon
+
 ### [1.02] - 2025-12-24
 
 - Fixed
