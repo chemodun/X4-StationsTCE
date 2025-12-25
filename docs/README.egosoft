@@ -137,6 +137,17 @@ In this example will be cloned all "empty" wares except first and last wares tha
 [/list]
 [size=130][u]Changelog[/u][/size]
 
+[size=125][u][1.03] - 2025-12-26[/u][/size]
+[list]
+[*] Fixed
+[list]
+[*] Possible interference with the [b]Custom Tabs[/b] mod by [b]mycu[/b]
+[/list]
+[*] Changed
+[list]
+[*] Menu item icon
+[/list]
+[/list]
 [size=125][u][1.02] - 2025-12-24[/u][/size]
 [list]
 [*] Fixed
