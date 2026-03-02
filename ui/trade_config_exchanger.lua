@@ -799,7 +799,7 @@ local function render()
   local currentTableNum = 1
   local columns = 13
 
-  local tableTop = frame:addTable(columns, { tabOrder = currentTableNum, reserveScrollBar = false, highlightMode = "off", x = Helper.borderSize, y = currentY, })
+  local tableTop = frame:addTable(columns, { tabOrder = 2, reserveScrollBar = false, highlightMode = "off", x = Helper.borderSize, y = currentY, })
   setMainTableColumnsWidth(tableTop)
 
   local row = tableTop:addRow(false, { fixed = true })
@@ -874,7 +874,7 @@ local function render()
   currentY = currentY + tableTop:getFullHeight() + Helper.borderSize * 2
   currentTableNum = currentTableNum + 1
 
-  local tableContent = frame:addTable(columns, { tabOrder = currentTableNum, reserveScrollBar = true, highlightMode = "on", x = Helper.borderSize, y = currentY, })
+  local tableContent = frame:addTable(columns, { tabOrder = 2, reserveScrollBar = true, highlightMode = "on", x = Helper.borderSize, y = currentY, })
   setMainTableColumnsWidth(tableContent)
 
   local stationOneEntry = data.selectedStationOne and data.stations[data.selectedStationOne]
@@ -1085,7 +1085,7 @@ local function render()
     local currentPage = math.ceil(data.waresStartIndex / data.waresOnScreenMax)
     local pageInfoFormat = tostring(texts.pageInfo or "%d / %d")
     local pageInfoText = string.format(pageInfoFormat, currentPage, pageCount)
-    local tablePages = frame:addTable(12, { tabOrder = currentTableNum, reserveScrollBar = false, highlightMode = "off", x = Helper.borderSize, y = currentY })
+    local tablePages = frame:addTable(12, { tabOrder = 2, reserveScrollBar = false, highlightMode = "off", x = Helper.borderSize, y = currentY })
     tablePages:setColWidth(1, checkBoxWidth, false)
     local pageButtonWidth = 80
     local pageIntervalWidth = 30
@@ -1134,7 +1134,7 @@ local function render()
   end
 
   local tableConfirm = frame:addTable(9,
-    { tabOrder = currentTableNum, reserveScrollBar = false, highlightMode = "off", x = Helper.borderSize, y = currentY })
+    { tabOrder = 2, reserveScrollBar = false, highlightMode = "off", x = Helper.borderSize, y = currentY })
   local cellWidth = math.floor((tableTop.properties.width - checkBoxWidth) / 8) - 3
   for i = 1, 3 do
     tableConfirm:setColWidth(i, cellWidth, false)
@@ -1161,7 +1161,7 @@ local function render()
 
 
   local tableBottom = frame:addTable(8,
-    { tabOrder = currentTableNum, reserveScrollBar = false, highlightMode = "off", x = Helper.borderSize, y = currentY })
+    { tabOrder = 2, reserveScrollBar = false, highlightMode = "off", x = Helper.borderSize, y = currentY })
 
   tableBottom:setColWidth(1, checkBoxWidth, false)
   local buttonWidth = math.floor((tableTop.properties.width - checkBoxWidth) / 7) - 3
