@@ -135,6 +135,11 @@ In this example will be cloned all "empty" wares except first and last wares tha
 
 ## Changelog
 
+## [1.04] - 2026-03-14
+
+- Fixed
+  - Wrong page id for custom action name in context menu
+
 ### [1.03] - 2025-12-26
 
 - Fixed
