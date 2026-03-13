@@ -138,6 +138,13 @@ Video demonstration of the Stations Trade Config Exchanger. Version 1.00
 [/list]
 [h2][b]Changelog[/b][/h2]
 
+[h2][b][1.04] - 2026-03-14[/b][/h2]
+[list]
+[*] Fixed
+[list]
+[*] Wrong page id for custom action name in context menu
+[/list]
+[/list]
 [h2][1.03] - 2025-12-26[/h2]
 [list]
 [*] Fixed

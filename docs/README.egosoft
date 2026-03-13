@@ -137,6 +137,13 @@ In this example will be cloned all "empty" wares except first and last wares tha
 [/list]
 [size=130][u]Changelog[/u][/size]
 
+[size=130][u][1.04] - 2026-03-14[/u][/size]
+[list]
+[*] Fixed
+[list]
+[*] Wrong page id for custom action name in context menu
+[/list]
+[/list]
 [size=125][u][1.03] - 2025-12-26[/u][/size]
 [list]
 [*] Fixed
