@@ -46,7 +46,7 @@
             <debug_text text="'TradeConfigExchanger: Going to add custom tabs group.'" chance="100" filter="scripts" />
             <set_value name="$tabsGroup" exact="'station_trade_management_group'" />
             <raise_lua_event name="'Interact_Menu_API.Add_Custom_Actions_Group_Id'" param="$tabsGroup" />
-            <raise_lua_event name="'Interact_Menu_API.Add_Custom_Actions_Group_Text'" param="{1972092410, 10001}" />
+            <raise_lua_event name="'Interact_Menu_API.Add_Custom_Actions_Group_Text'" param="{1972092405, 10001}" />
             <reset_cue cue="this" />
           </actions>
         </cue>
