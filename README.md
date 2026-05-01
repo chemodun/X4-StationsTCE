@@ -4,6 +4,7 @@ Stations Trade Config Exchanger allows you to exchange the trade configuration f
 
 ## Features
 
+- This mod is save game safe, i.e. can be uninstalled anytime without breaking the save game.
 - Transfer trade configuration between stations.
 - Can work with production and trading stations.
 - Allows selecting wares by groups: Resources, Intermediates, Products, Trade Wares.
@@ -12,12 +13,11 @@ Stations Trade Config Exchanger allows you to exchange the trade configuration f
 
 ## Limitations
 
-- Can't work with stations contained the ships factory modules, i.e. with Shipyards and Wharfs.
 - Identifies trading stations as stations with cargo bays and without production modules. I.e. if your defense platform has cargo modules - it's will be identified as trading station.
 
 ## Requirements
 
-- `X4: Foundations` 7.60 or newer (tested on 7.60 and 8.00).
+- `X4: Foundations` 7.60 or newer (tested on 7.60, 8.00, and 9.00 beta).
 - `Mod Support APIs` by [SirNukes](https://next.nexusmods.com/profile/sirnukes?gameId=2659) to be installed and enabled. Version `1.93` and upper is required.
   - It is available via Steam - [SirNukes Mod Support APIs](https://steamcommunity.com/sharedfiles/filedetails/?id=2042901274)
   - Or via the Nexus Mods - [Mod Support APIs](https://www.nexusmods.com/x4foundations/mods/503)
@@ -118,6 +118,16 @@ In this example will be cloned all "empty" wares except first and last wares tha
 ![Empty to full after](docs/images/empty_to_full_after.png)
 ![Full station after cloning](docs/images/full_station_after.png)
 
+### Extension options
+
+**Options Menu > Extension options > Trade Configuration Exchanger**:
+
+![Extension Options](docs/images/options.png)
+
+There is a single option:
+
+- **Enable for Shipyards and Wharfs**: When enabled, the Trade Config Exchanger will be available for stations that contain ship factory modules (Shipyards and Wharfs). Disabled by default due to the limitations of the current version of the mod.
+
 ## Video
 
 [Video demonstration of the Stations Trade Config Exchanger. Version 1.00](https://www.youtube.com/watch?v=cWfU4Az8yAo)
@@ -134,6 +144,11 @@ In this example will be cloned all "empty" wares except first and last wares tha
 - [Forleyor](https://next.nexusmods.com/profile/Forleyor?gameId=2659) — for his constant help with understanding the UI modding! And especially for the help with resolving the scaling issue!
 
 ## Changelog
+
+## [1.05] - 2026-05-01
+
+- Added:
+  - Option to enable the Trade Config Exchanger for stations with ship factory modules (Shipyards and Wharfs). Disabled by default.
 
 ## [1.04] - 2026-03-14
 
