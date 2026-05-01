@@ -36,6 +36,9 @@
       <t id="2012">Operace klonování byla dokončena s varováními!\nZpracovaná zboží: %d.\nPřeskočená zboží: %s</t>
       <t id="2101">Vybráno:\n Kompletní zboží: %d.\n Samostatné atributy:\n - přidělení skladů: %d;\n - nákupní nabídky: %d;\n - prodejní nabídky: %d.</t>
       <t id="10001">Správa obchodů</t>
+      <!-- Settings -->
+      <t id="90000">Obecná nastavení</t>
+      <t id="90001">Povolit pro loděnice a doky</t>
     </page>
   </add>
 </diff>

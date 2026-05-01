@@ -36,6 +36,9 @@
       <t id="2012">Klonvorgang mit Warnungen abgeschlossen!\nVerarbeitete Waren: %d.\nÜbersprungene Waren: %s</t>
       <t id="2101">Ausgewählt:\n Vollständige Waren: %d.\n Getrennte Attribute:\n - Speicherzuweisungen: %d;\n - Kaufangebote: %d;\n - Verkaufsangebote: %d.</t>
       <t id="10001">Handelsverwaltung</t>
+      <!-- Settings -->
+      <t id="90000">Allgemeine Einstellungen</t>
+      <t id="90001">Für Werften und Dockanlagen aktivieren</t>
     </page>
   </add>
 </diff>

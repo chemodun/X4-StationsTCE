@@ -36,6 +36,9 @@
       <t id="2012">Operacja klonowania zakończona z ostrzeżeniami!\nPrzetworzone towary: %d.\nPominięte towary: %s</t>
       <t id="2101">Wybrano:\n Pełne towary: %d.\n Oddzielne atrybuty:\n - przydziały magazynowe: %d;\n - oferty kupna: %d;\n - oferty sprzedaży: %d.</t>
       <t id="10001">Zarządzanie handlem</t>
+      <!-- Settings -->
+      <t id="90000">Ustawienia ogólne</t>
+      <t id="90001">Włącz dla stoczni i doków</t>
     </page>
   </add>
 </diff>

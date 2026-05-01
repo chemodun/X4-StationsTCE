@@ -36,6 +36,9 @@
       <t id="2012">Opération de copie terminée avec avertissements !\nMarchandises traitées : %d.\nMarchandises ignorées : %s</t>
       <t id="2101">Sélection :\n Marchandises complètes : %d.\n Attributs séparés :\n - allocations de stockage : %d ;\n - offres d'achat : %d ;\n - offres de vente : %d.</t>
       <t id="10001">Gestion commerciale</t>
+      <!-- Settings -->
+      <t id="90000">Paramètres généraux</t>
+      <t id="90001">Activer pour les chantiers navals et les docks</t>
     </page>
   </add>
 </diff>

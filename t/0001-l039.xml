@@ -36,6 +36,9 @@
       <t id="2012">Operazione di clonazione completata con avvisi!\nMerci elaborate: %d.\nMerci saltate: %s</t>
       <t id="2101">Selezionato:\n Merci complete: %d.\n Attributi separati:\n - allocazioni di stoccaggio: %d;\n - offerte di acquisto: %d;\n - offerte di vendita: %d.</t>
       <t id="10001">Gestione commerciale</t>
+      <!-- Settings -->
+      <t id="90000">Impostazioni generali</t>
+      <t id="90001">Abilita per cantieri navali e banchine</t>
     </page>
   </add>
 </diff>

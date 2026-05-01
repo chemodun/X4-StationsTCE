@@ -36,6 +36,9 @@
       <t id="2012">¡Operación de clonación completada con advertencias!\nMercancías procesadas: %d.\nMercancías omitidas: %s</t>
       <t id="2101">Seleccionado:\n Mercancías completas: %d.\n Atributos separados:\n - asignaciones de almacenamiento: %d;\n - ofertas de compra: %d;\n - ofertas de venta: %d.</t>
       <t id="10001">Gestión comercial</t>
+      <!-- Settings -->
+      <t id="90000">Configuración general</t>
+      <t id="90001">Activar para astilleros y varaderos</t>
     </page>
   </add>
 </diff>

@@ -36,6 +36,9 @@
       <t id="2012">Operação de clonagem concluída com avisos!\nMercadorias processadas: %d.\nMercadorias ignoradas: %s</t>
       <t id="2101">Selecionado:\n Mercadorias completas: %d.\n Atributos separados:\n - alocações de armazenamento: %d;\n - ofertas de compra: %d;\n - ofertas de venda: %d.</t>
       <t id="10001">Gestão comercial</t>
+      <!-- Settings -->
+      <t id="90000">Configurações gerais</t>
+      <t id="90001">Ativar para estaleiros e docas</t>
     </page>
   </add>
 </diff>
