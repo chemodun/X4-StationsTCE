@@ -52,5 +52,6 @@
   <text language="380"
     description="Stations Trade Config Exchanger дозволяє передавати торгові налаштування з однієї станції на іншу. Це корисно, коли ви хочете мати однакові торгові налаштування для кількох станцій."></text>
   <dependency version="760"></dependency>
-  <dependency id="ws_2042901274" optional="false" name="SirNukes Mod Support APIs" version="193"></dependency>
+  <dependency id="ws_2042901274" optional="false" name="SirNukes Mod Support APIs" version="195"></dependency>
+  <dependency id="ws_3715253556" optional="false" name="Options Helper" version="100"></dependency>
 </content>

@@ -204,6 +204,15 @@ local function buildStationCache()
   local options = {}
   local list = GetContainedStationsByOwner("player", nil, true) or {}
 
+  local stceConfig = {}
+  if playerId and playerId ~= 0 then
+    local rawConfig = GetNPCBlackboard(playerId, "$TradeConfigExchangerConfig")
+    if type(rawConfig) == "table" then
+      stceConfig = rawConfig
+    end
+  end
+  local enableForShipyardsAndWharfs = (stceConfig.enableForShipyardsAndWharfs == true or stceConfig.enableForShipyardsAndWharfs == 1)
+
   for i = 1, #list do
     local id = list[i]
     local id64 = toUniverseId(id)
@@ -217,7 +226,7 @@ local function buildStationCache()
       local numStorages = C.GetNumCargoTransportTypes(entry.id64, true)
       local sector, isshipyard, iswharf = GetComponentData(entry.id64, "sector", "isshipyard", "iswharf")
       entry.sector = sector
-      if isshipyard or iswharf then
+      if (isshipyard or iswharf) and not enableForShipyardsAndWharfs then
         debugTrace("Skipping station that is a shipyard or wharf: " .. tostring(entry.displayName))
       elseif numStorages == 0 then
         debugTrace("Skipping station without cargo capacity: " .. tostring(entry.displayName))

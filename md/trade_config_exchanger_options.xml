@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mdscript name="Stations_Trade_Config_Exchanger_Options" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="md.xsd">
+  <cues>
+
+    <!-- Reads (or initialises) mod config from player.entity.$TradeConfigExchangerConfig.
+         Leaves a local $config reference; caller must <remove_value name="$config" />. -->
+    <library name="DefaultConfig" purpose="include_actions" version="1">
+      <actions>
+        <do_if value="@player.entity.$TradeConfigExchangerConfig == null">
+          <set_value name="player.entity.$TradeConfigExchangerConfig" exact="table[
+            $enableForShipyardsAndWharfs = false,
+          ]" />
+        </do_if>
+        <set_value name="$config" exact="player.entity.$TradeConfigExchangerConfig" />
+        <!-- forward-compat: initialise keys added in later releases -->
+        <do_if value="not $config.$enableForShipyardsAndWharfs?">
+          <set_value name="$config.$enableForShipyardsAndWharfs" exact="false" />
+        </do_if>
+      </actions>
+    </library>
+
+    <!-- *** Options menu *** -->
+
+    <cue name="STCE_Register_Options_Menu" instantiate="true" version="1">
+      <conditions>
+        <event_cue_signalled cue="md.Simple_Menu_API.Reloaded" />
+      </conditions>
+      <actions>
+        <signal_cue_instantly cue="md.Simple_Menu_API.Register_Options_Menu"
+          param="table[
+            $id      = 'trade_config_exchanger_options',
+            $columns = 12,
+            $title   = {1972092405, 1},
+            $onOpen  = STCE_Options_Menu_Open,
+          ]" />
+      </actions>
+    </cue>
+
+    <cue name="STCE_Options_Menu_Open" instantiate="true" version="1">
+      <conditions>
+        <event_cue_signalled />
+      </conditions>
+      <actions>
+        <include_actions ref="md.Stations_Trade_Config_Exchanger_Options.DefaultConfig" />
+        <include_actions ref="md.Options_Helper.Add_Empty_Row" />
+        <run_actions ref="md.Options_Helper.Add_Title_Row">
+          <param name="title" value="{1972092405, 90000}" />
+          <param name="columns" value="12" />
+        </run_actions>
+        <run_actions ref="md.Options_Helper.Add_Checkbox">
+          <param name="id" value="'enableForShipyardsAndWharfs'" />
+          <param name="col" value="1" />
+          <param name="textColSpan" value="11" />
+          <param name="text" value="{1972092405, 90001}" />
+          <param name="data" value="@$config" />
+          <param name="handle" value="STCE_Handle_Checkbox_Changed" />
+        </run_actions>
+        <remove_value name="$config" />
+      </actions>
+    </cue>
+
+    <cue name="STCE_Handle_Checkbox_Changed" instantiate="true" version="1">
+      <conditions>
+        <event_cue_signalled />
+      </conditions>
+      <actions>
+        <include_actions ref="md.Stations_Trade_Config_Exchanger_Options.DefaultConfig" />
+        <set_value name="$resultTable" exact="$config" />
+        <include_actions ref="md.Options_Helper.Process_Checkbox_Changed" />
+        <remove_value name="$resultTable" />
+        <remove_value name="$config" />
+      </actions>
+    </cue>
+
+  </cues>
+</mdscript>

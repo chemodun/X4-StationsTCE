@@ -35,6 +35,9 @@
       <t id="2012">Clone operation completed with warnings!\nProcessed wares: %d.\nSkipped wares: %s</t>
       <t id="2101">Selected:\n Complete wares: %d.\n Separate attributes:\n - storage allocations: %d;\n - buy offers: %d;\n - sell offers: %d.</t>
       <t id="10001">Trade Management</t>
+      <!-- Settings -->
+      <t id="90000">General Settings</t>
+      <t id="90001">Enable for Shipyards and Wharfs</t>
     </page>
   </add>
 </diff>
