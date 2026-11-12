@@ -23,6 +23,11 @@ Stations Trade Config Exchanger allows you to exchange the trade configuration f
 [*] It is available via Steam - [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2042901274]SirNukes Mod Support APIs[/url]
 [*] Or via the Nexus Mods - [url=https://www.nexusmods.com/x4foundations/mods/503]Mod Support APIs[/url]
 [/list]
+[*] [b]Options Helper[/b] to be installed and enabled. Version [b]1.00[/b] and upper is required.
+[list]
+[*] It is available via Steam - [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3715253556]Options Helper[/url]
+[*] Or via the Nexus Mods - [url=https://www.nexusmods.com/x4foundations/mods/2089]Options Helper[/url]
+[/list]
 [/list]
 [h2][b]Installation[/b][/h2]
 
@@ -35,10 +40,20 @@ Or you can do it via the Nexus Mods - [url=https://www.nexusmods.com/x4foundatio
 
 You can open the Trade Config Exchanger UI from the Stations Context Menu.
 
-To do this, simply select a station on a [b]Map[/b] or from [b]Property Owned[/b] list, then right-click on it, and select [b]Trade Config Exchanger[/b] from the context menu.
+To do this, simply select a station on a [b]Map[/b] or from [b]Property Owned[/b] list, then right-click on it, and select [b]Trade Configuration Exchanger[/b] from the context menu.
 
 [img]https://raw.githubusercontent.com/chemodun/X4-StationsTCE/refs/heads/main/docs/images/select_from_context_menu.png[/img]
 
+If [b]UI Extensions and HUD[/b] by [url=https://next.nexusmods.com/profile/kuertee?gameId=2659]kuertee[/url] is installed, the item is not at the top of the context menu, it is in a sub-menu: [b]Custom Actions[/b] > [b]Trade Management[/b] > [b]Trade Configuration Exchanger[/b].
+
+[img]https://raw.githubusercontent.com/chemodun/X4-StationsTCE/refs/heads/main/docs/images/select_from_context_menu_uix.png[/img]
+
+The item is shown only:
+[list]
+[*] for your own stations with at least one storage module;
+[*] when no ships are selected together with the station;
+[*] for Shipyards and Wharfs, only if this is enabled in the [url=https://github.com/chemodun/X4-StationsTCE/raw/main/#extension-options]Extension options[/url].
+[/list]
 [h2]Trade Config Exchanger UI[/h2]
 
 The Trade Config Exchanger UI allows you to select the Station One and Station Two, and configure how the trade configuration will be exchanged between them.
