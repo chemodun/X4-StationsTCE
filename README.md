@@ -21,6 +21,9 @@ Stations Trade Config Exchanger allows you to exchange the trade configuration f
 - `Mod Support APIs` by [SirNukes](https://next.nexusmods.com/profile/sirnukes?gameId=2659) to be installed and enabled. Version `1.93` and upper is required.
   - It is available via Steam - [SirNukes Mod Support APIs](https://steamcommunity.com/sharedfiles/filedetails/?id=2042901274)
   - Or via the Nexus Mods - [Mod Support APIs](https://www.nexusmods.com/x4foundations/mods/503)
+- `Options Helper` to be installed and enabled. Version `1.00` and upper is required.
+  - It is available via Steam - [Options Helper](https://steamcommunity.com/sharedfiles/filedetails/?id=3715253556)
+  - Or via the Nexus Mods - [Options Helper](https://www.nexusmods.com/x4foundations/mods/2089)
 
 ## Installation
 
@@ -33,9 +36,19 @@ Or you can do it via the Nexus Mods - [Stations Trade Config Exchanger](https://
 
 You can open the Trade Config Exchanger UI from the Stations Context Menu.
 
-To do this, simply select a station on a `Map` or from `Property Owned` list, then right-click on it, and select `Trade Config Exchanger` from the context menu.
+To do this, simply select a station on a `Map` or from `Property Owned` list, then right-click on it, and select `Trade Configuration Exchanger` from the context menu.
 
 ![Stations Trade Config Exchanger Context Menu Item](docs/images/select_from_context_menu.png)
+
+If `UI Extensions and HUD` by [kuertee](https://next.nexusmods.com/profile/kuertee?gameId=2659) is installed, the item is not at the top of the context menu, it is in a sub-menu: `Custom Actions` > `Trade Management` > `Trade Configuration Exchanger`.
+
+![Stations Trade Config Exchanger Context Menu Item with UI Extensions and HUD](docs/images/select_from_context_menu_uix.png)
+
+The item is shown only:
+
+- for your own stations with at least one storage module;
+- when no ships are selected together with the station;
+- for Shipyards and Wharfs, only if this is enabled in the [Extension options](#extension-options).
 
 ### Trade Config Exchanger UI
 
